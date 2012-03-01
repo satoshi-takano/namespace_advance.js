@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-new Namespace(namespace_lib_geom).using(function() {
+new Namespace(namespace_lib_geom).use(function() {
 	var ns = this;
 	
 	 /** 
 	 * creating a Point
 	 * @class flash の Point
 	 */
-	clas(function Point() {
+	proto(function Point() {
 		init(function(x, y) {
 			this.x = x;
 			this.y = y;
@@ -84,7 +84,7 @@ new Namespace(namespace_lib_geom).using(function() {
 	 * creating a Rectangle
 	 * @class flash の Rectangle
 	 */
-	 clas(function Rectangle() {
+	 proto(function Rectangle() {
 	 	init(function (x, y, w, h) {
 	 		this.x = x;
 	 		this.y = y;
@@ -196,7 +196,7 @@ new Namespace(namespace_lib_geom).using(function() {
 	 * creating a Matrix
 	 * @class flash の Matrix
 	 */
-	 clas(function Matrix() {
+	 proto(function Matrix() {
 	 	init(function (a, b, c, d, tx, ty) {
 	 		this.a = a;
 	 		this.b = b;

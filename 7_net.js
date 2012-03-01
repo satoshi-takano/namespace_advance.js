@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-new Namespace(namespace_lib_net).using(function () {
+new Namespace(namespace_lib_net).use(function () {
 	var ns = this;
 	
 	/** 
 	* creating a URL
 	* @class 
 	*/
-	clas(function URL() {
+	proto(function URL() {
 		init(function(url) {
 			this.url = url;
 			this.scheme = 
@@ -73,7 +73,7 @@ new Namespace(namespace_lib_net).using(function () {
 	* creating a URLRequest
 	* @class flash の URLRequest
 	*/
-	clas(function URLRequest() {
+	proto(function URLRequest() {
 		init(function (urlString) {
 			this.url = urlString;
 			this.httpMethod = "GET";
@@ -88,7 +88,7 @@ new Namespace(namespace_lib_net).using(function () {
 	* creating a URLLoader
 	* @class flash の URLLoader
 	*/
-	clas(function URLLoader() {
+	proto(function URLLoader() {
 		var nse = new Namespace(namespace_lib_events);
 		
 		ex(nse.EventDispatcher);

@@ -94,18 +94,18 @@ var InternalNamespacePrototype = function() {
 	this.nsName = "";
 	var self = this;
 	
-	this.using = function(func) {
+	this.use = function(func) {
 		self = this;
-		var oldDef = window.clas;
+		var oldDef = window.proto;
 		var oldSingleton = window.singleton;
-		window.clas = this.clas;
+		window.proto = this.proto;
 		window.singleton = this.singleton;
 		func.call(this);
-		window.clas = oldDef;
+		window.proto = oldDef;
 		window.singleton = oldSingleton;
 	};
 	
-	this.clas = function(namedFunc) {
+	this.proto = function(namedFunc) {
 		var tmpSelf = self;
 		if (this instanceof Namespace) {
 			tmpSelf = this;
@@ -140,7 +140,7 @@ var InternalNamespacePrototype = function() {
 		window.ex = oldEx;
 		window.def = oldMeth;
 		
-		proto.prototype.clas = proto;
+		proto.prototype.proto = proto;
 	};
 	
 	this.singleton = function(namedFunc) {
@@ -222,14 +222,14 @@ Namespace = function(str) {
 }
 Namespace.prototype = internalNamespacePrototype;
 
-new Namespace(namespace_lib_core).using(function () {
+new Namespace(namespace_lib_core).use(function () {
 	var ns = this;
 	
 	/** 
 	 * creating a Performer
 	 * @class 
 	 */
-	 clas(function Performer() {
+	 proto(function Performer() {
 	 	init(function(target, callback, args) {
 	 		this.target = target;
 	 		this.callback = callback;
@@ -245,7 +245,7 @@ new Namespace(namespace_lib_core).using(function () {
 	 * creating a Utilitie 
 	 * @class 実行環境ごとの差異吸収がメインのしごと
 	 */
-	clas(function Utilitie() {
+	proto(function Utilitie() {
 		def(function listen(target, type, func) {
 			if (target.addEventListener)
 				target.addEventListener(type, function (e) {

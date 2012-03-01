@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-new Namespace(namespace_lib_events).using(function() {
+new Namespace(namespace_lib_events).use(function() {
 	var ns = this;
 	// dynamical creating a internal namespace
 	var nsi = new Namespace(ns.nsName + ".internal");
 	var userAgent = new Namespace(namespace_lib_core).UserAgent.gen();
 	
 	/* internal */
-	nsi.clas(function EventTargetSet(listener) {
+	nsi.proto(function EventTargetSet(listener) {
 		init(function (listener) {
 			this.listener = listener;
 		})
@@ -40,7 +40,7 @@ new Namespace(namespace_lib_events).using(function() {
 	* 
 	* @class 
 	*/
-	clas(function EventDispatcher() {
+	proto(function EventDispatcher() {
 		init(function (target) {
 			this.observers = {};
 			this.target = target;
@@ -100,7 +100,7 @@ new Namespace(namespace_lib_events).using(function() {
 	* accessing a DOMEvent object
 	* @class 
 	*/
-	clas(function DOMEvent() {
+	proto(function DOMEvent() {
 		var isIE = userAgent.isIE();
 		if (isIE) {
 			$$.INIT = "onload";
@@ -116,7 +116,7 @@ new Namespace(namespace_lib_events).using(function() {
 	* accessing a DOMMouseEvent object
 	* @class 
 	*/
-	clas(function DOMMouseEvent() {
+	proto(function DOMMouseEvent() {
 		var isIE = userAgent.isIE();
 		if (isIE) {
 			$$.CLICK = "onclick";
@@ -142,7 +142,7 @@ new Namespace(namespace_lib_events).using(function() {
 	* creating a FLEvent
 	* @class flash の Eventぽく
 	*/
-	clas(function FLEvent() {
+	proto(function FLEvent() {
 		init(function (type, caller, origin) {
 			this.type = type;
 			this.origin = origin;
@@ -172,7 +172,7 @@ new Namespace(namespace_lib_events).using(function() {
 	* creating a FLMouseEvent
 	* @class flash の MouseEvent
 	*/
-	clas(function FLMouseEvent() {
+	proto(function FLMouseEvent() {
 		ex(ns.FLEvent);
 		
 		$$.DOUBLE_CLICK = "doubleclick";

@@ -22,14 +22,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-new Namespace(namespace_lib_core).using(function() {
+new Namespace(namespace_lib_core).use(function() {
 	var ns = this;
 	
 	/** 
 	 * creating a UserAgent
 	 * @class ユーザーエージェント
 	 */
-	clas(function UserAgent() {
+	proto(function UserAgent() {
 		init(function() {
 			this.ua = navigator.userAgent.toLowerCase();
 		});
@@ -93,7 +93,7 @@ new Namespace(namespace_lib_core).using(function() {
 	 * @param {String} name 通知名
 	 * @param {Object} userData 引き回す用の Object
 	 */
-	 clas(function Notification() {
+	 proto(function Notification() {
 	 	init(function(name, userData) {
 	 		this.name = name;
 	 		this.userData = userData;
@@ -161,7 +161,7 @@ new Namespace(namespace_lib_core).using(function() {
 	 * creating a Timestamp
 	 * @class new された時刻を保持し、そこからの経過時間を出力します
 	 */
-	 clas(function Timestamp() {
+	 proto(function Timestamp() {
 	 	init(function() {
 	 		this.created = new Date();
 	 	});
@@ -181,7 +181,7 @@ new Namespace(namespace_lib_core).using(function() {
 	 * creating a Identifier
 	 * @class ユニークな識別子
 	 */
-	 clas(function Identifier() {
+	 proto(function Identifier() {
 	 	init(function() {
 	 		this.id = null;
 	 		this.generate();
@@ -212,7 +212,7 @@ new Namespace(namespace_lib_core).using(function() {
 	 * creating a Wait
 	 * @class 指定時間経過後に指定された関数を実行します
 	 */
-	 clas(function Wait() {
+	 proto(function Wait() {
 	 	init(function(time, callback) {
 	 		this.timer = setTimeout(function(){
 	 			callback.call();
@@ -225,7 +225,7 @@ new Namespace(namespace_lib_core).using(function() {
 	 	});
 	 });
 	
-	clas(function Range() {
+	proto(function Range() {
 		init(function(min, max) {
 			this.min = min;
 			this.max = max;

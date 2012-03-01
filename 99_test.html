@@ -12,8 +12,8 @@
 
 <script type="text/javascript">
 
-new Namespace("jp.example").using(function() {
-	clas(function SuperClass() {
+new Namespace("jp.example").use(function() {
+	proto(function SuperClass() {
 		init(function(p0, p1) {
 			this.propA = p0;
 			this.propB = p1;
@@ -24,7 +24,7 @@ new Namespace("jp.example").using(function() {
 		});
 	});
 	
-	clas(function SubClass() {
+	proto(function SubClass() {
 		ex(jp.example.SuperClass);
 		
 		init(function(p0, p1, p2, p3) {
@@ -44,7 +44,7 @@ new Namespace("jp.example").using(function() {
 		$$.classVarA = "class variable";
 	});
 	
-	clas(function SubsubClass() {
+	proto(function SubsubClass() {
 		ex(jp.example.SubClass);
 		
 		init(function (p0, p1, p2, p3, p4) {

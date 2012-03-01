@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-new Namespace(namespace_lib_app).using(function() {
+new Namespace(namespace_lib_app).use(function() {
 	var ns = this;
 		
 	 /** 

@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-new Namespace(namespace_lib_display).using(function() {
+new Namespace(namespace_lib_display).use(function() {
 	var ns = this;
 	var nsc = new Namespace(namespace_lib_core);
 	var nse = new Namespace(namespace_lib_events);
@@ -33,7 +33,7 @@ new Namespace(namespace_lib_display).using(function() {
 	* creating a DisplayObject
 	* @class 
 	*/
-	clas(function DisplayObject() {
+	proto(function DisplayObject() {
 		ex(nse.EventDispatcher);
 		
 		init(function(domElement) {
@@ -141,7 +141,7 @@ new Namespace(namespace_lib_display).using(function() {
 	* creating a InteractiveObject
 	* @class 
 	*/
-	clas(function InteractiveObject() {
+	proto(function InteractiveObject() {
 		ex(ns.DisplayObject);
 		
 		init(function(domElement) {

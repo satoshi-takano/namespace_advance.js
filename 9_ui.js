@@ -22,11 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-new Namespace(namespace_lib_ui).using(function() {
+new Namespace(namespace_lib_ui).use(function() {
 	var ns = this;
 	var nsd = new Namespace(namespace_lib_display);
 	
-	clas(function Label() {
+	proto(function Label() {
 		ex(nsd.DisplayObject);
 		
 		init(function(textElement) {
