@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/* log util */
+function trace() {for(var i=0;i<arguments.length;i++)if(window.console){console.log(arguments[i]);}}
+function warn(message) {alert("Warning : " + message);}
+
 var FunctionPrototype = function() {
 	var self = this;
 	// util
@@ -38,7 +42,7 @@ var FunctionPrototype = function() {
 	// hierarchie util
 	function wrap(key, method) {
 		var wrapper = method;
-		// 親クラスの同名メソッドを保持
+		// use by parent() method
 		wrapper.superMethod = self.substance.prototype[key];
 		return wrapper;
 	};
@@ -46,7 +50,9 @@ var FunctionPrototype = function() {
 		return arguments.callee.caller.superMethod.apply(this, arguments);
 	};
 	
-	// object generation
+	/**
+	* object generation
+	**/
 	this.gen = function() {
 		var obj = new this();
 		if (obj.initialize != undefined) {
@@ -55,6 +61,9 @@ var FunctionPrototype = function() {
 		return obj;
 	};
 	
+	/**
+	* returning singleton object
+	**/
 	this.getInstance = function() {
 		var instance = this.instance;
 		if (!instance) {
@@ -66,7 +75,7 @@ var FunctionPrototype = function() {
 		return this.instance;
 	}
 	
-	// class definition
+	// define method to initialize
 	this.init = function(initialize) {
 		if (self.substance.prototype.$super)
 			self.substance.prototype.$super["initialize"] = self.substance.prototype.$super.prototype.initialize;
@@ -79,6 +88,7 @@ var FunctionPrototype = function() {
 		self.substance.prototype.$super = obj;
 		self.substance.prototype.parent = parent;
 	};
+	// define method to method definition
 	this.def = function(method){
 		var name = getMethodName(method);
 		self.substance.prototype[name] = wrap(name, method);

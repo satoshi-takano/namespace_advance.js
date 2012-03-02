@@ -30,7 +30,3 @@ var namespace_lib_tween = "jp.co.imgsrc.tween";
 var namespace_lib_net = "jp.co.imgsrc.net";
 var namespace_lib_display = "jp.co.imgsrc.display";
 var namespace_lib_ui = "jp.co.imgsrc.ui";
-
-/* simple logger */
-function trace() {for(var i=0;i<arguments.length;i++)if(window.console){console.log(arguments[i]);}}
-function warn(message) {alert("Warning : " + message);}
