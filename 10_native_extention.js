@@ -44,6 +44,21 @@ Number.prototype.step = function(limit, step, closure) {
 	}
 }
 
+Number.prototype.after = function(closure) {
+	setTimeout(closure, this + 0);
+}
+
+Number.prototype.frames = function(closure) {
+	var i = 0;
+	var step = this + 0;
+	var interval = 1 / 60;
+	var tid = setInterval(function() {
+		if (closure.call(this, i) == false) clearInterval(tid);
+		i++;
+		if (i == step) clearInterval(tid);
+	}, interval);
+}
+
 // Array's extention
 Array.prototype.each = function(closure) {
 	for (var i = 0, l = this.length; i < l; i++) {

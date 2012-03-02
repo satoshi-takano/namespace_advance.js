@@ -9,6 +9,7 @@
 <script type="text/javascript" src="7_net.js"></script>
 <script type="text/javascript" src="8_display.js"></script>
 <script type="text/javascript" src="9_ui.js"></script>
+<script type="text/javascript" src="10_native_extention.js"></script>
 
 <script type="text/javascript">
 
@@ -66,17 +67,17 @@ new Namespace("jp.example").use(function() {
 
 jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	var subsubClass = jp.example.SubsubClass.gen("property A",
-	 "property B",
-	 "property C",
-	 "property D",
-	 "property E");
-	alert("-- subsubClass inspect ---------\n" + subsubClass.inspect() + '\n\n');
-	alert("-- jp.example.SubClass class member ---------\n" + jp.example.SubClass.classVarA);
-	alert(jp.example.SubClass.classMethodA() + '\n\n');
-	var singletonA = jp.example.SingletonClass.getInstance();
-	var singletonB = jp.example.SingletonClass.getInstance(); 
-	alert("-- Equivalence test of singleton object  ---------\n\
-		(singletonA === singletonB) = " + (singletonA === singletonB).toString());
+			 "property B",
+			 "property C",
+			 "property D",
+			 "property E");
+			alert("-- subsubClass inspect ---------\n" + subsubClass.inspect() + '\n\n');
+			alert("-- jp.example.SubClass class member ---------\n" + jp.example.SubClass.classVarA);
+			alert(jp.example.SubClass.classMethodA() + '\n\n');
+			var singletonA = jp.example.SingletonClass.getInstance();
+			var singletonB = jp.example.SingletonClass.getInstance(); 
+			alert("-- Equivalence test of singleton object  ---------\n\
+				(singletonA === singletonB) = " + (singletonA === singletonB).toString());
 });
 
 </script>
