@@ -259,11 +259,11 @@ new Namespace(namespace_lib_core).use(function () {
 		def(function listen(target, type, func) {
 			if (target.addEventListener)
 				target.addEventListener(type, function (e) {
-					func.perform(e);
+					func.call(this, e);
 				}, false);
 			else if (target.attachEvent)
 				target.attachEvent(type, function (e) {
-					func.perform(e);
+					func.call(this, e);
 				});
 		});
 		
@@ -275,19 +275,27 @@ new Namespace(namespace_lib_core).use(function () {
 		})		
 	});
 	
-	singleton(function Main () {
-		init(function () {
-			var util = ns.Utilitie.gen();
-			var isIE = navigator.userAgent.toLowerCase().indexOf("msie") != -1;
-			util.listen(window, isIE ? "onload" : "load", ns.Performer.gen(this,  function () {
-					util.unlisten(window, isIE ? "onload" : "load", arguments.callee);
-					if (this.runner) this.runner.call(window);
-			}));
-		});
+	/**
+	* @archetype Main
+	* 
+	**/
+	singleton(function Main() {
+		// To initialize when the Main.gen(params) called.
+		init(function() {
+				var self = this;
+				var util = ns.Utilitie.gen();
+				var isIE = navigator.userAgent.toLowerCase().indexOf("msie") != -1;
+				
+				util.listen(window, isIE ? "onload" : "load", function () {
+						util.unlisten(window, isIE ? "onload" : "load", arguments.callee);
+						if (self.runner) self.runner.call(window);
+				});
+		})
 		
-		def(function main (runner) {
+		// main {replace the description here}.
+		def(function main(runner) {
 			this.runner = runner;
-		});
-	});
+		})
+	})
 	
 });

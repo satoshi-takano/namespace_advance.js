@@ -46,33 +46,33 @@ new Namespace(namespace_lib_events).use(function() {
 			this.target = target;
 		});
 		
-		def(function addEventListener(type, performer) {
+		def(function addEventListener(type, callback) {
 			var list = this.observers[type];
 			var flg = false;
 			if (list) {
 				var numTargets = list.length;
 				for (var i = 0; i < numTargets; i++)
-					if (list[i] == performer)
+					if (list[i] == callback)
 						flg = true;
 				if (!flg)
-					list.push(performer);
+					list.push(callback);
 			} else {
 				this.observers[type] = [];
-				this.observers[type].push(performer);
+				this.observers[type].push(callback);
 			}
 			return flg;
 		});
 		
 		// shortcut of the addEventListener method
-		def(function ae(type, performer) {
-			this.addEventListener(type, performer);
+		def(function ae(type, callback) {
+			this.addEventListener(type, callback);
 		});
 		
-		def(function removeEventListener(type, performer) {
+		def(function removeEventListener(type, callback) {
 			var list = this.observers[type];
 			var numTargets = list.length;
 			for (var i = 0; i < numTargets; i++) {
-				if (list[i] && list[i].callback == performer.callback) {
+				if (list[i] && list[i] == callback) {
 					list.splice(i, 1);
 					return;
 				}
@@ -89,7 +89,7 @@ new Namespace(namespace_lib_events).use(function() {
 			if (list) {
 				var numTargets = list.length;
 				for (var i = 0; i < numTargets; i++) {
-					list[i].perform();//.call(this, event);
+					list[i].call(this, event);
 				}
 			}
 		});
@@ -175,6 +175,11 @@ new Namespace(namespace_lib_events).use(function() {
 	proto(function FLMouseEvent() {
 		ex(ns.FLEvent);
 		
+		init(function (type, caller, origin) {
+			this.parent(type, caller, origin);
+		})
+		
+		$$.CLICK = "click";
 		$$.DOUBLE_CLICK = "doubleclick";
 		$$.MOUSE_DOWN = "mousedown";
 		$$.MOUSE_MOVE = "mousemove";

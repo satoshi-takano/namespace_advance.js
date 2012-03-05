@@ -1,0 +1,50 @@
+<html>
+<script type="text/javascript" src="0_lib_define.js"></script>
+<script type="text/javascript" src="1_namespace.js"></script>
+<script type="text/javascript" src="2_core.js"></script>
+<script type="text/javascript" src="3_events.js"></script>
+<script type="text/javascript" src="4_geom.js"></script>
+<script type="text/javascript" src="5_application.js"></script>
+<script type="text/javascript" src="6_tween.js"></script>
+<script type="text/javascript" src="7_net.js"></script>
+<script type="text/javascript" src="8_display.js"></script>
+<script type="text/javascript" src="9_ui.js"></script>
+<script type="text/javascript" src="10_native_extention.js"></script>
+
+<script type="text/javascript">
+
+new Namespace("jp.example").use(function() {
+	/**
+	* @archetype Hoge
+	* 
+	**/
+	proto(function Hoge() {
+		// To initialize when the Hoge.gen(params) called.
+		init(function(name) {
+			this.name = name;
+		})
+		
+		// getName {replace the description here}.
+		def(function getName() {
+			return this.name;
+		})
+		
+	})
+	
+});
+
+jp.co.imgsrc.Main.getInstance().main(function (argument) {
+	var hoge = jp.example.Hoge.gen("hoge");
+	
+	1000..after(function (argument) {
+		trace("1000 msec");
+	})
+	60..frames(function (i) {
+		trace(hoge.getName(), i);
+	})
+});
+
+</script>
+<body>
+</body>
+</html>

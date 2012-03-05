@@ -117,7 +117,7 @@ new Namespace(namespace_lib_display).use(function() {
 		});
 		
 		def(function globalToLocal(globalP) {
-			return new nsg.Point(this.x + globalP.x, this.y + globalP.y);
+			return nsg.Point.gen(this.x + globalP.x, this.y + globalP.y);
 		});
 		
 		def(function paint() {
@@ -169,15 +169,15 @@ new Namespace(namespace_lib_display).use(function() {
 			g.listen(this.domElement, nse.DOMMouseEvent.MOUSE_OVER, function(evt){
 				if (isOvered == false) {
 					isOvered = true;
-					self.dispatchEvent(new nse.FLMouseEvent(nse.FLMouseEvent.ROLL_OVER, self));
+					self.dispatchEvent(nse.FLMouseEvent.gen(nse.FLMouseEvent.ROLL_OVER, self));
 				}
 			});
 			g.listen(this.domElement, nse.DOMMouseEvent.MOUSE_OUT, function(evt){
 				if (isOvered) {
-					var rect = new geom.Rectangle(self.getGlobalX(), self.getGlobalY(), self.getWidth(), self.getHeight());
+					var rect = nsg.Rectangle.gen(self.getGlobalX(), self.getGlobalY(), self.getWidth(), self.getHeight());
 					if (isOvered) {
 						isOvered = false;
-						self.dispatchEvent(new nse.FLMouseEvent(nse.FLMouseEvent.ROLL_OUT, self, evt));
+						self.dispatchEvent(nse.FLMouseEvent.gen(nse.FLMouseEvent.ROLL_OUT, self, evt));
 					}
 					// 1フレまつ
 					/*
@@ -192,27 +192,27 @@ new Namespace(namespace_lib_display).use(function() {
 				}
 			});
 			g.listen(this.domElement, nse.DOMMouseEvent.MOUSE_OVER, function(evt){
-				var mOver = new nse.FLMouseEvent(nse.FLMouseEvent.MOUSE_OVER, self, evt);
+				var mOver = nse.FLMouseEvent.gen(nse.FLMouseEvent.MOUSE_OVER, self, evt);
 				mOver.target = evt.target || evt.srcElement;
 				self.dispatchEvent(mOver);
 			});
 			g.listen(this.domElement, nse.DOMMouseEvent.MOUSE_OUT, function(evt){
-				var mOut = new nse.FLMouseEvent(nse.FLMouseEvent.MOUSE_OUT, self, evt);
+				var mOut = nse.FLMouseEvent.gen(nse.FLMouseEvent.MOUSE_OUT, self, evt);
 				mOut.target = evt.target || evt.srcElement;
 				self.dispatchEvent(mOut);
 			});
 			g.listen(this.domElement, nse.DOMMouseEvent.CLICK, function(evt){
-				var click = new nse.FLMouseEvent(nse.FLMouseEvent.CLICK, self, evt);
+				var click = nse.FLMouseEvent.gen(nse.FLMouseEvent.CLICK, self, evt);
 				click.target = evt.target || evt.srcElement;
 				self.dispatchEvent(click);
 			});
 			g.listen(this.domElement, nse.DOMMouseEvent.MOUSE_DOWN, function(evt){
-				var down = new nse.FLMouseEvent(nse.FLMouseEvent.MOUSE_DOWN, self, evt);
+				var down = nse.FLMouseEvent.gen(nse.FLMouseEvent.MOUSE_DOWN, self, evt);
 				down.target = evt.target || evt.srcElement;
 				self.dispatchEvent(down);
 			});
 			g.listen(this.domElement, nse.DOMMouseEvent.MOUSE_UP, function(evt){
-				var up = new nse.FLMouseEvent(nse.FLMouseEvent.MOUSE_UP, self, evt);
+				var up = nse.FLMouseEvent.gen(nse.FLMouseEvent.MOUSE_UP, self, evt);
 				up.target = evt.target || evt.srcElement;
 				self.dispatchEvent(up);
 			});

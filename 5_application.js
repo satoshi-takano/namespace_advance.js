@@ -42,7 +42,7 @@ new Namespace(namespace_lib_app).use(function() {
 			var nscore = (new Namespace(namespace_lib_core));
 			var util = nscore.Utilitie.gen();
 			var isIE = this.userAgent.isIE();
-			util.listen(document, isIE ? "onmousemove" : "mousemove", nscore.Performer.gen(this, function(mouseMove) {
+			util.listen(document, isIE ? "onmousemove" : "mousemove", function(mouseMove) {
 				if (!isIE) {
 					this.mouseX = mouseMove.clientX;
 					this.mouseY = mouseMove.clientY;
@@ -51,7 +51,7 @@ new Namespace(namespace_lib_app).use(function() {
 					this.mouseX = mouseMove.clientX;
 					this.mouseY = mouseMove.clientY + document.documentElement.scrollTop;
 				}
-			}));
+			});
 			
 		});
 	});
