@@ -15,6 +15,9 @@
 
 <canvas id="world" width='300' height='300'>
 </canvas>
+
+<canvas id="world2" width='300' height='300'>
+</canvas>
 <script type="text/javascript">
 
 jp.co.imgsrc.Main.getInstance().main(function (argument) {
@@ -25,13 +28,15 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	
 	var cont = ns.DisplayObjectContainer.gen();
 	stage.addChild(cont);
-	cont.x = cont.y = 50;
+	cont.x = cont.y = 0;
 	
 	var cont2 = ns.DisplayObjectContainer.gen();
 	cont.addChild(cont2);
 	cont2.x = cont2.y = 30;
 	cont2.addChild(di);
 
+	cont.graphics.beginFill(0x123456)
+	cont.graphics.drawRect(0, 0, stage.width, stage.height);
 	di.graphics.beginFill(0);
 	di.graphics.drawRect(0, 0, stage.width, stage.height);
 	di.graphics.beginFill(0xffffff);
@@ -39,6 +44,22 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	di.graphics.moveTo(0, 0);
 	di.graphics.lineTo(100, 100);
 	di.graphics.lineTo(50, 200);
+	
+	var stage2 = ns.Stage.gen(document.getElementById("world2"));
+	var cont = ns.DisplayObjectContainer.gen();
+	var dobj = ns.DisplayObjectContainer.gen();
+	stage2.addChild(cont);
+	cont.addChild(dobj);
+	
+	cont.graphics.beginFill(0xcccccc);
+	cont.graphics.drawRect(0, 0, stage2.width, stage2.height);
+	dobj.graphics.beginFill(0, 0)
+	dobj.graphics.lineStyle(5, 0xff0000);
+	dobj.graphics.moveTo(0, stage2.height / 2);
+	dobj.graphics.lineTo(stage2.width, stage2.height / 2);
+	dobj.graphics.moveTo(stage2.width / 2, 0);
+	dobj.graphics.lineTo(stage2.width / 2, stage2.height);
+	dobj.graphics.drawCircle(stage2.width / 2, stage2.height / 2, 30);
 });
 
 </script>

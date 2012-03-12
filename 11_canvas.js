@@ -315,6 +315,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		// To initialize when the DisplayObjectContainer.gen(params) called.
 		init(function() {
+			this.$super();
 			this.children = [];
 		})
 		
