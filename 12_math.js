@@ -22,13 +22,31 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-var namespace_lib_core = "jp.co.imgsrc";
-var namespace_lib_app = "jp.co.imgsrc.application";
-var namespace_lib_geom = "jp.co.imgsrc.geom";
-var namespace_lib_events = "jp.co.imgsrc.events";
-var namespace_lib_tween = "jp.co.imgsrc.tween";
-var namespace_lib_net = "jp.co.imgsrc.net";
-var namespace_lib_display = "jp.co.imgsrc.display";
-var namespace_lib_ui = "jp.co.imgsrc.ui";
-var namespace_lib_math = "jp.co.imgsrc.math";
-var namespace_lib_canvas = "jp.co.imgsrc.html5.canvas";
+new Namespace(namespace_lib_math).use(function () {
+	var ns = this;
+	/**
+	* @archetype Math
+	* 
+	**/
+	proto(function Math() {
+		// To initialize when the Math.gen(params) called.
+		init(function() {
+			
+		})
+		
+		// fact {replace the description here}.
+		$$.factorial = function(n) {
+			if (1 < n) return n * ns.Math.factorial(n - 1) 
+			else return 1;
+		}
+		
+		// sigma {replace the description here}.
+		$$.sigma = function sigma(s, e) {
+			return (s + e) * e / 2;
+		}
+		
+		$$.PI = 3.141592653589793;
+		$$.E = 2.718281828459045;
+	})
+	
+})
