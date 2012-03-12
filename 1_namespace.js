@@ -42,11 +42,11 @@ var FunctionPrototype = function() {
 	// hierarchie util
 	function wrap(key, method) {
 		var wrapper = method;
-		// use by parent() method
+		// use by $super() method
 		wrapper.superMethod = self.substance.prototype[key];
 		return wrapper;
 	};
-	function parent() {
+	function $super() {
 		return arguments.callee.caller.superMethod.apply(this, arguments);
 	};
 	
@@ -77,17 +77,27 @@ var FunctionPrototype = function() {
 	
 	// define method to initialize
 	this.init = function(initialize) {
-		if (self.substance.prototype.$super)
-			self.substance.prototype.$super["initialize"] = self.substance.prototype.$super.prototype.initialize;
 		self.substance.prototype.initialize = wrap("initialize", initialize);
 	};
 	this.ex = function(obj) {
 		var proto = obj.gen();
 		self.substance.superClass = obj.prototype;
 		self.substance.prototype = proto;
-		self.substance.prototype.$super = obj;
-		self.substance.prototype.parent = parent;
+		self.substance.prototype.$super = $super;
 	};
+	this.getter = function (name, func) {
+		var p = self.substance.prototype;
+		if ("__defineGetter__" in p) {
+			p.__defineGetter__(name, func);
+		}
+	}
+	this.setter = function (name, func) {
+		var p = self.substance.prototype;
+		if ("__defineSetter__" in p) {
+			p.__defineSetter__(name, func);
+		}
+	}
+	
 	// define method to method definition
 	this.def = function(method){
 		var name = getMethodName(method);
@@ -135,6 +145,8 @@ var InternalNamespacePrototype = function() {
 		var oldInit = window.init;
 		var oldEx = window.ex;
 		var oldMeth = window.def;
+		var oldGetter = window.getter;
+		var oldSetter = window.setter;
 		FunctionPrototype.substance = proto;
 		
 		window.$ = namedFunc;
@@ -142,6 +154,8 @@ var InternalNamespacePrototype = function() {
 		window.init = namedFunc.init = FunctionPrototype.init;
 		window.ex = namedFunc.ex = FunctionPrototype.ex;
 		window.def = namedFunc.def = FunctionPrototype.def;
+		window.getter = FunctionPrototype.getter;
+		window.setter = FunctionPrototype.setter;
 		namedFunc.call(namedFunc);
 
 		window.$ = old$; 
@@ -149,8 +163,14 @@ var InternalNamespacePrototype = function() {
 		window.init = oldInit;
 		window.ex = oldEx;
 		window.def = oldMeth;
+		window.getter = oldGetter;
+		window.setter = oldSetter;
 		
 		proto.prototype.proto = proto;
+	};
+	
+	this.a = function(name, f) {
+		trace(this);
 	};
 	
 	this.singleton = function(namedFunc) {
@@ -158,46 +178,43 @@ var InternalNamespacePrototype = function() {
 		if (this instanceof Namespace) {
 			tmpSelf = this;
 		}
-
-		var name = namedFunc.name;
-		if (name == undefined) {
-			name = /function\s*(.*)\s*\(/mgi.exec(namedFunc)[1];
-			if (name == null) return;
-		}
+		var name = FunctionPrototype.getMethodName(namedFunc);
 		if (tmpSelf[name] != undefined) alert("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
 		
 		tmpSelf[name] = eval("(function " + name + " () {})");
 		if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
 		var proto = tmpSelf[name];
 		proto.getInstance = FunctionPrototype.getInstance;
-		proto.prototype.cls = proto;
-
+		proto.def = FunctionPrototype.defInObj;
 		
-		var oldSub = window[name];
+		// fake dynamic scope
+		var old$ = window.$;
+		var old$$ = window.$$;
 		var oldInit = window.init;
 		var oldEx = window.ex;
 		var oldMeth = window.def;
-		var oldClsVar = window.clsVar;
-		var oldClsMeth = window.clsMethod;
-		FunctionPrototype.substance = tmpSelf[name];
+		var oldGetter = window.getter;
+		var oldSetter = window.setter;
+		FunctionPrototype.substance = proto;
+		
+		window.$ = namedFunc;
+		window.$$ = proto;
 		window.init = namedFunc.init = FunctionPrototype.init;
 		window.ex = namedFunc.ex = FunctionPrototype.ex;
 		window.def = namedFunc.def = FunctionPrototype.def;
-		window.clsVar = namedFunc.clsVar = FunctionPrototype.clsVar;
-		window.clsMethod = namedFunc.clsMethod = FunctionPrototype.clsMethod;
-		
-		// 擬似的に動的スコープ
-		var stack = window.$;
-		window.$ = namedFunc; 
+		window.getter = FunctionPrototype.getter;
+		window.setter = FunctionPrototype.setter;
 		namedFunc.call(namedFunc);
-		// 復元
-		window.$ = stack; 
-		window[name] = oldSub;
+
+		window.$ = old$; 
+		window.$$ = old$$;
 		window.init = oldInit;
 		window.ex = oldEx;
 		window.def = oldMeth;
-		window.clsVar = oldClsVar;
-		window.clsMeth = window.clsMethod;
+		window.getter = oldGetter;
+		window.setter = oldSetter;
+		
+		proto.prototype.proto = proto;
 	};
 }
 

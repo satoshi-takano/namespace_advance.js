@@ -176,7 +176,7 @@ new Namespace(namespace_lib_events).use(function() {
 		ex(ns.FLEvent);
 		
 		init(function (type, caller, origin) {
-			this.parent(type, caller, origin);
+			this.$super(type, caller, origin);
 		})
 		
 		$$.CLICK = "click";

@@ -225,5 +225,4 @@ new Namespace(namespace_lib_display).use(function() {
 			else style.opacity = self.alpha.toString();
 		});*/
 	});
-
 });

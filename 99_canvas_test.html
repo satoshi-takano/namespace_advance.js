@@ -13,48 +13,32 @@
 <script type="text/javascript" src="11_canvas.js"></script>
 <script type="text/javascript" src="12_math.js"></script>
 
-<canvas id="canvas" width='900' height='300'>
+<canvas id="world" width='300' height='300'>
 </canvas>
 <script type="text/javascript">
 
 jp.co.imgsrc.Main.getInstance().main(function (argument) {
-	var graphics = jp.co.imgsrc.html5.canvas.Canvas.gen(document.getElementById("canvas"));
+	var ns = jp.co.imgsrc.html5.canvas;
+	var stage = ns.Stage.gen(document.getElementById("world"));
+	var di = ns.DisplayObject.gen();
+	stage.addChild(di);
 	
-	var dtor = Math.PI / 180;
+	var cont = ns.DisplayObjectContainer.gen();
+	stage.addChild(cont);
+	cont.x = cont.y = 50;
+	
+	var cont2 = ns.DisplayObjectContainer.gen();
+	cont.addChild(cont2);
+	cont2.x = cont2.y = 30;
+	cont2.addChild(di);
 
-	var W = 100;
-	setInterval(function () {
-		var oldX = 0;
-		var oldY = 100;
-		graphics.context.clearRect(0, 0, 900, 300);
-		graphics.context.beginPath();
-		graphics.beginFill(0, 1);
-		graphics.moveTo(0, 300);
-		graphics.lineTo(0, 100);
-		for (var x = 0; x <= W; x++) {
-			var xx = x * (900 / W);
-			var yy = f(x) * 20 + 100;
-			var cx = oldX + (xx - oldX) / 2;
-			var cy = oldY + (yy - oldY) / 2;
-			graphics.curveTo(cx, cy, xx, yy);
-			oldX = xx;
-			oldY = yy;
-		}
-		graphics.lineTo(900, 300);
-		graphics.lineTo(0, 300);
-		graphics.endFill();
-	}, 1000 / 30)
-	
-	var k = 0;
-	function f(t) {
-		var res = 0;
-		var num = 5;
-		k += 0.003;
-		for (var n = 1; n < num; n++) {
-			res += (-2/n) * (Math.pow(-1, n)) * Math.sin(n * 2 * t * Math.PI / 180 + k);
-		}
-		return res;
-	}
+	di.graphics.beginFill(0);
+	di.graphics.drawRect(0, 0, stage.width, stage.height);
+	di.graphics.beginFill(0xffffff);
+	di.graphics.lineStyle(5, 0xff0000);
+	di.graphics.moveTo(0, 0);
+	di.graphics.lineTo(100, 100);
+	di.graphics.lineTo(50, 200);
 });
 
 </script>
