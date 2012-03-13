@@ -249,4 +249,83 @@ new Namespace(namespace_lib_core).use(function() {
 		
 	});
 	
+	/**
+	* @archetype Operation
+	* 
+	**/
+	proto(function Operation() {
+		// To initialize when the Operation.gen(params) called.
+		init(function(scope, func, args) {
+			this.scope = scope;
+			this.func = func;
+			this.args = args;
+		})
+		
+		// execute {replace the description here}.
+		def(function execute() {
+			this.func.apply(this.scope, this.args);
+		})
+		
+	})
+	
+	/**
+	* @archetype OperationQueue
+	* 
+	**/
+	proto(function OperationQueue() {
+		// To initialize when the OperationQueue.gen(params) called.
+		init(function() {
+			this.operations = [];
+		})
+		
+		// push {replace the description here}.
+		def(function push(op) {
+			this.operations.push(op);
+		})
+		
+		// pop {replace the description here}.
+		def(function pop() {
+			return this.operations.pop();
+		})
+		
+		// execute {replace the description here}.
+		def(function execute() {
+			this.operations.each(function (op) {
+				op.execute();
+			})
+		})
+	})
+	
+	/**
+	* @archetype OperationRecorder
+	* 
+	**/
+	proto(function OperationRecorder() {
+		// To initialize when the OperationRecorder.gen(params) called.
+		init(function() {
+			this.opq = ns.OperationQueue.gen();
+		})
+		
+		// rec {replace the description here}.
+		def(function rec() {
+			var caller = arguments.callee.caller;
+			var op = ns.Operation.gen(this, caller, caller.arguments);
+			this.opq.push(op);
+		})
+		
+		// playback {replace the description here}.
+		def(function playback() {
+			this.opq.execute();
+		})
+		
+		// clear {replace the description here}.
+		def(function clear() {
+			this.opq = null;
+		})
+		
+	})
+	
+	
+	
+	
 });

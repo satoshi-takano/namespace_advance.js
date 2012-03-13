@@ -1,17 +1,17 @@
 <html>
-<script type="text/javascript" src="0_lib_define.js"></script>
-<script type="text/javascript" src="1_namespace.js"></script>
-<script type="text/javascript" src="2_core.js"></script>
-<script type="text/javascript" src="3_events.js"></script>
-<script type="text/javascript" src="4_geom.js"></script>
-<script type="text/javascript" src="5_application.js"></script>
-<script type="text/javascript" src="6_tween.js"></script>
-<script type="text/javascript" src="7_net.js"></script>
-<script type="text/javascript" src="8_display.js"></script>
-<script type="text/javascript" src="9_ui.js"></script>
-<script type="text/javascript" src="10_native_extention.js"></script>
-<script type="text/javascript" src="11_canvas.js"></script>
-<script type="text/javascript" src="12_math.js"></script>
+<script type="text/javascript" src="../src/0_lib_define.js"></script>
+<script type="text/javascript" src="../src/1_namespace.js"></script>
+<script type="text/javascript" src="../src/2_core.js"></script>
+<script type="text/javascript" src="../src/3_events.js"></script>
+<script type="text/javascript" src="../src/4_geom.js"></script>
+<script type="text/javascript" src="../src/5_application.js"></script>
+<script type="text/javascript" src="../src/6_tween.js"></script>
+<script type="text/javascript" src="../src/7_net.js"></script>
+<script type="text/javascript" src="../src/8_display.js"></script>
+<script type="text/javascript" src="../src/9_ui.js"></script>
+<script type="text/javascript" src="../src/10_native_extention.js"></script>
+<script type="text/javascript" src="../src/11_canvas.js"></script>
+<script type="text/javascript" src="../src/12_math.js"></script>
 
 <canvas id="world" width='300' height='300'>
 </canvas>
@@ -24,7 +24,6 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	var ns = jp.co.imgsrc.html5.canvas;
 	var stage = ns.Stage.gen(document.getElementById("world"));
 	var di = ns.DisplayObject.gen();
-	stage.addChild(di);
 	
 	var cont = ns.DisplayObjectContainer.gen();
 	stage.addChild(cont);
@@ -33,17 +32,29 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	var cont2 = ns.DisplayObjectContainer.gen();
 	cont.addChild(cont2);
 	cont2.x = cont2.y = 30;
+	cont2.width = cont2.height = 240;
 	cont2.addChild(di);
-
+	// ...to do
+	cont2.graphics.beginFill(0);
+	cont2.graphics.drawRect(0, 0, cont2.width, cont2.height);
+	cont2.graphics.endFill();
+	
 	cont.graphics.beginFill(0x123456)
 	cont.graphics.drawRect(0, 0, stage.width, stage.height);
-	di.graphics.beginFill(0);
+	
+	
+	di.graphics.beginFill(0, 0);
 	di.graphics.drawRect(0, 0, stage.width, stage.height);
-	di.graphics.beginFill(0xffffff);
-	di.graphics.lineStyle(5, 0xff0000);
+	di.graphics.lineStyle(15, 0xff0000, 1, ns.CapStyle.ROUND, ns.JointStyle.ROUND);
 	di.graphics.moveTo(0, 0);
 	di.graphics.lineTo(100, 100);
 	di.graphics.lineTo(50, 200);
+
+	di.graphics.beginPath();
+	di.graphics.lineStyle(10, 0x00ff00, 1, ns.CapStyle.NONE, ns.JointStyle.BEVEL)
+	di.graphics.moveTo(50, 0);
+	di.graphics.lineTo(150, 100);
+	di.graphics.lineTo(100, 200);
 	
 	var stage2 = ns.Stage.gen(document.getElementById("world2"));
 	var cont = ns.DisplayObjectContainer.gen();
@@ -60,6 +71,7 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	dobj.graphics.moveTo(stage2.width / 2, 0);
 	dobj.graphics.lineTo(stage2.width / 2, stage2.height);
 	dobj.graphics.drawCircle(stage2.width / 2, stage2.height / 2, 30);
+	dobj.scaleX = 2;
 });
 
 </script>

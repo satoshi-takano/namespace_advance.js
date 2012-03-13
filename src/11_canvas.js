@@ -24,6 +24,8 @@ THE SOFTWARE.
 
 new Namespace(namespace_lib_canvas).use(function () {
 	var ns = this;
+	var nscore = new Namespace(namespace_lib_core);
+	
 	if (window.CanvasRenderingContext2D && 
 	    !CanvasRenderingContext2D.prototype.createImageData && 
 	    window.ImageData) {
@@ -137,10 +139,14 @@ new Namespace(namespace_lib_canvas).use(function () {
 	* 
 	**/
 	proto(function Graphics() {
+//		include(nscore.OperationRecorder)
+		
 		// To initialize when the Graphics.gen(params) called.
 		init(function(displayObject) {
 			this.displayObject = displayObject;
 			this.needFill = false;
+			
+			this.include(nscore.OperationRecorder.gen());
 		})
 		
 		// beginBitmapFill {replace the description here}.
@@ -154,6 +160,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var col = ns.Color.gen(color);
 			this.context.fillStyle = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
 			this.needFill = true;
+			
+			this.rec();
 		})
 		
 		// beginGradientFill {replace the description here}.
@@ -176,6 +184,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 			c.quadraticCurveTo(cpx + gx, cpy + gy, ax + gx, ay + gy);
 			if (this.needFill) this.context.fill();
 			c.stroke();
+			
+			this.rec();
 		})
 		
 		// drawCircle {replace the description here}.
@@ -189,6 +199,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 			c.closePath();
 			c.fill();
 			c.stroke();
+			
+			this.rec();
 		})
 		
 		// drawEllipse {replace the description here}.
@@ -204,6 +216,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var c = this.context;
 			c.fillRect(x + gx, y + gy, w, h);
 			c.stroke();
+			
+			this.rec();
 		})
 		
 		// drawRoundRect {replace the description here}.
@@ -215,6 +229,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function endFill() {
 			if (this.needFill) this.context.fill();
 			this.needFill = false;
+			
+			this.rec();
 		})
 		
 		// lineStyle {replace the description here}.
@@ -228,6 +244,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 			c.lineCap = caps;
 			c.lineJoin = joints;
 			c.miterLimit = miterLimit;
+			
+			this.rec();
 		})
 		
 		// lineTo {replace the description here}.
@@ -239,6 +257,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 			c.lineTo(x + gx, y + gy);
 			if (this.needFill) this.context.fill();
 			c.stroke();
+			
+			this.rec();
 		})
 		
 		// moveTo {replace the description here}.
@@ -247,8 +267,23 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var gy = this.getGlobalY();
 			
 			this.context.moveTo(x + gx, y + gy);
+			
+			this.rec();
 		})
 		
+		// beginPath {replace the description here}.
+		def(function beginPath() {
+			this.context.beginPath();
+			
+			this.rec();
+		})
+		
+		// closePath {replace the description here}.
+		def(function closePath() {
+			this.context.closePath();
+			
+			this.rec();
+		})
 		
 		// bezierCurveTo {replace the description here}.
 		def(function bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
@@ -258,6 +293,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var c = this.context;
 			c.bezierCurveTo(cp1x + gx, cp1y + gx, cp2x + gx, cp2y + gy, x + gx, y + gy);
 			c.stroke();
+			
+			this.rec();
 		})
 		
 		getter("context", function() {return this.displayObject.context;})
@@ -291,6 +328,15 @@ new Namespace(namespace_lib_canvas).use(function () {
 		setter("width", function(val) {this.w = val})
 		getter("height", function() {return this.h})
 		setter("height", function(val) {this.h = val})
+		
+		setter("scaleX", function(val) {
+			var c = this.graphics.context;
+			c.clearRect(0, 0, 400, 400);
+			c.scale(val, 1);
+//			trace(this.parent);
+			this.parent.graphics.playback();
+//			this.graphics.playback();
+		})
 		
 		getter("globalX", function() {
 			if (this.parent == undefined) return 0;

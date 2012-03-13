@@ -85,6 +85,13 @@ var FunctionPrototype = function() {
 		self.substance.prototype = proto;
 		self.substance.prototype.$super = $super;
 	};
+	this.include = function(module, overwrite) {
+		for (var p in module) {
+			if (overwrite || this[p] == undefined) {
+				this[p] = module[p];
+			}
+		}
+	};
 	this.getter = function (name, func) {
 		var p = self.substance.prototype;
 		if ("__defineGetter__" in p) {
@@ -138,6 +145,7 @@ var InternalNamespacePrototype = function() {
 		var proto = tmpSelf[name];
 		proto.gen = FunctionPrototype.gen;
 		proto.def = FunctionPrototype.defInObj;
+		proto.prototype.include = FunctionPrototype.include;
 		
 		// fake dynamic scope
 		var old$ = window.$;
