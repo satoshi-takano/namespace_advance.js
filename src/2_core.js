@@ -300,16 +300,18 @@ new Namespace(namespace_lib_core).use(function() {
 	* @archetype OperationRecorder
 	* 
 	**/
-	proto(function OperationRecorder() {
+	proto(function Recordable() {
 		// To initialize when the OperationRecorder.gen(params) called.
 		init(function() {
 			this.opq = ns.OperationQueue.gen();
 		})
 		
 		// rec {replace the description here}.
-		def(function rec() {
-			var caller = arguments.callee.caller;
-			var op = ns.Operation.gen(this, caller, caller.arguments);
+		def(function rec(op) {
+			if (!op) {
+				var caller = arguments.callee.caller;
+				op = ns.Operation.gen(this, caller, caller.arguments);
+			}
 			this.opq.push(op);
 		})
 		

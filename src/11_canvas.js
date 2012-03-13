@@ -90,11 +90,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.imgData = ctx.createImageData(w, h);
 		})
 		
-		// draw {replace the description here}.
-		def(function draw(drawable) {
-			
-		})
-		
 		getter("width", function() {
 			return this.w;
 		})
@@ -111,9 +106,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 	singleton(function CapStyle() {
 		// To initialize when the CapStyle.gen(params) called.
 		init(function() {
-			
 		})
-		
 		$$.NONE = "butt";
 		$$.ROUND = "round";
 		$$.SQUARE = "square";
@@ -126,9 +119,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 	singleton(function JointStyle() {
 		// To initialize when the JointStyle.gen(params) called.
 		init(function(args) {
-			
 		})
-		
 		$$.BEVEL = "bevel";
 		$$.MITER = "miter";
 		$$.ROUND = "round";
@@ -139,15 +130,30 @@ new Namespace(namespace_lib_canvas).use(function () {
 	* 
 	**/
 	proto(function Graphics() {
-//		include(nscore.OperationRecorder)
-		
 		// To initialize when the Graphics.gen(params) called.
 		init(function(displayObject) {
 			this.displayObject = displayObject;
+			this.include(nscore.Recordable.gen());
+			this.needStroke = false;
 			this.needFill = false;
 			
-			this.include(nscore.OperationRecorder.gen());
-		})
+			// initialize context
+			var op = nscore.Operation.gen(this, ctxInit);
+			this.rec(op);
+		});
+		function ctxInit() {
+			var c = this.context;
+			c.fillStyle = "#000000"
+			c.strokeStyle = "#000000";
+			c.lineWidth = 1;
+			c.lineCap = ns.CapStyle.NONE;
+ 			c.lineJoin = ns.JointStyle.MITER;
+ 			c.miterLimit = 10.0;
+			c.closePath();
+			c.moveTo(0, 0);
+		}
+		function ctxNeedFill(bool) {this.needFill = bool;}
+		function ctxNeedStroke(bool) {this.needStroke = bool;}
 		
 		// beginBitmapFill {replace the description here}.
 		def(function beginBitmapFill(bmd, matrix, repeat) {
@@ -158,11 +164,14 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function beginFill(color, alpha) {
 			if (alpha == undefined) alpha = 1;
 			var col = ns.Color.gen(color);
-			this.context.fillStyle = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
-			this.needFill = true;
+			var style = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
 			
-			this.rec();
+			this.rec(nscore.Operation.gen(this, ctxNeedFill, [true]))
+			this.rec(nscore.Operation.gen(this, ctxSetFillStyle, [style]));
 		})
+		function ctxSetFillStyle(style) {
+			this.context.fillStyle = style;
+		}
 		
 		// beginGradientFill {replace the description here}.
 		def(function beginGradientFill(type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod) {
@@ -171,37 +180,36 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		// clear {replace the description here}.
 		def(function clear() {
-			this.context.clearRect(0, 0, 900, 300);
-			this.needFill = false;
+
 		})
 		
 		// curveTo {replace the description here}.
 		def(function curveTo(cpx, cpy, ax, ay) {
+			this.rec(nscore.Operation.gen(this, ctxCurveTo, [cpx, cpy, ax, ay]));
+		})
+		function ctxCurveTo(cpx, cpy, ax, ay) {
 			var gx = this.getGlobalX();
 			var gy = this.getGlobalY();
-			
 			var c = this.context;
 			c.quadraticCurveTo(cpx + gx, cpy + gy, ax + gx, ay + gy);
 			if (this.needFill) this.context.fill();
-			c.stroke();
-			
-			this.rec();
-		})
+			if (this.needStroke) c.stroke();
+		}
 		
 		// drawCircle {replace the description here}.
 		def(function drawCircle(x, y, r) {
+			this.rec(nscore.Operation.gen(this, ctxArc, [x, y, r]));
+		})
+		function ctxArc(x, y, r) {
+			var c = this.context;
 			var gx = this.getGlobalX();
 			var gy = this.getGlobalY();
-			
-			var c = this.context;
 			c.beginPath();
-			c.arc(x + gx, y + gy, r, 0, 2 * Math.PI, false);
+			c.arc(x + gx, y + gy, r, 0, Math.PI * 2, false);
+			if (this.needFill) c.fill();
+			if (this.needStroke) c.stroke();
 			c.closePath();
-			c.fill();
-			c.stroke();
-			
-			this.rec();
-		})
+		}
 		
 		// drawEllipse {replace the description here}.
 		def(function drawEllipse(x, y, w, h) {
@@ -210,15 +218,16 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		// drawRect {replace the description here}.
 		def(function drawRect(x, y, w, h) {
+			this.rec(nscore.Operation.gen(this, ctxFillRect, [x, y, w, h]));
+		})
+		function ctxFillRect(x, y, w, h) {
 			var gx = this.getGlobalX();
 			var gy = this.getGlobalY();
-			
 			var c = this.context;
-			c.fillRect(x + gx, y + gy, w, h);
-			c.stroke();
-			
-			this.rec();
-		})
+			c.beginPath();
+			this.context.fillRect(x + gx, y + gy, w, h);
+			c.closePath();
+		}
 		
 		// drawRoundRect {replace the description here}.
 		def(function drawRoundRect(x, y, w, h, ellipseW, ellipseH) {
@@ -227,84 +236,90 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		// endFill {replace the description here}.
 		def(function endFill() {
-			if (this.needFill) this.context.fill();
-			this.needFill = false;
-			
-			this.rec();
+			this.rec(nscore.Operation.gen(this, ctxEndFill));
 		})
+		function ctxEndFill() {
+			var c = this.context;
+			if (this.needFill) c.fill();
+			if (this.needStroke) c.stroke();
+			c.closePath();
+		}
 		
 		// lineStyle {replace the description here}.
 		def(function lineStyle(thickness, color, alpha, caps, joints, miterLimit) {
-			var c = this.context;
-			c.lineWidth = thickness;
-			
 			if (alpha == undefined) var alpha = 1;
 			var col = ns.Color.gen(color);
-			c.strokeStyle = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
-			c.lineCap = caps;
-			c.lineJoin = joints;
-			c.miterLimit = miterLimit;
-			
-			this.rec();
+			var style = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
+			var op = nscore.Operation.gen(this, ctxSetLineStyle, [thickness, style, caps, joints, miterLimit]);
+			this.rec(op);
 		})
+		function ctxSetLineStyle(thickness, style, caps, joints, miterLimit) {
+			var c = this.context;
+			c.strokeStyle = style;
+			c.lineWidth = thickness;
+			c.lineCap = caps;
+ 			c.lineJoin = joints;
+ 			c.miterLimit = miterLimit;
+			this.needStroke = true;
+			c.beginPath();
+		}
 		
 		// lineTo {replace the description here}.
 		def(function lineTo(x, y) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			
-			var c = this.context;
-			c.lineTo(x + gx, y + gy);
-			if (this.needFill) this.context.fill();
-			c.stroke();
-			
-			this.rec();
+			var op = nscore.Operation.gen(this, ctxLineTo, [x, y]);
+			this.rec(op);
 		})
+		function ctxLineTo(x, y) {
+			var c = this.context;
+			c.lineTo(this.getGlobalX() + x, this.getGlobalY() + y);
+			if (this.needFill) c.fill();
+			if (this.needStroke) c.stroke();
+		}
 		
 		// moveTo {replace the description here}.
 		def(function moveTo(x, y) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			
-			this.context.moveTo(x + gx, y + gy);
-			
-			this.rec();
+			this.rec(nscore.Operation.gen(this, ctxMoveTo, [x, y]));
 		})
-		
-		// beginPath {replace the description here}.
-		def(function beginPath() {
-			this.context.beginPath();
-			
-			this.rec();
-		})
-		
-		// closePath {replace the description here}.
-		def(function closePath() {
-			this.context.closePath();
-			
-			this.rec();
-		})
+		function ctxMoveTo(x, y) {
+			this.context.moveTo(this.getGlobalX() + x, this.getGlobalY() + y);
+		}
 		
 		// bezierCurveTo {replace the description here}.
 		def(function bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
+			this.rec(nscore.Operation.gen(this, ctxBezierCurveTo, [cp1x, cp1y, cp2x, cp2y, x, y]));
+		})
+		function ctxBezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
 			var gx = this.getGlobalX();
 			var gy = this.getGlobalY();
 			
 			var c = this.context;
 			c.bezierCurveTo(cp1x + gx, cp1y + gx, cp2x + gx, cp2y + gy, x + gx, y + gy);
-			c.stroke();
-			
-			this.rec();
-		})
+			if (this.needFill) c.fill();
+			if (this.needStroke) c.stroke();
+		}
 		
-		getter("context", function() {return this.displayObject.context;})
+		// drawImage {replace the description here}.
+		def(function drawImage(img, x, y) {
+			this.rec(nscore.Operation.gen(this, ctxDrawImage, [img, x, y]));
+		})
+		function ctxDrawImage(img, x, y) {
+			var gx = this.getGlobalX();
+			var gy = this.getGlobalY();
+			this.context.drawImage(img, x + gx, y + gy);
+		}
+		
 		// getGlobalX {replace the description here}.
 		def(function getGlobalX() {
 			return this.displayObject.globalX;
 		})
+		
 		// getGlobalY {replace the description here}.
 		def(function getGlobalY() {
 			return this.displayObject.globalY;
+		})
+		
+		getter("context", function() {
+			return this.displayObject.stage.context;
 		})
 	})
 	
@@ -316,40 +331,41 @@ new Namespace(namespace_lib_canvas).use(function () {
 		// To initialize when the DisplayObject.gen(params) called.
 		init(function() {
 			//this.graphics = ns.Graphics.gen(ns.Stage.getInstance().context);
-			this.ctx = null, this.mx = 0, this.my = 0, this.w = 0, this.h = 0;
-			this.g = ns.Graphics.gen(this);
+			this._mx = 0, this._my = 0, this._w = 0, this._h = 0;
+			this._g = ns.Graphics.gen(this);
+			this._stg = null;
 		})
 		
-		getter("x", function() {return this.mx})
-		setter("x", function(val) {this.mx = val})
-		getter("y", function() {return this.my})
-		setter("y", function(val) {this.my = val})
-		getter("width", function() {return this.w})
-		setter("width", function(val) {this.w = val})
-		getter("height", function() {return this.h})
-		setter("height", function(val) {this.h = val})
-		
-		setter("scaleX", function(val) {
-			var c = this.graphics.context;
-			c.clearRect(0, 0, 400, 400);
-			c.scale(val, 1);
-//			trace(this.parent);
-			this.parent.graphics.playback();
-//			this.graphics.playback();
+		// draw {replace the description here}.
+		def(function draw() {
+			this._g.playback();
 		})
+		
+		
+		getter("x", function() {return this._mx})
+		setter("x", function(val) {
+			this._mx = val;
+			
+		})
+		getter("y", function() {return this._my})
+		setter("y", function(val) {this._my = val})
+		getter("width", function() {return this._w})
+		setter("width", function(val) {this._w = val})
+		getter("height", function() {return this._h})
+		setter("height", function(val) {this._h = val})
 		
 		getter("globalX", function() {
 			if (this.parent == undefined) return 0;
-			return this.mx + this.parent.globalX;
+			return this._mx + this.parent.globalX;
 		})
 		getter("globalY", function() {
 			if (this.parent == undefined) return 0;
-			return this.my + this.parent.globalY;
+			return this._my + this.parent.globalY;
 		})
-		
-		getter("context", function() {return this.ctx})
-		setter("context", function(ctx) {this.ctx = ctx;})
-		getter("graphics", function() {return this.g})
+		getter("stage", function () {
+			return this._stg;
+		})
+		getter("graphics", function() {return this._g})
 	})
 	
 	/**
@@ -367,11 +383,38 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		// addChild {replace the description here}.
 		def(function addChild(child) {
+			this.numChildren.times(function (i) {
+				if (this.children[i] == child) this.children.splice(i, 1);
+			}, this);
 			this.children.push(child);
 			child.parent = this;
-			child.context = this.context;
+			child._stg = this._stg;
 		})
 		
+		// addChildAt {replace the description here}.
+		def(function addChildAt(child, index) {
+			var numChildren = this.numChildren;
+			numChildren.times(function (i) {
+				if (this.children[i] == child) this.children.splice(i, 1);
+			}, this);
+			var left = this.children.splice(0, index);
+			var right = this.children.splice(0, this.numChildren);
+			left.push(child);
+			this.children = left.concat(right);
+			child.parent = this;
+			child._stg = this._stg;
+		})
+		
+		
+		// draw {replace the description here}.
+		def(function draw() {
+			this.graphics.playback();
+			this.numChildren.times(function (i) {
+				this.children[i].draw();
+			}, this)
+		})
+		
+		getter("numChildren", function() {return this.children.length;})
 	})
 	
 	/**
@@ -392,6 +435,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.context = context;
 			this.w = canvas.width;
 			this.h = canvas.height;
+			this._stg = this;
 		})
 		
 		// addChild {replace the description here}.
@@ -399,9 +443,16 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.$super(child);
 		})
 		
+		// draw {replace the description here}.
+		def(function draw() {
+			this.numChildren.times(function (i) {
+				this.children[i].draw();
+			}, this)
+		})
 		
-		getter("width", function() {return this.w});
-		getter("height", function() {return this.h});
+		
+		getter("stageWidth", function() {return this.w});
+		getter("stageHeight", function() {return this.h});
 	})
 	
 	

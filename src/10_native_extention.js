@@ -23,45 +23,47 @@ THE SOFTWARE.
 ===================================================== */
 
 // Number's extention
-Number.prototype.times = function(closure) {
+Number.prototype.times = function(closure, scope) {
 	for (var i = 0; i < this; i++) {
-		closure.call(this, i);
+		closure.call(scope || arguments.callee.caller, i);
 	}
 };
-Number.prototype.upto = function(max, closure) {
+Number.prototype.upto = function(max, closure, scope) {
 	for (var i = this + 0; i <= max; i++) {
-		closure.call(this, i)
+		closure.call(scope || arguments.callee.caller, i)
 	}
 }
-Number.prototype.downto = function(min, closure) {
+Number.prototype.downto = function(min, closure, scope) {
 	for (var i = this + 0; min <= i; i--) {
-		closure.call(this, i);
+		closure.call(scope || arguments.callee.caller, i);
 	}
 }
-Number.prototype.step = function(limit, step, closure) {
+Number.prototype.step = function(limit, step, closure, scope) {
 	for (var i = this + 0; i <= limit; i += step) {
-		closure.call(this, i);
+		closure.call(scope || arguments.callee.caller, i);
 	}
 }
 
-Number.prototype.after = function(closure) {
-	setTimeout(closure, this + 0);
+Number.prototype.after = function(closure, scope) {
+	setTimeout(function () {
+		closure.call(scope || arguments.callee.caller);
+	}, this + 0);
 }
 
-Number.prototype.frames = function(closure) {
+Number.prototype.frames = function(closure, scope) {
 	var i = 0;
 	var step = this + 0;
 	var interval = 1 / 60;
 	var tid = setInterval(function() {
-		if (closure.call(this, i) == false) clearInterval(tid);
+		if (closure.call(scope || arguments.callee.caller, i) == false) clearInterval(tid);
 		i++;
 		if (i == step) clearInterval(tid);
 	}, interval);
 }
 
 // Array's extention
-Array.prototype.each = function(closure) {
+Array.prototype.each = function(closure, scope) {
 	for (var i = 0, l = this.length; i < l; i++) {
-		closure.call(this, this[i]);
+		closure.call(scope || arguments.callee.caller, this[i]);
 	}
 }

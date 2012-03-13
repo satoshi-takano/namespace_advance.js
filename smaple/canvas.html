@@ -18,60 +18,79 @@
 
 <canvas id="world2" width='300' height='300'>
 </canvas>
+<img src="../../../../../Desktop/86159862.jpg" width="100" height="73" alt="86159862" id="img" style="visibility:hidden"/>
+
 <script type="text/javascript">
 
 jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	var ns = jp.co.imgsrc.html5.canvas;
-	var stage = ns.Stage.gen(document.getElementById("world"));
-	var di = ns.DisplayObject.gen();
 	
-	var cont = ns.DisplayObjectContainer.gen();
-	stage.addChild(cont);
-	cont.x = cont.y = 0;
+	createWorld("world");
+	createWorld("world2");
 	
-	var cont2 = ns.DisplayObjectContainer.gen();
-	cont.addChild(cont2);
-	cont2.x = cont2.y = 30;
-	cont2.width = cont2.height = 240;
-	cont2.addChild(di);
-	// ...to do
-	cont2.graphics.beginFill(0);
-	cont2.graphics.drawRect(0, 0, cont2.width, cont2.height);
-	cont2.graphics.endFill();
-	
-	cont.graphics.beginFill(0x123456)
-	cont.graphics.drawRect(0, 0, stage.width, stage.height);
-	
-	
-	di.graphics.beginFill(0, 0);
-	di.graphics.drawRect(0, 0, stage.width, stage.height);
-	di.graphics.lineStyle(15, 0xff0000, 1, ns.CapStyle.ROUND, ns.JointStyle.ROUND);
-	di.graphics.moveTo(0, 0);
-	di.graphics.lineTo(100, 100);
-	di.graphics.lineTo(50, 200);
+	function createWorld(name) {
+		var stage = ns.Stage.gen(document.getElementById(name));
 
-	di.graphics.beginPath();
-	di.graphics.lineStyle(10, 0x00ff00, 1, ns.CapStyle.NONE, ns.JointStyle.BEVEL)
-	di.graphics.moveTo(50, 0);
-	di.graphics.lineTo(150, 100);
-	di.graphics.lineTo(100, 200);
-	
-	var stage2 = ns.Stage.gen(document.getElementById("world2"));
-	var cont = ns.DisplayObjectContainer.gen();
-	var dobj = ns.DisplayObjectContainer.gen();
-	stage2.addChild(cont);
-	cont.addChild(dobj);
-	
-	cont.graphics.beginFill(0xcccccc);
-	cont.graphics.drawRect(0, 0, stage2.width, stage2.height);
-	dobj.graphics.beginFill(0, 0)
-	dobj.graphics.lineStyle(5, 0xff0000);
-	dobj.graphics.moveTo(0, stage2.height / 2);
-	dobj.graphics.lineTo(stage2.width, stage2.height / 2);
-	dobj.graphics.moveTo(stage2.width / 2, 0);
-	dobj.graphics.lineTo(stage2.width / 2, stage2.height);
-	dobj.graphics.drawCircle(stage2.width / 2, stage2.height / 2, 30);
-	dobj.scaleX = 2;
+		var container = ns.DisplayObjectContainer.gen();
+		stage.addChild(container);
+		container.graphics.beginFill(0x999999);
+		container.graphics.drawRect(0, 0, 300, 300);
+
+		var spA = ns.DisplayObjectContainer.gen();
+		container.addChild(spA)
+		spA.graphics.beginFill(0x333333);
+		spA.graphics.drawRect(0, 0, 100, 100);
+		spA.graphics.beginFill(0x6666ff)
+		spA.graphics.drawRect(10, 10, 10, 10);
+		spA.graphics.drawRect(80, 10, 10, 10);
+		spA.graphics.drawRect(80, 80, 10, 10);
+		spA.graphics.drawRect(10, 80, 10, 10);
+		spA.x = (stage.stageWidth - 100) / 2;
+		spA.y = (stage.stageHeight - 100) / 2;
+		spA.graphics.endFill();
+
+		var spB = ns.DisplayObject.gen();
+		container.addChild(spB);
+		spB.graphics.lineStyle(5, 0);
+		spB.graphics.moveTo(0, 0);
+		spB.graphics.lineTo(30, 30);
+		spB.graphics.moveTo(30, 0);
+		spB.graphics.lineTo(0, 30);
+		spB.x = (100 - 30) / 2;
+		spB.y = (100 - 30) / 2;
+		spB.x = (stage.stageWidth) / 2 - 15;
+		spB.y = (stage.stageHeight) / 2 -15;
+		spB.graphics.endFill();
+
+		var spC = ns.DisplayObject.gen();
+		container.addChildAt(spC, 1);
+		spC.graphics.beginFill(0xff6666);
+		spC.graphics.drawCircle(0, 0, 30);
+		spC.x = (stage.stageWidth) / 2;
+		spC.y = (stage.stageHeight) / 2;
+		spC.graphics.endFill();
+
+		var spD = ns.DisplayObjectContainer.gen();
+		container.addChildAt(spD, 0);
+		spD.graphics.lineStyle(2, 0xff0000)
+		spD.graphics.beginFill(0xffffff);
+		spD.graphics.drawCircle(0, 0, 10);
+		spD.graphics.endFill();
+
+		var photo = ns.DisplayObject.gen();
+		var img = document.getElementById("img");
+		photo.graphics.drawImage(img, 0, 0);
+		spD.addChild(photo);
+
+		var dtor = Math.PI / 180;
+		(60 * 1000000).frames(function (i) {
+			var tx = stage.stageWidth / 2 + 100 * Math.cos(i * dtor);
+			var ty = stage.stageHeight / 2 + 100 * Math.sin(i * dtor);
+			spD.x = tx;
+			spD.y = ty;
+			stage.draw();
+		})
+	}
 });
 
 </script>
