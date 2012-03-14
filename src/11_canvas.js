@@ -174,14 +174,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function curveTo(cpx, cpy, ax, ay) {
 			this.rec(nscore.Operation.gen(this, ctxCurveTo, [cpx, cpy, ax, ay]));
 		})
-		function ctxCurveTo(cpx, cpy, ax, ay) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			var c = this.context;
-			c.quadraticCurveTo(cpx + gx, cpy + gy, ax + gx, ay + gy);
-			if (this.needFill) this.context.fill();
-			if (this.needStroke) c.stroke();
-		}
 		
 		// drawCircle {replace the description here}.
 		def(function drawCircle(x, y, r) {
@@ -211,6 +203,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		// lineStyle {replace the description here}.
 		def(function lineStyle(thickness, color, alpha, caps, joints, miterLimit) {
 			if (alpha == undefined) var alpha = 1;
+			if (thickness == 0) alpha = 0;
 			var col = ns.Color.gen(color);
 			var style = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
 			var op = nscore.Operation.gen(this, ctxSetLineStyle, [thickness, style, caps, joints, miterLimit]);
@@ -240,6 +233,15 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.rec(nscore.Operation.gen(this, ctxDrawImage, [img, x, y]));
 			updateBound.call(this, x + img.width, y + img.height);
 		})
+		
+		// drawText {replace the description here}.
+		def(function drawText(text, x, y) {
+			this.rec(nscore.Operation.gen(this, ctxDrawText, [text, x, y]));
+			var c = this.context;
+			var metrics = c.measureText(text);
+			updateBound.call(this, x + metrics.widht, y);
+		})
+		
 		
 		// getGlobalX {replace the description here}.
 		def(function getGlobalX() {
@@ -283,6 +285,15 @@ new Namespace(namespace_lib_canvas).use(function () {
 			if (this.needFill) c.fill();
 			if (this.needStroke) c.stroke();
 			c.closePath();
+		}
+		
+		function ctxCurveTo(cpx, cpy, ax, ay) {
+			var gx = this.getGlobalX();
+			var gy = this.getGlobalY();
+			var c = this.context;
+			c.quadraticCurveTo(cpx + gx, cpy + gy, ax + gx, ay + gy);
+			if (this.needFill) this.context.fill();
+			if (this.needStroke) c.stroke();
 		}
 		
 		function ctxFillRect(x, y, w, h) {
@@ -337,6 +348,13 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var gx = this.getGlobalX();
 			var gy = this.getGlobalY();
 			this.context.drawImage(img, x + gx, y + gy);
+		}
+		
+		function ctxDrawText(text, x, y) {
+				var gx = this.getGlobalX();
+				var gy = this.getGlobalY();
+				this.context.fillText(text, x + gx, y + gy);
+				this.context.strokeText(text, x + gx, y + gy);
 		}
 		
 		function updateBound(x, y) {

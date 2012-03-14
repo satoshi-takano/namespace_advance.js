@@ -80,18 +80,21 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		var img = document.getElementById("img");
 		photo.graphics.drawImage(img, 20, 20);
 		spD.addChild(photo);
-		photo.scaleX = 1.5;
-		photo.scaleY = 1.5;
+		
+		container.graphics.context.font = "38px Helvetica";
+		container.graphics.beginFill(0xff0000);
+		container.graphics.lineStyle(1, 0xffffff);
+		container.graphics.drawText("alsdfj", 0, stage.stageHeight - 5, 0xff0000, 0xffffff);
 
 
-		// var dtor = Math.PI / 180;
-		// 		(60 * 1000000).frames(function (i) {
-		// 			var tx = stage.stageWidth / 2 + 100 * Math.cos(i * dtor);
-		// 			var ty = stage.stageHeight / 2 + 100 * Math.sin(i * dtor);
-		// 			spD.x = tx;
-		// 			spD.y = ty;
-		// 			stage.draw();
-		// 		})
+		var dtor = Math.PI / 180;
+		(60 * 1000000).frames(function (i) {
+			var tx = stage.stageWidth / 2 + 100 * Math.cos(i * dtor);
+			var ty = stage.stageHeight / 2 + 100 * Math.sin(i * dtor);
+			spD.x = tx;
+			spD.y = ty;
+			stage.draw();
+		})
 		stage.draw();
 	}
 });
