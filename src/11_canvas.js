@@ -374,10 +374,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this._mx = 0, this._my = 0;
 			this._g = ns.Graphics.gen(this);
 			this._stg = null;
+			this._sx = this._sy = 1;
 
 			this.visible = true;
 			this.alpha = 1;
-			this.scaleX = this.scaleY = 1;
 		})
 		
 		// draw {replace the description here}.
@@ -387,15 +387,14 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var sY = this.scaleY;
 			var offsetX = this.globalX;
 			var offsetY = this.globalY;
-			
 			if (sX != 1 || sY != 1) {
-				c.translate(offsetX, offsetY);
-				c.scale(sX, sY);
-				c.translate(-offsetX, -offsetY);
+				c.setTransform(sX, 0, 0, sY, -offsetX * sX, -offsetY * sY);
+				c.translate(offsetX / sX, offsetY / sY);
 			}
 			if (this.visible) this._g.playback();
 			if (sX != 1 || sY != 1) {
-				c.scale(1 / sX, 1 / sY);
+				
+				c.setTransform(1, 0, 0, 1, 0, 0);
 			}
 		})
 		
@@ -406,6 +405,15 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		getter("width", function() {return this._g.boundWidth})
 		getter("height", function() {return this._g.boundHeight})
+		
+		getter("scaleX", function() {
+			return this._sx * (this.parent ? this.parent.scaleX : 1);
+		})
+		setter("scaleX", function(val) {this._sx = val})
+		getter("scaleY", function() {
+			return this._sy * (this.parent ? this.parent.scaleY : 1);
+		})
+		setter("scaleY", function(val) {this._sx = val})
 		
 		getter("globalX", function() {
 			if (this.parent == undefined) return 0;
@@ -474,7 +482,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		// draw {replace the description here}.
 		def(function draw() {
-			this.graphics.playback();
+			this.$super();
 			this.numChildren.times(function (i) {
 				this.children[i].draw();
 			}, this)

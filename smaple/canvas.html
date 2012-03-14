@@ -47,6 +47,7 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		spA.x = (stage.stageWidth - 100) / 2;
 		spA.y = (stage.stageHeight - 100) / 2;
 		spA.graphics.endFill();
+		spA.name = "spA"
 
 		var spB = ns.DisplayObject.gen();
 		container.addChild(spB);
@@ -58,8 +59,11 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		spB.graphics.endFill();
 		spB.x = (stage.stageWidth) / 2 - 15;
 		spB.y = (stage.stageHeight) / 2 -15;
-		spB.scaleX = 2;
-		spB.scaleY = 2;
+
+		(60 * 10000).frames(function() {
+			//spB.x+=1;
+			//spB.draw()
+		})
 
 		var spC = ns.DisplayObject.gen();
 		container.addChildAt(spC, 1);
@@ -78,14 +82,13 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 
 		var photo = ns.DisplayObject.gen();
 		var img = document.getElementById("img");
-		photo.graphics.drawImage(img, 20, 20);
+		photo.graphics.drawImage(img, 0, 0);
 		spD.addChild(photo);
 		
 		container.graphics.context.font = "38px Helvetica";
 		container.graphics.beginFill(0xff0000);
 		container.graphics.lineStyle(1, 0xffffff);
 		container.graphics.drawText("alsdfj", 0, stage.stageHeight - 5, 0xff0000, 0xffffff);
-
 
 		var dtor = Math.PI / 180;
 		(60 * 1000000).frames(function (i) {
