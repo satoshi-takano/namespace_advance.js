@@ -140,20 +140,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 			// initialize context
 			var op = nscore.Operation.gen(this, ctxInit);
 			this.rec(op);
+			
+			this.boundWidth = 0;
+			this.boundHeight = 0;
 		});
-		function ctxInit() {
-			var c = this.context;
-			c.fillStyle = "#000000"
-			c.strokeStyle = "#000000";
-			c.lineWidth = 1;
-			c.lineCap = ns.CapStyle.NONE;
- 			c.lineJoin = ns.JointStyle.MITER;
- 			c.miterLimit = 10.0;
-			c.closePath();
-			c.moveTo(0, 0);
-		}
-		function ctxNeedFill(bool) {this.needFill = bool;}
-		function ctxNeedStroke(bool) {this.needStroke = bool;}
 		
 		// beginBitmapFill {replace the description here}.
 		def(function beginBitmapFill(bmd, matrix, repeat) {
@@ -169,9 +159,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.rec(nscore.Operation.gen(this, ctxNeedFill, [true]))
 			this.rec(nscore.Operation.gen(this, ctxSetFillStyle, [style]));
 		})
-		function ctxSetFillStyle(style) {
-			this.context.fillStyle = style;
-		}
 		
 		// beginGradientFill {replace the description here}.
 		def(function beginGradientFill(type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod) {
@@ -200,16 +187,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function drawCircle(x, y, r) {
 			this.rec(nscore.Operation.gen(this, ctxArc, [x, y, r]));
 		})
-		function ctxArc(x, y, r) {
-			var c = this.context;
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			c.beginPath();
-			c.arc(x + gx, y + gy, r, 0, Math.PI * 2, false);
-			if (this.needFill) c.fill();
-			if (this.needStroke) c.stroke();
-			c.closePath();
-		}
 		
 		// drawEllipse {replace the description here}.
 		def(function drawEllipse(x, y, w, h) {
@@ -220,14 +197,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function drawRect(x, y, w, h) {
 			this.rec(nscore.Operation.gen(this, ctxFillRect, [x, y, w, h]));
 		})
-		function ctxFillRect(x, y, w, h) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			var c = this.context;
-			c.beginPath();
-			this.context.fillRect(x + gx, y + gy, w, h);
-			c.closePath();
-		}
 		
 		// drawRoundRect {replace the description here}.
 		def(function drawRoundRect(x, y, w, h, ellipseW, ellipseH) {
@@ -238,12 +207,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function endFill() {
 			this.rec(nscore.Operation.gen(this, ctxEndFill));
 		})
-		function ctxEndFill() {
-			var c = this.context;
-			if (this.needFill) c.fill();
-			if (this.needStroke) c.stroke();
-			c.closePath();
-		}
 		
 		// lineStyle {replace the description here}.
 		def(function lineStyle(thickness, color, alpha, caps, joints, miterLimit) {
@@ -253,60 +216,30 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var op = nscore.Operation.gen(this, ctxSetLineStyle, [thickness, style, caps, joints, miterLimit]);
 			this.rec(op);
 		})
-		function ctxSetLineStyle(thickness, style, caps, joints, miterLimit) {
-			var c = this.context;
-			c.strokeStyle = style;
-			c.lineWidth = thickness;
-			c.lineCap = caps;
- 			c.lineJoin = joints;
- 			c.miterLimit = miterLimit;
-			this.needStroke = true;
-			c.beginPath();
-		}
 		
 		// lineTo {replace the description here}.
 		def(function lineTo(x, y) {
 			var op = nscore.Operation.gen(this, ctxLineTo, [x, y]);
 			this.rec(op);
+			updateBound.call(this, x, y);
 		})
-		function ctxLineTo(x, y) {
-			var c = this.context;
-			c.lineTo(this.getGlobalX() + x, this.getGlobalY() + y);
-			if (this.needFill) c.fill();
-			if (this.needStroke) c.stroke();
-		}
 		
 		// moveTo {replace the description here}.
 		def(function moveTo(x, y) {
 			this.rec(nscore.Operation.gen(this, ctxMoveTo, [x, y]));
+			updateBound.call(this, x, y);
 		})
-		function ctxMoveTo(x, y) {
-			this.context.moveTo(this.getGlobalX() + x, this.getGlobalY() + y);
-		}
 		
 		// bezierCurveTo {replace the description here}.
 		def(function bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
 			this.rec(nscore.Operation.gen(this, ctxBezierCurveTo, [cp1x, cp1y, cp2x, cp2y, x, y]));
 		})
-		function ctxBezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			
-			var c = this.context;
-			c.bezierCurveTo(cp1x + gx, cp1y + gx, cp2x + gx, cp2y + gy, x + gx, y + gy);
-			if (this.needFill) c.fill();
-			if (this.needStroke) c.stroke();
-		}
 		
 		// drawImage {replace the description here}.
 		def(function drawImage(img, x, y) {
 			this.rec(nscore.Operation.gen(this, ctxDrawImage, [img, x, y]));
+			updateBound.call(this, x + img.width, y + img.height);
 		})
-		function ctxDrawImage(img, x, y) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			this.context.drawImage(img, x + gx, y + gy);
-		}
 		
 		// getGlobalX {replace the description here}.
 		def(function getGlobalX() {
@@ -321,6 +254,95 @@ new Namespace(namespace_lib_canvas).use(function () {
 		getter("context", function() {
 			return this.displayObject.stage.context;
 		})
+		
+		// privates
+		function ctxInit() {
+			var c = this.context;
+			c.fillStyle = "#000000"
+			c.strokeStyle = "#000000";
+			c.lineWidth = 1;
+			c.lineCap = ns.CapStyle.NONE;
+ 			c.lineJoin = ns.JointStyle.MITER;
+ 			c.miterLimit = 10.0;
+			c.closePath();
+			c.moveTo(0, 0);
+		}
+		function ctxNeedFill(bool) {this.needFill = bool;}
+		function ctxNeedStroke(bool) {this.needStroke = bool;}
+		
+		function ctxSetFillStyle(style) {
+			this.context.fillStyle = style;
+		}
+		
+		function ctxArc(x, y, r) {
+			var c = this.context;
+			var gx = this.getGlobalX();
+			var gy = this.getGlobalY();
+			c.beginPath();
+			c.arc(x + gx, y + gy, r, 0, Math.PI * 2, false);
+			if (this.needFill) c.fill();
+			if (this.needStroke) c.stroke();
+			c.closePath();
+		}
+		
+		function ctxFillRect(x, y, w, h) {
+			var gx = this.getGlobalX();
+			var gy = this.getGlobalY();
+			var c = this.context;
+			c.beginPath();
+			this.context.fillRect(x + gx, y + gy, w, h);
+			c.closePath();
+		}
+		
+		function ctxEndFill() {
+			var c = this.context;
+			if (this.needFill) c.fill();
+			if (this.needStroke) c.stroke();
+			c.closePath();
+		}
+		
+		function ctxSetLineStyle(thickness, style, caps, joints, miterLimit) {
+			var c = this.context;
+			c.strokeStyle = style;
+			c.lineWidth = thickness;
+			c.lineCap = caps;
+ 			c.lineJoin = joints;
+ 			c.miterLimit = miterLimit;
+			this.needStroke = true;
+			c.beginPath();
+		}
+		
+		function ctxLineTo(x, y) {
+			var c = this.context;
+			c.lineTo(this.getGlobalX() + x, this.getGlobalY() + y);
+			if (this.needFill) c.fill();
+			if (this.needStroke) c.stroke();
+		}
+		
+		function ctxMoveTo(x, y) {
+			this.context.moveTo(this.getGlobalX() + x, this.getGlobalY() + y);
+		}
+		
+		function ctxBezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
+			var gx = this.getGlobalX();
+			var gy = this.getGlobalY();
+			
+			var c = this.context;
+			c.bezierCurveTo(cp1x + gx, cp1y + gx, cp2x + gx, cp2y + gy, x + gx, y + gy);
+			if (this.needFill) c.fill();
+			if (this.needStroke) c.stroke();
+		}
+		
+		function ctxDrawImage(img, x, y) {
+			var gx = this.getGlobalX();
+			var gy = this.getGlobalY();
+			this.context.drawImage(img, x + gx, y + gy);
+		}
+		
+		function updateBound(x, y) {
+			if (this.boundWidth < x) this.boundWidth = x;
+			if (this.boundHeight < y) this.boundHeight = y;
+		}
 	})
 	
 	/**
@@ -331,28 +353,41 @@ new Namespace(namespace_lib_canvas).use(function () {
 		// To initialize when the DisplayObject.gen(params) called.
 		init(function() {
 			//this.graphics = ns.Graphics.gen(ns.Stage.getInstance().context);
-			this._mx = 0, this._my = 0, this._w = 0, this._h = 0;
+			this._mx = 0, this._my = 0;
 			this._g = ns.Graphics.gen(this);
 			this._stg = null;
+
+			this.visible = true;
+			this.alpha = 1;
+			this.scaleX = this.scaleY = 1;
 		})
 		
 		// draw {replace the description here}.
 		def(function draw() {
-			this._g.playback();
+			var c = this._g.context;
+			var sX = this.scaleX;
+			var sY = this.scaleY;
+			var offsetX = this.globalX;
+			var offsetY = this.globalY;
+			
+			if (sX != 1 || sY != 1) {
+				c.translate(offsetX, offsetY);
+				c.scale(sX, sY);
+				c.translate(-offsetX, -offsetY);
+			}
+			if (this.visible) this._g.playback();
+			if (sX != 1 || sY != 1) {
+				c.scale(1 / sX, 1 / sY);
+			}
 		})
-		
 		
 		getter("x", function() {return this._mx})
-		setter("x", function(val) {
-			this._mx = val;
-			
-		})
+		setter("x", function(val) {this._mx = val;})
 		getter("y", function() {return this._my})
 		setter("y", function(val) {this._my = val})
-		getter("width", function() {return this._w})
-		setter("width", function(val) {this._w = val})
-		getter("height", function() {return this._h})
-		setter("height", function(val) {this._h = val})
+		
+		getter("width", function() {return this._g.boundWidth})
+		getter("height", function() {return this._g.boundHeight})
 		
 		getter("globalX", function() {
 			if (this.parent == undefined) return 0;
@@ -379,6 +414,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		init(function() {
 			this.$super();
 			this.children = [];
+			this._stg = null;
 		})
 		
 		// addChild {replace the description here}.
@@ -403,6 +439,18 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.children = left.concat(right);
 			child.parent = this;
 			child._stg = this._stg;
+		})
+		
+		// removeChild {replace the description here}.
+		def(function removeChild(child) {
+			var i = 0;
+			this.children.each(function (c) {
+				if (c == child) {
+					this.children.splice(i, 1);
+					return 0;
+				}
+				i++;
+			}, this);
 		})
 		
 		

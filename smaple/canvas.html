@@ -21,12 +21,11 @@
 <img src="../../../../../Desktop/86159862.jpg" width="100" height="73" alt="86159862" id="img" style="visibility:hidden"/>
 
 <script type="text/javascript">
-
 jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	var ns = jp.co.imgsrc.html5.canvas;
 	
 	createWorld("world");
-	createWorld("world2");
+	//createWorld("world2");
 	
 	function createWorld(name) {
 		var stage = ns.Stage.gen(document.getElementById(name));
@@ -56,11 +55,11 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		spB.graphics.lineTo(30, 30);
 		spB.graphics.moveTo(30, 0);
 		spB.graphics.lineTo(0, 30);
-		spB.x = (100 - 30) / 2;
-		spB.y = (100 - 30) / 2;
+		spB.graphics.endFill();
 		spB.x = (stage.stageWidth) / 2 - 15;
 		spB.y = (stage.stageHeight) / 2 -15;
-		spB.graphics.endFill();
+		spB.scaleX = 2;
+		spB.scaleY = 2;
 
 		var spC = ns.DisplayObject.gen();
 		container.addChildAt(spC, 1);
@@ -79,19 +78,24 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 
 		var photo = ns.DisplayObject.gen();
 		var img = document.getElementById("img");
-		photo.graphics.drawImage(img, 0, 0);
+		photo.graphics.drawImage(img, 20, 20);
 		spD.addChild(photo);
+		photo.scaleX = 1.5;
+		photo.scaleY = 1.5;
 
-		var dtor = Math.PI / 180;
-		(60 * 1000000).frames(function (i) {
-			var tx = stage.stageWidth / 2 + 100 * Math.cos(i * dtor);
-			var ty = stage.stageHeight / 2 + 100 * Math.sin(i * dtor);
-			spD.x = tx;
-			spD.y = ty;
-			stage.draw();
-		})
+
+		// var dtor = Math.PI / 180;
+		// 		(60 * 1000000).frames(function (i) {
+		// 			var tx = stage.stageWidth / 2 + 100 * Math.cos(i * dtor);
+		// 			var ty = stage.stageHeight / 2 + 100 * Math.sin(i * dtor);
+		// 			spD.x = tx;
+		// 			spD.y = ty;
+		// 			stage.draw();
+		// 		})
+		stage.draw();
 	}
 });
+
 
 </script>
 <body>
