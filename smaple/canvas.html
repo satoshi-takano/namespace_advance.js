@@ -21,12 +21,11 @@
 <img src="../../../../../Desktop/86159862.jpg" width="100" height="73" alt="86159862" id="img" style="visibility:hidden"/>
 
 <script type="text/javascript">
-
 jp.co.imgsrc.Main.getInstance().main(function (argument) {
 	var ns = jp.co.imgsrc.html5.canvas;
 	
 	createWorld("world");
-	createWorld("world2");
+	//createWorld("world2");
 	
 	function createWorld(name) {
 		var stage = ns.Stage.gen(document.getElementById(name));
@@ -48,6 +47,7 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		spA.x = (stage.stageWidth - 100) / 2;
 		spA.y = (stage.stageHeight - 100) / 2;
 		spA.graphics.endFill();
+		spA.name = "spA"
 
 		var spB = ns.DisplayObject.gen();
 		container.addChild(spB);
@@ -56,11 +56,14 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		spB.graphics.lineTo(30, 30);
 		spB.graphics.moveTo(30, 0);
 		spB.graphics.lineTo(0, 30);
-		spB.x = (100 - 30) / 2;
-		spB.y = (100 - 30) / 2;
+		spB.graphics.endFill();
 		spB.x = (stage.stageWidth) / 2 - 15;
 		spB.y = (stage.stageHeight) / 2 -15;
-		spB.graphics.endFill();
+
+		(60 * 10000).frames(function() {
+			//spB.x+=1;
+			//spB.draw()
+		})
 
 		var spC = ns.DisplayObject.gen();
 		container.addChildAt(spC, 1);
@@ -81,6 +84,11 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		var img = document.getElementById("img");
 		photo.graphics.drawImage(img, 0, 0);
 		spD.addChild(photo);
+		
+		container.graphics.context.font = "38px Helvetica";
+		container.graphics.beginFill(0xff0000);
+		container.graphics.lineStyle(1, 0xffffff);
+		container.graphics.drawText("alsdfj", 0, stage.stageHeight - 5, 0xff0000, 0xffffff);
 
 		var dtor = Math.PI / 180;
 		(60 * 1000000).frames(function (i) {
@@ -90,8 +98,10 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 			spD.y = ty;
 			stage.draw();
 		})
+		stage.draw();
 	}
 });
+
 
 </script>
 <body>
