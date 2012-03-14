@@ -13,7 +13,7 @@
 <script type="text/javascript" src="../src/11_canvas.js"></script>
 <script type="text/javascript" src="../src/12_math.js"></script>
 
-<canvas id="canvas" width='500' height='540'>
+<canvas id="canvas" width='450' height='450'>
 </canvas>
 <script type="text/javascript">
 
@@ -24,7 +24,7 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	var cont = ns.DisplayObjectContainer.gen();
 	stage.addChild(cont);
 	cont.graphics.beginFill(0);
-	cont.graphics.drawRect(0, 0, stage.stageWidth, 500);
+	cont.graphics.drawRect(0, 0, stage.stageWidth, (stage.stageHeight - 40));
 	
 	new Namespace(namespace_lib_math).Math.sugar();
 	var dt = 30;
@@ -32,7 +32,7 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	var real = [];
 	var imag = [];
 	
-	for (var i = 0; i < dt; i++) {
+	for (var i = 0; i <= dt; i++) {
 		samples[i] = 0;
 		samples[i] += 2 * sin(1 * i * 2 * Math.PI / dt);
 		samples[i] += 3 * sin(2 * i * 2 * Math.PI / dt);
@@ -43,11 +43,11 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	cont.graphics.lineStyle(2, 0xff0000);
 	
 	var amp = 10;
-	cont.graphics.moveTo(0, samples[0] + 500);
+	cont.graphics.moveTo(0, samples[0] + (stage.stageHeight - 40));
 	var oldx = 0;
 	var oldy = samples[0] + 255;
-	for (var i = 0; i < samples.length; i++) {
-		var x = i * stage.stageWidth / samples.length;
+	for (var i = 0; i <= dt; i++) {
+		var x = i * stage.stageWidth / dt;
 		var y = samples[i] * amp + 255;
 		var cx = oldx + (x - oldx) / 4;
 		var cy = oldy + (y - oldy) / 4;
@@ -62,10 +62,10 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	var imag = [];
 	DFT(dt, samples, real, imag);
 	
-	cont.graphics.context.font = "10px Helvetica";
+	cont.graphics.context.font = "9px Helvetica";
 	cont.graphics.lineStyle(0, 0);
 	var flg = true;
-	for (i = 0; i < samples.length; i++) {
+	for (i = 0; i <= dt; i++) {
 		var r = real[i];
 		var j = imag[i];
 		var amp = sqrt(r * r + j * j);
@@ -74,9 +74,9 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		y = amp;
 		
 		cont.graphics.beginFill(0x00ff00);
-		cont.graphics.drawRect(x, 500 - y, 3, 500 - (500 - y));
+		cont.graphics.drawRect(x, (stage.stageHeight - 40) - y, 3, (stage.stageHeight - 40) - ((stage.stageHeight - 40) - y));
 		cont.graphics.beginFill(0);
-		cont.graphics.drawText(i+"Hz", x - 8, stage.stageHeight - 15 + ((flg = !flg) ? -6 : 6));
+		cont.graphics.drawText(i+"Hz", x - (i == 0 ? 0 : 7), stage.stageHeight - 15 + ((flg = !flg) ? -6 : 6));
 	}
 	
 	stage.draw();
