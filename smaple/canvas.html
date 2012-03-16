@@ -47,7 +47,6 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		spA.x = (stage.stageWidth - 100) / 2;
 		spA.y = (stage.stageHeight - 100) / 2;
 		spA.graphics.endFill();
-		spA.name = "spA"
 
 		var spB = ns.DisplayObject.gen();
 		container.addChild(spB);
@@ -59,12 +58,7 @@ jp.co.imgsrc.Main.getInstance().main(function (argument) {
 		spB.graphics.endFill();
 		spB.x = (stage.stageWidth) / 2 - 15;
 		spB.y = (stage.stageHeight) / 2 -15;
-
-		(60 * 10000).frames(function() {
-			//spB.x+=1;
-			//spB.draw()
-		})
-
+		
 		var spC = ns.DisplayObject.gen();
 		container.addChildAt(spC, 1);
 		spC.graphics.beginFill(0xff6666);

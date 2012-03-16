@@ -24,6 +24,7 @@ THE SOFTWARE.
 
 new Namespace(namespace_lib_math).use(function () {
 	var ns = this;
+	var M = Math;
 	/**
 	* @archetype Math
 	* 
@@ -45,24 +46,8 @@ new Namespace(namespace_lib_math).use(function () {
 			return (s + e) * e / 2;
 		}
 		
-		$$.DFT = function(dt, samples, real, imag) {
-			var amp = 0;
-			var calcR = [];
-			var calcI = [];
-			for (var i = 0; i < dt; i++) {
-				calcR[i] = 0;
-				calcI[i] = 0;
-				var fn = i / dt;
-				var pi2ft = 2 * PI * fn;
-				for (var t = 0; t < dt; t++) {
-					calcR[i] += samples[t] * cos(pi2ft * t);
-					calcI[i] -= samples[t] * sin(pi2ft * t);
-				}
-			}
-			for (i = 0; i < dt; i++) {
-				real[i] = calcR[i];
-				imag[i] = calcI[i];
-			}
+		$$.log = function(base, trueValue) {
+			return M.log(trueValue) / M.log(base);
 		}
 		
 		$$.sugar = function() {
@@ -93,7 +78,141 @@ new Namespace(namespace_lib_math).use(function () {
 			window.SQRT1_2 = nativeMath.SQRT1_2;
 			window.SQRT2 = nativeMath.SQRT2;
 			window.DFT = this.DFT;
+			window.FFT = this.FFT;
 		}
+		
+		$$.PI = window.Math.PI;
+
+		$$.DFT = function(dt, samples, real, imag) {
+			var amp = 0;
+			var calcR = [];
+			var calcI = [];
+			for (var i = 0; i < dt; i++) {
+				calcR[i] = 0;
+				calcI[i] = 0;
+				var fn = i / dt;
+				var pi2ft = 2 * M.PI * fn;
+				for (var t = 0; t < dt; t++) {
+					calcR[i] += samples[t] * M.cos(pi2ft * t);
+					calcI[i] -= samples[t] * M.sin(pi2ft * t);
+				}
+			}
+			for (i = 0; i < dt; i++) {
+				real[i] = calcR[i];
+				imag[i] = calcI[i];
+			}
+		}
+		
+		/**
+		* @archetype DFT
+		* 
+		**/
+		proto(function DFT() {
+			// To initialize when the DFT.gen(params) called.
+			init(function(N) {
+				this.N = N;
+			})
+			
+			// dft {replace the description here}.
+			def(function dft(x, y) {
+				
+			})
+			
+		})
+		
+		
+		/**
+		* @archetype FFT
+		* 
+		**/
+		proto(function FFT() {
+			// To initialize when the FFT.gen(params) called.
+			init(function(N) {
+				this.N = N;
+				
+ 			 	this.bitrev = [];
+	 			betrev(N, this.bitrev);
+				this.sintable = [];
+				sintbl(N, this.sintable);
+			})
+			
+			// fft {replace the description here}.
+			def(function fft(x, y) {
+				last_n = 0;
+				var bitrev = this.bitrev;
+				var sintbl = this.sintable;
+				var n = this.N;
+				
+				var i, j, k, ik, h, d, k2, n4, inverse,
+				t, s, c, dx, dy;
+				
+				if (n < 0) {
+					n = -n; 
+					inverse = 1;
+				} else inverse = 0;
+				
+				n4 = n >> 2;
+				
+				for (i = 0; i < n; i++) {
+					j = bitrev[i];
+					if (i < j) {
+						t = x[i]; x[i] = x[j]; x[j] = t;
+						t = y[i]; y[i] = y[j]; y[j] = t;
+					}
+				}
+				for (k = 1; k < n; k = k2) {
+					h = 0; k2 = k + k; d = n / k2;
+					for (j = 0; j < k; j++) {
+						c = sintbl[h + n4];
+						if (inverse) s = -sintbl[h];
+						else s = sintbl[h];
+						for (i = j; i < n; i += k2) {
+							ik = i + k;
+							dx = s * y[ik] + c * x[ik];
+							dy = c * y[ik] - s * x[ik];
+							x[ik] = x[i] - dx; x[i] += dx;
+							y[ik] = y[i] - dy; y[i] += dy;
+						}
+						h += d;
+					}
+				}
+			})
+			
+			
+			function betrev(N, table) {
+				var i = 0, j = 0, k = 0;
+				table[0] = 0;
+				while (++i < N) {
+					k = N >> 1;
+					while (k <= j) { j -= k; k >>= 1; }
+					j += k;
+					table[i] = j;
+				}
+			}
+			
+			function sintbl(N, table) {
+				var i, n2, n4, n8, c, s, dc, ds, t;
+				n2 = N >> 1;
+				n4 = N >> 2;
+				n8 = N >> 3;
+				t = M.sin(M.PI / N);
+				dc = 2 * t * t;
+				ds = M.sqrt(dc * (2 - dc));
+				t = 2 * dc;
+				c = table[n4] = 1;
+				s = table[0] = 0;
+				for (i = 1; i < n8; i++) {
+					c -= dc;
+					dc += t * c;
+					s += ds;
+					ds -= t * s;
+					table[i] = s;
+					table[n4 - i] = c;
+				}
+				if (n8 != 0) table[n8] = M.sqrt(0.5);
+				for (i = 0; i < n4; i++) table[n2 - i] = table[i];
+				for (i = 0; i < n2 + n4; i++) table[i + n2] = -table[i];
+			}
+		})
 	})
-	
 })

@@ -19,6 +19,7 @@
 
 new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	var ns = new Namespace(namespace_lib_canvas)
+	var nsmath = jp.co.imgsrc.math;
 	var stage = ns.Stage.gen(document.getElementById("canvas"))
 	
 	var cont = ns.DisplayObjectContainer.gen();
@@ -27,16 +28,19 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	cont.graphics.drawRect(0, 0, stage.stageWidth, (stage.stageHeight - 40));
 	
 	new Namespace(namespace_lib_math).Math.sugar();
-	var dt = 30;
+	
+	var dt = Math.pow(2, 9);
 	var samples = [];
 	var real = [];
 	var imag = [];
 	
 	for (var i = 0; i <= dt; i++) {
 		samples[i] = 0;
-		samples[i] += 2 * sin(1 * i * 2 * Math.PI / dt);
-		samples[i] += 3 * sin(2 * i * 2 * Math.PI / dt);
-		samples[i] += 1 * sin(3 * i * 2 * Math.PI / dt);
+		samples[i] += 2 * sin(441 * i * 2 * Math.PI / 44100);
+		// samples[i] += 3 * sin(2 * i * 2 * Math.PI / dt);
+		// 		samples[i] += 1 * sin(25 * i * 2 * Math.PI / dt);
+		real[i] = samples[i];
+		imag[i] = 0;
 	}
 
 	cont.graphics.beginFill(0,0);
@@ -58,25 +62,24 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	}
 	cont.graphics.endFill();
 
-	var real = [];
-	var imag = [];
-	DFT(dt, samples, real, imag);
-	
+	//DFT(dt, samples, real, imag);
+	var fft = nsmath.FFT.gen(dt); 
+	fft.fft(real, imag);
 	cont.graphics.context.font = "9px Helvetica";
 	cont.graphics.lineStyle(0, 0);
 	var flg = true;
-	for (i = 0; i <= dt; i++) {
+	for (i = 0; i <= dt / 2; i++) {
 		var r = real[i];
 		var j = imag[i];
 		var amp = sqrt(r * r + j * j);
-//		console.log(i + " Hz : " + (amp + 0.0001));
-		x = i * stage.stageWidth / samples.length;
+		console.log(Math.floor((44100 / dt * i)) + " Hz : " + (amp + 0.0001));
+		x = i * stage.stageWidth / dt * 2;
 		y = amp;
 		
-		cont.graphics.beginFill(0x00ff00);
-		cont.graphics.drawRect(x, (stage.stageHeight - 40) - y, 3, (stage.stageHeight - 40) - ((stage.stageHeight - 40) - y));
-		cont.graphics.beginFill(0);
-		cont.graphics.drawText(i+"Hz", x - (i == 0 ? 0 : 7), stage.stageHeight - 15 + ((flg = !flg) ? -6 : 6));
+		// cont.graphics.beginFill(0x00ff00);
+		// 		cont.graphics.drawRect(x, (stage.stageHeight - 40) - y, 3, (stage.stageHeight - 40) - ((stage.stageHeight - 40) - y));
+		// 		cont.graphics.beginFill(0);
+	//	cont.graphics.drawText(i+"Hz", x - (i == 0 ? 0 : 7), stage.stageHeight - 15 + ((flg = !flg) ? -6 : 6));
 	}
 	
 	stage.draw();

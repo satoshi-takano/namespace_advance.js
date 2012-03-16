@@ -297,6 +297,20 @@ new Namespace(namespace_lib_core).use(function() {
 	})
 	
 	/**
+	* @archetype System
+	* 
+	**/
+	singleton(function System() {
+		// To initialize when the System.gen(params) called.
+		init(function(args) {
+			
+		})
+		
+		$$.FPS = 30;
+	})
+	
+	
+	/**
 	* @archetype OperationRecorder
 	* 
 	**/

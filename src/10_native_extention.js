@@ -53,7 +53,7 @@ Number.prototype.after = function(closure, scope) {
 Number.prototype.frames = function(closure, scope) {
 	var i = 0;
 	var step = this + 0;
-	var interval = 1 / 60;
+	var interval = 1 / (new Namespace(namespace_lib_core).System.FPS);
 	var tid = setInterval(function() {
 		if (closure.call(scope || arguments.callee.caller, i) == false) clearInterval(tid);
 		i++;
