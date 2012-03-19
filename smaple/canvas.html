@@ -1,4 +1,7 @@
 <html>
+<script type="text/javascript" charset="utf-8">
+	debug = true;
+</script>
 <script type="text/javascript" src="../src/0_lib_define.js"></script>
 <script type="text/javascript" src="../src/1_namespace.js"></script>
 <script type="text/javascript" src="../src/2_core.js"></script>
@@ -22,8 +25,8 @@
 <img src="../../../../../Desktop/86159862.jpg" width="100" height="73" alt="86159862" id="img" style="visibility:hidden"/>
 
 <script type="text/javascript">
-jp.co.imgsrc.Main.getInstance().main(function (argument) {
-	var ns = jp.co.imgsrc.html5.canvas;
+new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
+	var ns = new Namespace(namespace_lib_canvas);
 	
 	createWorld("world");
 	//createWorld("world2");

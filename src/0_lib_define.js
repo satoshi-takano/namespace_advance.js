@@ -23,7 +23,7 @@ THE SOFTWARE.
 ===================================================== */
 var global = window;
 
-var namespace_lib_core = "jp.co.imgsrc";
+var namespace_lib_core = "jp.example"; // enter your reversed domain.
 var namespace_lib_app = namespace_lib_core + ".application";
 var namespace_lib_geom = namespace_lib_core + ".geom";
 var namespace_lib_events = namespace_lib_core + ".events";
