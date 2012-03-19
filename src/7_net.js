@@ -116,9 +116,9 @@ new Namespace(namespace_lib_net).use(function () {
 		
 		def(function generateXHR() {
 			var xhr;
-			if (window.XMLHttpRequest != undefined) {
+			if (global.XMLHttpRequest != undefined) {
 				xhr = new XMLHttpRequest();
-			} else if (window.ActiveXObject){
+			} else if (global.ActiveXObject){
 				xhr = new ActiveXObject("Microsoft.XMLHTTP");
 			}
 			return xhr;

@@ -21,11 +21,18 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
-
-/* log util */
-function trace() {for(var i=0;i<arguments.length;i++)if(window.console){console.log(arguments[i]);}}
-function warn(message) {alert("Warning : " + message);}
-
+if (!global.debug || !global.console) {
+	console = {};
+	console.log = 
+	console.error = 
+	console.assert =
+	console.count = 
+	console.debug = 
+	console.info = 
+	console.trace = 
+	console.warn = 
+	function(){};
+}
 var FunctionPrototype = function() {
 	var self = this;
 	// util
@@ -123,13 +130,13 @@ var InternalNamespacePrototype = function() {
 	
 	this.use = function(func) {
 		self = this;
-		var oldDef = window.proto;
-		var oldSingleton = window.singleton;
-		window.proto = this.proto;
-		window.singleton = this.singleton;
+		var oldDef = global.proto;
+		var oldSingleton = global.singleton;
+		global.proto = this.proto;
+		global.singleton = this.singleton;
 		func.call(this);
-		window.proto = oldDef;
-		window.singleton = oldSingleton;
+		global.proto = oldDef;
+		global.singleton = oldSingleton;
 	};
 	
 	this.proto = function(namedFunc) {
@@ -139,46 +146,43 @@ var InternalNamespacePrototype = function() {
 		}
 		var name = FunctionPrototype.getMethodName(namedFunc);
 		if (tmpSelf[name] != undefined) alert("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
+		if (!global.debug)
+			tmpSelf[name] = function() {};
+		else
+			tmpSelf[name] = eval("(function " + name + " () {})");
 		
-		tmpSelf[name] = eval("(function " + name + " () {})");
 		if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
 		var proto = tmpSelf[name];
 		proto.gen = FunctionPrototype.gen;
 		proto.def = FunctionPrototype.defInObj;
 		proto.prototype.include = FunctionPrototype.include;
+		proto.prototype.$class = proto;
 		
 		// fake dynamic scope
-		var old$ = window.$;
-		var old$$ = window.$$;
-		var oldInit = window.init;
-		var oldEx = window.ex;
-		var oldMeth = window.def;
-		var oldGetter = window.getter;
-		var oldSetter = window.setter;
+		var old$$ = global.$$;
+		var oldInit = global.init;
+		var oldEx = global.ex;
+		var oldMeth = global.def;
+		var oldGetter = global.getter;
+		var oldSetter = global.setter;
 		FunctionPrototype.substance = proto;
 		
-		window.$ = namedFunc;
-		window.$$ = proto;
-		window.init = namedFunc.init = FunctionPrototype.init;
-		window.ex = namedFunc.ex = FunctionPrototype.ex;
-		window.def = namedFunc.def = FunctionPrototype.def;
-		window.getter = FunctionPrototype.getter;
-		window.setter = FunctionPrototype.setter;
+		global.$$ = proto;
+		global.init = namedFunc.init = FunctionPrototype.init;
+		global.ex = namedFunc.ex = FunctionPrototype.ex;
+		global.def = namedFunc.def = FunctionPrototype.def;
+		global.getter = FunctionPrototype.getter;
+		global.setter = FunctionPrototype.setter;
 		namedFunc.call(namedFunc);
 
-		window.$ = old$; 
-		window.$$ = old$$;
-		window.init = oldInit;
-		window.ex = oldEx;
-		window.def = oldMeth;
-		window.getter = oldGetter;
-		window.setter = oldSetter;
+		global.$$ = old$$;
+		global.init = oldInit;
+		global.ex = oldEx;
+		global.def = oldMeth;
+		global.getter = oldGetter;
+		global.setter = oldSetter;
 		
 		proto.prototype.proto = proto;
-	};
-	
-	this.a = function(name, f) {
-		trace(this);
 	};
 	
 	this.singleton = function(namedFunc) {
@@ -194,33 +198,35 @@ var InternalNamespacePrototype = function() {
 		var proto = tmpSelf[name];
 		proto.getInstance = FunctionPrototype.getInstance;
 		proto.def = FunctionPrototype.defInObj;
+		proto.prototype.include = FunctionPrototype.include;
+		proto.prototype.$class = proto;
 		
 		// fake dynamic scope
-		var old$ = window.$;
-		var old$$ = window.$$;
-		var oldInit = window.init;
-		var oldEx = window.ex;
-		var oldMeth = window.def;
-		var oldGetter = window.getter;
-		var oldSetter = window.setter;
+		var old$ = global.$;
+		var old$$ = global.$$;
+		var oldInit = global.init;
+		var oldEx = global.ex;
+		var oldMeth = global.def;
+		var oldGetter = global.getter;
+		var oldSetter = global.setter;
 		FunctionPrototype.substance = proto;
 		
-		window.$ = namedFunc;
-		window.$$ = proto;
-		window.init = namedFunc.init = FunctionPrototype.init;
-		window.ex = namedFunc.ex = FunctionPrototype.ex;
-		window.def = namedFunc.def = FunctionPrototype.def;
-		window.getter = FunctionPrototype.getter;
-		window.setter = FunctionPrototype.setter;
+		global.$ = namedFunc;
+		global.$$ = proto;
+		global.init = namedFunc.init = FunctionPrototype.init;
+		global.ex = namedFunc.ex = FunctionPrototype.ex;
+		global.def = namedFunc.def = FunctionPrototype.def;
+		global.getter = FunctionPrototype.getter;
+		global.setter = FunctionPrototype.setter;
 		namedFunc.call(namedFunc);
 
-		window.$ = old$; 
-		window.$$ = old$$;
-		window.init = oldInit;
-		window.ex = oldEx;
-		window.def = oldMeth;
-		window.getter = oldGetter;
-		window.setter = oldSetter;
+		global.$ = old$; 
+		global.$$ = old$$;
+		global.init = oldInit;
+		global.ex = oldEx;
+		global.def = oldMeth;
+		global.getter = oldGetter;
+		global.setter = oldSetter;
 		
 		proto.prototype.proto = proto;
 	};
@@ -230,7 +236,7 @@ var internalNamespacePrototype = new InternalNamespacePrototype();
 Namespace = function(str) {
 	var ns = str.split('.');
 	
-	var here = window;
+	var here = global;
 	if (ns.length == 1) {
 		if (here[str] != undefined)
 			return here[str];
@@ -311,9 +317,9 @@ new Namespace(namespace_lib_core).use(function () {
 				var util = ns.Utilitie.gen();
 				var isIE = navigator.userAgent.toLowerCase().indexOf("msie") != -1;
 				
-				util.listen(window, isIE ? "onload" : "load", function () {
-						util.unlisten(window, isIE ? "onload" : "load", arguments.callee);
-						if (self.runner) self.runner.call(window);
+				util.listen(global, isIE ? "onload" : "load", function () {
+						util.unlisten(global, isIE ? "onload" : "load", arguments.callee);
+						if (self.runner) self.runner.call(global);
 				});
 		})
 		

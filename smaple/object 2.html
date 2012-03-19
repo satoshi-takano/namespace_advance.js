@@ -1,4 +1,7 @@
 <html>
+<script type="text/javascript" charset="utf-8">
+	this.debug = false;
+</script>
 <script type="text/javascript" src="../src/0_lib_define.js"></script>
 <script type="text/javascript" src="../src/1_namespace.js"></script>
 <script type="text/javascript" src="../src/2_core.js"></script>
@@ -16,43 +19,40 @@
 
 <script type="text/javascript">
 
-new Namespace("jp.example").use(function() {
+
+new Namespace("example").use(function() {
 	/**
-	* @archetype Recorder
+	* @archetype Hoge
 	* 
 	**/
-	proto(function Recorder() {
-		// To initialize when the Recorder.gen(params) called.
+	proto(function Hoge() {
+		ex(jp.co.imgsrc.events.EventDispatcher)
+		
+		// To initialize when the Hoge.gen(params) called.
 		init(function() {
-			this.include(jp.co.imgsrc.Recordable.gen());
-		})
-		
-		// op_0 {replace the description here}.
-		def(function op_0(message) {
-			alert("op_0 " + message);
-			this.rec();
-		})
-		
-		// op_1 {replace the description here}.
-		def(function op_1(message) {
-			alert("op_1 " + message);
-			this.rec();
-		})
-		
-		// op_2 {replace the description here}.
-		def(function op_2(message) {
-			alert("op_2 " + message);
+			10..after(function (argument) {
+				var e = {};
+				e.type = "hogeEvent";
+				e.message = "dispatch hogeEvents"
+				this.dispatchEvent(e);
+			}, this)
 		})
 	})
+	
 	
 });
 
 jp.co.imgsrc.Main.getInstance().main(function (argument) {
-		var rec = jp.example.Recorder.gen();
-		rec.op_0("abc");
-		rec.op_1("def");
-		rec.op_2("ghi");
-		rec.playback();
+	var e = example.Hoge.gen();
+	e.ae("hogeEvent", function (argument) {
+		console.log(console)
+	})
+	
+	function listener(e) {
+
+		
+		alert(e.message)
+	}
 });
 
 </script>

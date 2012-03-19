@@ -26,14 +26,14 @@ new Namespace(namespace_lib_canvas).use(function () {
 	var ns = this;
 	var nscore = new Namespace(namespace_lib_core);
 	
-	if (window.CanvasRenderingContext2D && 
+	if (global.CanvasRenderingContext2D && 
 	    !CanvasRenderingContext2D.prototype.createImageData && 
-	    window.ImageData) {
+	    global.ImageData) {
 	  	CanvasRenderingContext2D.prototype.createImageData = function(w,h) {
 	    return new ImageData(w,h) 
 	  };
 	}
-	var globalCtx = window.CanvasRenderingContext2D;
+	var globalCtx = global.CanvasRenderingContext2D;
 	
 	/**
 	* @archetype Color

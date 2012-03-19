@@ -26,7 +26,7 @@ new Namespace(namespace_lib_events).use(function() {
 	var ns = this;
 	// dynamical creating a internal namespace
 	var nsi = new Namespace(ns.nsName + ".internal");
-	var userAgent = new Namespace(namespace_lib_core).UserAgent.gen();
+	var userAgent = new Namespace(namespace_lib_platform).browser.UserAgent.gen();
 	
 	/* internal */
 	nsi.proto(function EventTargetSet(listener) {

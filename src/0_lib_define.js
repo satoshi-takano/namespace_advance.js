@@ -21,14 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
+var global = window;
 
 var namespace_lib_core = "jp.co.imgsrc";
-var namespace_lib_app = "jp.co.imgsrc.application";
-var namespace_lib_geom = "jp.co.imgsrc.geom";
-var namespace_lib_events = "jp.co.imgsrc.events";
-var namespace_lib_tween = "jp.co.imgsrc.tween";
-var namespace_lib_net = "jp.co.imgsrc.net";
-var namespace_lib_display = "jp.co.imgsrc.display";
-var namespace_lib_ui = "jp.co.imgsrc.ui";
-var namespace_lib_math = "jp.co.imgsrc.math";
-var namespace_lib_canvas = "jp.co.imgsrc.html5.canvas";
+var namespace_lib_app = namespace_lib_core + ".application";
+var namespace_lib_geom = namespace_lib_core + ".geom";
+var namespace_lib_events = namespace_lib_core + ".events";
+var namespace_lib_tween = namespace_lib_core + ".tween";
+var namespace_lib_net = namespace_lib_core + ".net";
+var namespace_lib_display = namespace_lib_core + ".display";
+var namespace_lib_ui = namespace_lib_core + ".ui";
+var namespace_lib_math = namespace_lib_core + ".math";
+var namespace_lib_canvas = namespace_lib_core + ".html5.canvas";
+var namespace_lib_platform = namespace_lib_core + ".platform";

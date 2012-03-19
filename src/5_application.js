@@ -37,7 +37,7 @@ new Namespace(namespace_lib_app).use(function() {
 			var self = this;
 			this.mouseX = 0;
 			this.mouseY = 0;
-			this.userAgent = new Namespace(namespace_lib_core).UserAgent.gen();
+			this.userAgent = new Namespace(namespace_lib_platform).browser.UserAgent.gen();
 			
 			var nscore = (new Namespace(namespace_lib_core));
 			var util = nscore.Utilitie.gen();

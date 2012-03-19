@@ -51,56 +51,34 @@ new Namespace(namespace_lib_math).use(function () {
 		}
 		
 		$$.sugar = function() {
-			var nativeMath = window.Math;
-			window.PI = nativeMath.PI;
-			window.E = nativeMath.E;
-			window.sqrt = nativeMath.sqrt;
-			window.abs = nativeMath.abs;
-			window.acos = nativeMath.acos;
-			window.asin = nativeMath.atan;
-			window.atan = nativeMath.atan;
-			window.atan2 = nativeMath.atan2;
-			window.ceil = nativeMath.ceil;
-			window.sin = nativeMath.sin;
-			window.cos = nativeMath.cos;
-			window.tan = nativeMath.tan;
-			window.exp = nativeMath.exp;
-			window.floor = nativeMath.floor;
-			window.LN10 = nativeMath.LN10;
-			window.LN2 = nativeMath.LN2;
-			window.log = nativeMath.log;
-			window.LOG10E = nativeMath.LOG10E;
-			window.LOG2E = nativeMath.LOG2E;
-			window.max = nativeMath.max;
-			window.min = nativeMath.min;
-			window.random = nativeMath.random;
-			window.round = nativeMath.round;
-			window.SQRT1_2 = nativeMath.SQRT1_2;
-			window.SQRT2 = nativeMath.SQRT2;
-			window.DFT = this.DFT;
-			window.FFT = this.FFT;
-		}
-		
-		$$.PI = window.Math.PI;
-
-		$$.DFT = function(dt, samples, real, imag) {
-			var amp = 0;
-			var calcR = [];
-			var calcI = [];
-			for (var i = 0; i < dt; i++) {
-				calcR[i] = 0;
-				calcI[i] = 0;
-				var fn = i / dt;
-				var pi2ft = 2 * M.PI * fn;
-				for (var t = 0; t < dt; t++) {
-					calcR[i] += samples[t] * M.cos(pi2ft * t);
-					calcI[i] -= samples[t] * M.sin(pi2ft * t);
-				}
-			}
-			for (i = 0; i < dt; i++) {
-				real[i] = calcR[i];
-				imag[i] = calcI[i];
-			}
+			var nativeMath = global.Math;
+			global.PI = nativeMath.PI;
+			global.E = nativeMath.E;
+			global.sqrt = nativeMath.sqrt;
+			global.abs = nativeMath.abs;
+			global.acos = nativeMath.acos;
+			global.asin = nativeMath.atan;
+			global.atan = nativeMath.atan;
+			global.atan2 = nativeMath.atan2;
+			global.ceil = nativeMath.ceil;
+			global.sin = nativeMath.sin;
+			global.cos = nativeMath.cos;
+			global.tan = nativeMath.tan;
+			global.exp = nativeMath.exp;
+			global.floor = nativeMath.floor;
+			global.LN10 = nativeMath.LN10;
+			global.LN2 = nativeMath.LN2;
+			global.log = nativeMath.log;
+			global.LOG10E = nativeMath.LOG10E;
+			global.LOG2E = nativeMath.LOG2E;
+			global.max = nativeMath.max;
+			global.min = nativeMath.min;
+			global.random = nativeMath.random;
+			global.round = nativeMath.round;
+			global.SQRT1_2 = nativeMath.SQRT1_2;
+			global.SQRT2 = nativeMath.SQRT2;
+			global.DFT = this.DFT;
+			global.FFT = this.FFT;
 		}
 		
 		/**
@@ -115,9 +93,24 @@ new Namespace(namespace_lib_math).use(function () {
 			
 			// dft {replace the description here}.
 			def(function dft(x, y) {
-				
+				var dt = this.N;
+				var calcR = [];
+				var calcI = [];
+				for (var i = 0; i < dt; i++) {
+					calcR[i] = 0;
+					calcI[i] = 0;
+					var fn = i / dt;
+					var pi2ft = 2 * M.PI * fn;
+					for (var t = 0; t < dt; t++) {
+						calcR[i] += x[t] * M.cos(pi2ft * t);
+						calcI[i] -= x[t] * M.sin(pi2ft * t);
+					}
+				}
+				for (i = 0; i < dt; i++) {
+					x[i] = calcR[i];
+					y[i] = calcI[i];
+				}
 			})
-			
 		})
 		
 		
