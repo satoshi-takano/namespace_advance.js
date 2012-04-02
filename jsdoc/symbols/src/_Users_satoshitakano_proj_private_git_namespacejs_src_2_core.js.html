@@ -1,0 +1,371 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/* =====================================================
+<span class='line'>  2</span> Copyright (c) 2012 Satoshi Takano (ikke.co)
+<span class='line'>  3</span> 
+<span class='line'>  4</span> The MIT License
+<span class='line'>  5</span> 
+<span class='line'>  6</span> Permission is hereby granted, free of charge, to any person obtaining a copy
+<span class='line'>  7</span> of this software and associated documentation files (the "Software"), to deal
+<span class='line'>  8</span> in the Software without restriction, including without limitation the rights
+<span class='line'>  9</span> to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+<span class='line'> 10</span> copies of the Software, and to permit persons to whom the Software is
+<span class='line'> 11</span> furnished to do so, subject to the following conditions:
+<span class='line'> 12</span> 
+<span class='line'> 13</span> The above copyright notice and this permission notice shall be included in
+<span class='line'> 14</span> all copies or substantial portions of the Software.
+<span class='line'> 15</span> 
+<span class='line'> 16</span> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+<span class='line'> 17</span> IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+<span class='line'> 18</span> FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+<span class='line'> 19</span> AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+<span class='line'> 20</span> LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+<span class='line'> 21</span> OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+<span class='line'> 22</span> THE SOFTWARE.
+<span class='line'> 23</span> ===================================================== */</span><span class="WHIT">
+<span class='line'> 24</span> 
+<span class='line'> 25</span> </span><span class="COMM">/**
+<span class='line'> 26</span>  * @fileOverview 全体で使用する目的の基礎的なオブジェクトが定義されています.
+<span class='line'> 27</span>  */</span><span class="WHIT">
+<span class='line'> 28</span> </span><span class="WHIT"> 
+<span class='line'> 29</span> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Namespace</span><span class="PUNC">(</span><span class="NAME">namespace_lib_core</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">use</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 30</span> </span><span class="WHIT">	</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">ns</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">this</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">	
+<span class='line'> 32</span> 	</span><span class="COMM">/** 
+<span class='line'> 33</span> 	 * @class NotificationCenter へ post する通知オブジェクト.
+<span class='line'> 34</span> 	 * 通知名と任意の型のUserDataの対を保持する.
+<span class='line'> 35</span> 	 */</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">	 </span><span class="NAME">proto</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Notification</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">	 	</span><span class="COMM">/**
+<span class='line'> 38</span> 	 	* @memberOf Notification
+<span class='line'> 39</span> 	 	* @param {String} name 通知名
+<span class='line'> 40</span> 		* @param {Object} userData 引き回す用の Object
+<span class='line'> 41</span> 		*/</span><span class="WHIT">
+<span class='line'> 42</span> </span><span class="WHIT">	 	</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">name</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">userData</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 43</span> </span><span class="WHIT">	 		</span><span class="NAME">this.name</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">name</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 44</span> </span><span class="WHIT">	 		</span><span class="NAME">this.userData</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">userData</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 45</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 46</span> </span><span class="WHIT">	 	
+<span class='line'> 47</span> 	 	</span><span class="COMM">/** @return {String} 通知名を返します. */</span><span class="WHIT">
+<span class='line'> 48</span> </span><span class="WHIT">	 	</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getName</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 49</span> </span><span class="WHIT">	 		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.name</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 50</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 51</span> </span><span class="WHIT">	 	
+<span class='line'> 52</span> 	 	</span><span class="COMM">/** @return {Object} コンストラクタに渡されたUserDataを返します. */</span><span class="WHIT">
+<span class='line'> 53</span> </span><span class="WHIT">	 	</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">getUserData</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 54</span> </span><span class="WHIT">	 		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.userData</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 55</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 56</span> </span><span class="WHIT">	 </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 57</span> </span><span class="WHIT">	 
+<span class='line'> 58</span> 	 
+<span class='line'> 59</span> 	 </span><span class="COMM">/** 
+<span class='line'> 60</span> 	 * @class 通知センター. 多対多のイベント通知構造を表します.
+<span class='line'> 61</span> 	 */</span><span class="WHIT">
+<span class='line'> 62</span> </span><span class="WHIT">	 </span><span class="NAME">singleton</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">NotificationCenter</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 63</span> </span><span class="WHIT">	 	</span><span class="NAME">$$.targets</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 64</span> </span><span class="WHIT">	 	
+<span class='line'> 65</span> 	 	</span><span class="COMM">/** Observer を追加します.
+<span class='line'> 66</span> 	 	* @param target {Object} 任意の型の Observer.
+<span class='line'> 67</span> 	 	* @param func {Function} イベント通知を受け取る関数.
+<span class='line'> 68</span> 	 	* @param notifName {String} 受け取る通知名.
+<span class='line'> 69</span> 	 	* @memberOf NotificationCenter
+<span class='line'> 70</span> 	 	*/</span><span class="WHIT">
+<span class='line'> 71</span> </span><span class="WHIT">	 	</span><span class="NAME">$$.addObserver</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">target</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">notifName</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 72</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">obj</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="NAME">target</span><span class="PUNC">:</span><span class="NAME">target</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">:</span><span class="NAME">func</span><span class="PUNC">}</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 73</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">this.targets.hasOwnProperty</span><span class="PUNC">(</span><span class="NAME">notifName</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 74</span> </span><span class="WHIT">				</span><span class="NAME">this.targets</span><span class="PUNC">[</span><span class="NAME">notifName</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 75</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">list</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.targets</span><span class="PUNC">[</span><span class="NAME">notifName</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 76</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">isAlreadyPushed</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 77</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">l</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">list.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 78</span> </span><span class="WHIT">			</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">l</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 79</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 80</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">target</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NAME">list</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">target</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 81</span> </span><span class="WHIT">				</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 82</span> </span><span class="WHIT">					</span><span class="NAME">isAlreadyPushed</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 83</span> </span><span class="WHIT">					</span><span class="KEYW">break</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 84</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 85</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 86</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">isAlreadyPushed</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'> 87</span> </span><span class="WHIT">				</span><span class="NAME">list.push</span><span class="PUNC">(</span><span class="NAME">obj</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 88</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 89</span> </span><span class="WHIT">		
+<span class='line'> 90</span> 		</span><span class="COMM">/** 
+<span class='line'> 91</span> 		* Observer を削除します.
+<span class='line'> 92</span> 	 	* @memberOf NotificationCenter
+<span class='line'> 93</span> 		*/</span><span class="WHIT">
+<span class='line'> 94</span> </span><span class="WHIT">		</span><span class="NAME">$$.removeObserver</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">target</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">notifName</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 95</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">list</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.targets</span><span class="PUNC">[</span><span class="NAME">notifName</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 96</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">l</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">list.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 97</span> </span><span class="WHIT">			</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">l</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 98</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">target</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NAME">list</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">.</span><span class="NAME">target</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 99</span> </span><span class="WHIT">					</span><span class="NAME">list.splice</span><span class="PUNC">(</span><span class="NAME">i</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NUMB">1</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>100</span> </span><span class="WHIT">					</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>101</span> </span><span class="WHIT">				</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>102</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>103</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>104</span> </span><span class="WHIT">		
+<span class='line'>105</span> 		</span><span class="COMM">/**
+<span class='line'>106</span> 		* 通知を発行します.
+<span class='line'>107</span> 		* @param notification {Notification} 通知オブジェクト.
+<span class='line'>108</span> 	 	* @memberOf NotificationCenter
+<span class='line'>109</span> 		*/</span><span class="WHIT">
+<span class='line'>110</span> </span><span class="WHIT">		</span><span class="NAME">$$.postNotification</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">notification</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>111</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">list</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.targets</span><span class="PUNC">[</span><span class="NAME">notification.name</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>112</span> </span><span class="WHIT">			
+<span class='line'>113</span> 			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">list</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>114</span> </span><span class="WHIT">				</span><span class="KEYW">return</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>115</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">l</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">list.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>116</span> </span><span class="WHIT">			</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">l</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>117</span> </span><span class="WHIT">			</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>118</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">obj</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">list</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>119</span> </span><span class="WHIT">				</span><span class="NAME">obj.func.call</span><span class="PUNC">(</span><span class="NAME">obj.target</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">notification.object</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>120</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>121</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>122</span> </span><span class="WHIT">	 </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>123</span> </span><span class="WHIT">	 
+<span class='line'>124</span> 	 </span><span class="COMM">/** 
+<span class='line'>125</span> 	 * @class コンストラクタがよばれた時刻を保持します. 経過時間などの出力に使います.
+<span class='line'>126</span> 	 */</span><span class="WHIT">
+<span class='line'>127</span> </span><span class="WHIT">	 </span><span class="NAME">proto</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Timestamp</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>128</span> </span><span class="WHIT">	 	</span><span class="COMM">/** @memberOf Timestamp */</span><span class="WHIT">
+<span class='line'>129</span> </span><span class="WHIT">	 	</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>130</span> </span><span class="WHIT">	 		</span><span class="NAME">this.created</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Date</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>131</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>132</span> </span><span class="WHIT">	 	
+<span class='line'>133</span> 	 	</span><span class="COMM">/** @return {String} オブジェクトの文字列表現 */</span><span class="WHIT">
+<span class='line'>134</span> </span><span class="WHIT">	 	</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">toString</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>135</span> </span><span class="WHIT">	 		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">str</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="STRN">"* Timestamp : "</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="NAME">this.stamp</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">" msec"</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>136</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">str</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>137</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>138</span> </span><span class="WHIT">	 	
+<span class='line'>139</span> 	 	</span><span class="COMM">/** @return {Number} オブジェクトが作成されてからの経過時間をミリ秒単位で返します. */</span><span class="WHIT">
+<span class='line'>140</span> </span><span class="WHIT">	 	</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">stamp</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>141</span> </span><span class="WHIT">	 		</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Date</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">getTime</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">this.created.getTime</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>142</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>143</span> </span><span class="WHIT">	 </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>144</span> </span><span class="WHIT">	 
+<span class='line'>145</span> 	 
+<span class='line'>146</span> 	 </span><span class="COMM">/** 
+<span class='line'>147</span> 	 * @class ユニークな識別子.
+<span class='line'>148</span> 	 */</span><span class="WHIT">
+<span class='line'>149</span> </span><span class="WHIT">	 </span><span class="NAME">proto</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Identifier</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>150</span> </span><span class="WHIT">		 </span><span class="COMM">/** @memberOf Identifier */</span><span class="WHIT">
+<span class='line'>151</span> </span><span class="WHIT">	 	</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>152</span> </span><span class="WHIT">	 		</span><span class="NAME">this.id</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>153</span> </span><span class="WHIT">	 		</span><span class="NAME">generate.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>154</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>155</span> </span><span class="WHIT">	 	
+<span class='line'>156</span> 		</span><span class="NAME">$$.IDs</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>157</span> </span><span class="WHIT">	 	
+<span class='line'>158</span> 	 	</span><span class="COMM">/** @private */</span><span class="WHIT">
+<span class='line'>159</span> </span><span class="WHIT">	 	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">generate</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>160</span> </span><span class="WHIT">	 		</span><span class="NAME">this.id</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">new</span><span class="WHIT"> </span><span class="NAME">Date</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">getTime</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>161</span> </span><span class="WHIT">			</span><span class="KEYW">while</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">check.call</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>162</span> </span><span class="WHIT">				</span><span class="NAME">this.id</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">Math.round</span><span class="PUNC">(</span><span class="NAME">this.id</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">Math.random</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>163</span> </span><span class="WHIT">			</span><span class="NAME">this.$class.IDs.push</span><span class="PUNC">(</span><span class="NAME">this.id</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>164</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>165</span> </span><span class="WHIT">	 	
+<span class='line'>166</span> 	 	</span><span class="COMM">/** @private */</span><span class="WHIT">
+<span class='line'>167</span> </span><span class="WHIT">	 	</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">check</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>168</span> </span><span class="WHIT">	 		</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">numIDs</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">this.$class.IDs.length</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>169</span> </span><span class="WHIT">			</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">true</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>170</span> </span><span class="WHIT">			</span><span class="KEYW">for</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="WHIT"> </span><span class="PUNC">&lt;</span><span class="WHIT"> </span><span class="NAME">numIDs</span><span class="PUNC">;</span><span class="WHIT"> </span><span class="NAME">i</span><span class="PUNC">++</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>171</span> </span><span class="WHIT">				</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.$class.IDs</span><span class="PUNC">[</span><span class="NAME">i</span><span class="PUNC">]</span><span class="WHIT"> </span><span class="PUNC">==</span><span class="WHIT"> </span><span class="NAME">this.id</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>172</span> </span><span class="WHIT">					</span><span class="NAME">res</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">false</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>173</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>174</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">res</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>175</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>176</span> </span><span class="WHIT">	 </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>177</span> </span><span class="WHIT">	 
+<span class='line'>178</span> 	 
+<span class='line'>179</span> 	 </span><span class="COMM">/** 
+<span class='line'>180</span> 	 * @class 関数を遅延評価します.
+<span class='line'>181</span> 	 */</span><span class="WHIT">
+<span class='line'>182</span> </span><span class="WHIT">	 </span><span class="NAME">proto</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Wait</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>183</span> </span><span class="WHIT">	 	</span><span class="COMM">/**
+<span class='line'>184</span> 	 	* @memberOf Wait
+<span class='line'>185</span> 	 	* @param time {Number} 遅延時間をミリ秒単位で指定します.
+<span class='line'>186</span> 	 	* @param callback {Function} 指定時間経過後に呼ばれる関数.
+<span class='line'>187</span> 	 	*/</span><span class="WHIT">
+<span class='line'>188</span> </span><span class="WHIT">	 	</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">time</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">callback</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>189</span> </span><span class="WHIT">	 		</span><span class="NAME">this.timer</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">setTimeout</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>190</span> </span><span class="WHIT">	 			</span><span class="NAME">callback.call</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>191</span> </span><span class="WHIT">	 		</span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">time</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>192</span> </span><span class="WHIT">	 		</span><span class="NAME">callback</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">callback</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>193</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>194</span> </span><span class="WHIT">	 	
+<span class='line'>195</span> 	 	</span><span class="COMM">/** 遅延をキャンセルします. キャンセルした場合指定関数は呼ばれません. */</span><span class="WHIT">
+<span class='line'>196</span> </span><span class="WHIT">	 	</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">cancel</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>197</span> </span><span class="WHIT">	 		</span><span class="NAME">clearTimeout</span><span class="PUNC">(</span><span class="NAME">this.timer</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>198</span> </span><span class="WHIT">	 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>199</span> </span><span class="WHIT">	 </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>200</span> </span><span class="WHIT">	
+<span class='line'>201</span> 	</span><span class="COMM">/**
+<span class='line'>202</span> 	* @class 数値の範囲を表します.
+<span class='line'>203</span> 	*/</span><span class="WHIT">
+<span class='line'>204</span> </span><span class="WHIT">	</span><span class="NAME">proto</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Range</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>205</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>206</span> 		* @memberOf Range
+<span class='line'>207</span> 		* @min {Number} 範囲の最小値
+<span class='line'>208</span> 		* @max {Number} 範囲の最大値
+<span class='line'>209</span> 		*/</span><span class="WHIT">
+<span class='line'>210</span> </span><span class="WHIT">		</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">min</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">max</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>211</span> </span><span class="WHIT">			</span><span class="NAME">this.min</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">min</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>212</span> </span><span class="WHIT">			</span><span class="NAME">this.max</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">max</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>213</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>214</span> </span><span class="WHIT">		
+<span class='line'>215</span> 		</span><span class="COMM">/**
+<span class='line'>216</span> 		* 引数に渡された Range オブジェクトが、自身の値の範囲内に収まる場合に true を返します.
+<span class='line'>217</span> 		* @param {Range} 評価対象の Range オブジェクト
+<span class='line'>218</span> 		* @return {Boolean}
+<span class='line'>219</span> 		*/</span><span class="WHIT">
+<span class='line'>220</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">contains</span><span class="PUNC">(</span><span class="NAME">range</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>221</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">this.min</span><span class="WHIT"> </span><span class="PUNC">&lt;=</span><span class="WHIT"> </span><span class="NAME">range.min</span><span class="WHIT"> </span><span class="PUNC">&&</span><span class="WHIT"> </span><span class="NAME">range.max</span><span class="WHIT"> </span><span class="PUNC">&lt;=</span><span class="WHIT"> </span><span class="NAME">this.max</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>222</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>223</span> </span><span class="WHIT">		
+<span class='line'>224</span> 		</span><span class="COMM">/**
+<span class='line'>225</span> 		* 値を別の Range での値に置き換えます.
+<span class='line'>226</span> 		* @description 例えば 0 ~ 100 の Range オブジェクトに対して,&lt;br/>
+<span class='line'>227</span> 		* remap(50, Range.gen(100, 200)); を評価した場合,&lt;br/>
+<span class='line'>228</span> 		* 150 が返されます.
+<span class='line'>229</span> 		* @param value {Number} この範囲内での１点の値.
+<span class='line'>230</span> 		* @param range {Range} 置き換える範囲
+<span class='line'>231</span> 		* @return
+<span class='line'>232</span> 		*/</span><span class="WHIT">
+<span class='line'>233</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">remap</span><span class="PUNC">(</span><span class="NAME">value</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">range</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>234</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">range.min</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">range.length</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">*</span><span class="WHIT"> </span><span class="NAME">this.ratio</span><span class="PUNC">(</span><span class="NAME">value</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>235</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>236</span> </span><span class="WHIT">		
+<span class='line'>237</span> 		</span><span class="COMM">/** @return {Number} 範囲の大きさを返します. */</span><span class="WHIT">
+<span class='line'>238</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">length</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>239</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.max</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">this.min</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>240</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>241</span> </span><span class="WHIT">		
+<span class='line'>242</span> 		</span><span class="COMM">/** 
+<span class='line'>243</span> 		* 引数に渡された値の、この範囲内での割合を返します.
+<span class='line'>244</span> 		* @param val {Number} 評価する値.
+<span class='line'>245</span> 		* @return {Number} 
+<span class='line'>246</span> 		*/</span><span class="WHIT">
+<span class='line'>247</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">ratio</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">val</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>248</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">val</span><span class="WHIT"> </span><span class="PUNC">-</span><span class="WHIT"> </span><span class="NAME">this.min</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">/</span><span class="WHIT"> </span><span class="NAME">this.length</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>249</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>250</span> </span><span class="WHIT">		
+<span class='line'>251</span> 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>252</span> </span><span class="WHIT">	
+<span class='line'>253</span> 	</span><span class="COMM">/**
+<span class='line'>254</span> 	* @class 特定の操作を表します.
+<span class='line'>255</span> 	* 
+<span class='line'>256</span> 	**/</span><span class="WHIT">
+<span class='line'>257</span> </span><span class="WHIT">	</span><span class="NAME">proto</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Operation</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>258</span> </span><span class="WHIT">		</span><span class="COMM">/**
+<span class='line'>259</span> 		* @memberOf Operation
+<span class='line'>260</span> 		* @param scope {Object} 関数評価時のスコープ.
+<span class='line'>261</span> 		* @param func {Function} 操作を表す関数.
+<span class='line'>262</span> 		* @param args {Array} 関数評価時に引数として渡される arguments 配列. *関数評価時は可変長引数として渡されます.
+<span class='line'>263</span> 		*/</span><span class="WHIT">
+<span class='line'>264</span> </span><span class="WHIT">		</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">scope</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>265</span> </span><span class="WHIT">			</span><span class="NAME">this.scope</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">scope</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>266</span> </span><span class="WHIT">			</span><span class="NAME">this.func</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">func</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>267</span> </span><span class="WHIT">			</span><span class="NAME">this.args</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">args</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>268</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>269</span> </span><span class="WHIT">		
+<span class='line'>270</span> 		</span><span class="COMM">/** 評価します */</span><span class="WHIT">
+<span class='line'>271</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">execute</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>272</span> </span><span class="WHIT">			</span><span class="NAME">this.func.apply</span><span class="PUNC">(</span><span class="NAME">this.scope</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">this.args</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>273</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>274</span> </span><span class="WHIT">		
+<span class='line'>275</span> 	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>276</span> </span><span class="WHIT">	
+<span class='line'>277</span> 	</span><span class="COMM">/**
+<span class='line'>278</span> 	* @class 操作シーケンススタック.
+<span class='line'>279</span> 	* 
+<span class='line'>280</span> 	**/</span><span class="WHIT">
+<span class='line'>281</span> </span><span class="WHIT">	</span><span class="NAME">proto</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">OperationQueue</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>282</span> </span><span class="WHIT">		</span><span class="COMM">/** @memberOf OperationQueue */</span><span class="WHIT">
+<span class='line'>283</span> </span><span class="WHIT">		</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>284</span> </span><span class="WHIT">			</span><span class="NAME">this.operations</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">[</span><span class="PUNC">]</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>285</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>286</span> </span><span class="WHIT">		
+<span class='line'>287</span> 		</span><span class="COMM">/** 
+<span class='line'>288</span> 		* 操作を追加します.
+<span class='line'>289</span> 		* @param op {Operation} Operation オブジェクト.
+<span class='line'>290</span> 		*/</span><span class="WHIT">
+<span class='line'>291</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">push</span><span class="PUNC">(</span><span class="NAME">op</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>292</span> </span><span class="WHIT">			</span><span class="NAME">this.operations.push</span><span class="PUNC">(</span><span class="NAME">op</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>293</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>294</span> </span><span class="WHIT">		
+<span class='line'>295</span> 		</span><span class="COMM">/** 
+<span class='line'>296</span> 		* スタックの最後尾にある Operation オブジェクトを削除します.
+<span class='line'>297</span> 		* @return {Operation} 削除した Operation オブジェクト.
+<span class='line'>298</span> 		*/</span><span class="WHIT">
+<span class='line'>299</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">pop</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>300</span> </span><span class="WHIT">			</span><span class="KEYW">return</span><span class="WHIT"> </span><span class="NAME">this.operations.pop</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>301</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>302</span> </span><span class="WHIT">		
+<span class='line'>303</span> 		</span><span class="COMM">/**
+<span class='line'>304</span> 		* 一連の操作シーケンスをスタックに追加された順で実行します.
+<span class='line'>305</span> 		*/</span><span class="WHIT">
+<span class='line'>306</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">execute</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>307</span> </span><span class="WHIT">			</span><span class="NAME">this.operations.each</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">op</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>308</span> </span><span class="WHIT">				</span><span class="NAME">op.execute</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>309</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>310</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>311</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>312</span> </span><span class="WHIT">	
+<span class='line'>313</span> 	</span><span class="COMM">/**
+<span class='line'>314</span> 	* @class FPS など全体の情報を提供します. #予定
+<span class='line'>315</span> 	* 
+<span class='line'>316</span> 	**/</span><span class="WHIT">
+<span class='line'>317</span> </span><span class="WHIT">	</span><span class="NAME">singleton</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">System</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>318</span> </span><span class="WHIT">		</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="NAME">args</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>319</span> </span><span class="WHIT">			
+<span class='line'>320</span> 		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>321</span> </span><span class="WHIT">		
+<span class='line'>322</span> 		</span><span class="NAME">$$.FPS</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NUMB">30</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>323</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>324</span> </span><span class="WHIT">	
+<span class='line'>325</span> 	
+<span class='line'>326</span> 	</span><span class="COMM">/**
+<span class='line'>327</span> 	* @class 操作を記録できるAPIを提供します.
+<span class='line'>328</span> 	* @description オブジェクトにモジュールとして include して使用します.
+<span class='line'>329</span> 	**/</span><span class="WHIT">
+<span class='line'>330</span> </span><span class="WHIT">	</span><span class="NAME">proto</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">Recordable</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>331</span> </span><span class="WHIT">		</span><span class="NAME">init</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>332</span> </span><span class="WHIT">			</span><span class="NAME">this.opq</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ns.OperationQueue.gen</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>333</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>334</span> </span><span class="WHIT">		
+<span class='line'>335</span> 		</span><span class="COMM">/** 
+<span class='line'>336</span> 		* 操作を記録します.
+<span class='line'>337</span> 		* @param op {Operation} 記録する Operation. 省略した場合は rec() を呼び出した関数が記録されます.&lt;br/>
+<span class='line'>338</span> 		* Recordable をモジュールとして include している場合は this.rec() と呼びだすことで&lt;br/>
+<span class='line'>339</span> 		* 現在居るスコープの関数が操作として記録されます.
+<span class='line'>340</span> 		*/</span><span class="WHIT">
+<span class='line'>341</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">rec</span><span class="PUNC">(</span><span class="NAME">op</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>342</span> </span><span class="WHIT">			</span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">!</span><span class="NAME">op</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>343</span> </span><span class="WHIT">				</span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">caller</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">arguments.callee.caller</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>344</span> </span><span class="WHIT">				</span><span class="NAME">op</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">ns.Operation.gen</span><span class="PUNC">(</span><span class="KEYW">this</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">caller</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">caller.arguments</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>345</span> </span><span class="WHIT">			</span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'>346</span> </span><span class="WHIT">			</span><span class="NAME">this.opq.push</span><span class="PUNC">(</span><span class="NAME">op</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>347</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>348</span> </span><span class="WHIT">		
+<span class='line'>349</span> 		</span><span class="COMM">/** 
+<span class='line'>350</span> 		* 記録した一連の操作を順に実行します.
+<span class='line'>351</span> 		*/</span><span class="WHIT">
+<span class='line'>352</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">playback</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>353</span> </span><span class="WHIT">			</span><span class="NAME">this.opq.execute</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>354</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>355</span> </span><span class="WHIT">		
+<span class='line'>356</span> 		</span><span class="COMM">/**
+<span class='line'>357</span> 		* 記録した操作をすべて消去します.
+<span class='line'>358</span> 		*/</span><span class="WHIT">
+<span class='line'>359</span> </span><span class="WHIT">		</span><span class="NAME">def</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="NAME">clear</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>360</span> </span><span class="WHIT">			</span><span class="NAME">this.opq</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="KEYW">null</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'>361</span> </span><span class="WHIT">		</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>362</span> </span><span class="WHIT">	</span><span class="PUNC">}</span><span class="PUNC">)</span><span class="WHIT">
+<span class='line'>363</span> </span><span class="WHIT">	
+<span class='line'>364</span> </span><span class="PUNC">}</span><span class="PUNC">)</span><span class="PUNC">;</span></pre></body></html>
