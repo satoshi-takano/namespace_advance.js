@@ -42,6 +42,7 @@ new Namespace("jp.example").use(function() {
 		});
 		
 		def(function inspect() {
+			console.log(this);
 			return this.$super() + "\npropC = " + this.propC + "\npropD = " + this.propD;
 		});
 		
@@ -60,6 +61,7 @@ new Namespace("jp.example").use(function() {
 		});
 		
 		def(function inspect() {
+			console.log(this);
 			return this.$super() + "\npropE = " + this.propE;
 		});
 	});
@@ -78,13 +80,14 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		"property C",
 		"property D",
 		"property E");
-		alert("-- subsubClass inspect ---------\n" + subsubClass.inspect() + '\n\n');
-		alert("-- jp.example.SubClass class member ---------\n" + jp.example.SubClass.classVarA);
-		alert(jp.example.SubClass.classMethodA() + '\n\n');
-		var singletonA = jp.example.SingletonClass.getInstance();
-		var singletonB = jp.example.SingletonClass.getInstance(); 
-		alert("-- Equivalence test of singleton object  ---------\n\
-			(singletonA === singletonB) = " + (singletonA === singletonB).toString());
+		subsubClass.inspect();
+		// alert("-- subsubClass inspect ---------\n" + subsubClass.inspect() + '\n\n');
+		// 		alert("-- jp.example.SubClass class member ---------\n" + jp.example.SubClass.classVarA);
+		// 		alert(jp.example.SubClass.classMethodA() + '\n\n');
+		// var singletonA = jp.example.SingletonClass.getInstance();
+		// 	var singletonB = jp.example.SingletonClass.getInstance(); 
+		// 	alert("-- Equivalence test of singleton object  ---------\n\
+		// 		(singletonA === singletonB) = " + (singletonA === singletonB).toString());
 });
 
 </script>

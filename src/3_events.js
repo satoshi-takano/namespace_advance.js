@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/**
+ * @fileOverview イベントに関するオブジェクトが定義されています.
+ */
+ 
 new Namespace(namespace_lib_events).use(function() {
 	var ns = this;
 	// dynamical creating a internal namespace
@@ -37,15 +41,23 @@ new Namespace(namespace_lib_events).use(function() {
 	
 	
 	/** 
-	* 
-	* @class 
+	* @class イベントを発行するための機能を定義しています.
 	*/
 	proto(function EventDispatcher() {
+		/** 
+		* @memberOf EventDispatcher 
+		* @param 
+		*/
 		init(function (target) {
 			this.observers = {};
 			this.target = target;
 		});
 		
+		/**
+		* イベントリスナを追加します.
+		* @param type {String} イベントタイプ.
+		* @param callback {Function} イベント発生時に評価する関数.
+		*/
 		def(function addEventListener(type, callback) {
 			var list = this.observers[type];
 			var flg = false;
@@ -63,11 +75,19 @@ new Namespace(namespace_lib_events).use(function() {
 			return flg;
 		});
 		
-		// shortcut of the addEventListener method
+		/** 
+		* addEventListener のエイリアス. 
+		* @deprecated 将来的に廃止される可能性があります.
+		*/
 		def(function ae(type, callback) {
 			this.addEventListener(type, callback);
 		});
 		
+		/**
+		* イベントリスナを削除します.
+		* @param type {String} イベントタイプ.
+		* @param callback {Function} 登録済み関数.
+		*/
 		def(function removeEventListener(type, callback) {
 			var list = this.observers[type];
 			var numTargets = list.length;
@@ -79,7 +99,10 @@ new Namespace(namespace_lib_events).use(function() {
 			}
 		});
 
-		// shortcut of the removeEventListener method
+		/** 
+		* removeEventListener のエイリアス. 
+		* @deprecated 将来的に廃止される可能性があります.
+		*/
 		def(function re(type, performer) {
 			this.removeEventListener(type, performer);
 		});
@@ -97,13 +120,14 @@ new Namespace(namespace_lib_events).use(function() {
 	
 	
 	/** 
-	* accessing a DOMEvent object
-	* @class 
+	* @class DOMに関するイベントを定義しています.
 	*/
 	proto(function DOMEvent() {
 		var isIE = userAgent.isIE();
 		if (isIE) {
+			/** @memberOf DOMEvent */
 			$$.INIT = "onload";
+			/** @memberOf DOMEvent */
 			$$.LOAD = "onload";
 		} else {
 			$$.INIT = "load";
@@ -113,18 +137,24 @@ new Namespace(namespace_lib_events).use(function() {
 	
 	
 	/** 
-	* accessing a DOMMouseEvent object
-	* @class 
+	* @class DOMのマウス操作に関するイベントを定義しています.
 	*/
 	proto(function DOMMouseEvent() {
 		var isIE = userAgent.isIE();
 		if (isIE) {
+			/** @memberOf DOMMouseEvent */
 			$$.CLICK = "onclick";
+			/** @memberOf DOMEvent */
 			$$.MOUSE_DOWN = "onmousedown";
+			/** @memberOf DOMEvent */
 			$$.MOUSE_MOVE = "onmousemove";
+			/** @memberOf DOMEvent */
 			$$.MOUSE_OUT = "onmouseout";
+			/** @memberOf DOMEvent */
 			$$.MOUSE_OVER = "onmouseover";
+			/** @memberOf DOMEvent */
 			$$.MOUSE_UP = "onmouseup";
+			/** @memberOf DOMEvent */
 			$$.MOSUE_WHEEL = "onmousewheel";
 		} else {
 			$$.CLICK ="click";
@@ -139,16 +169,24 @@ new Namespace(namespace_lib_events).use(function() {
 	});
 	
 	/** 
-	* creating a FLEvent
-	* @class flash の Eventぽく
+	* @class FLEvent
 	*/
 	proto(function FLEvent() {
+		/**
+		* @memberOf FLEvent
+		* @param type {String} イベントタイプ
+		* @param caller {Object} イベント発行元オブジェクト
+		* @param origin {Event} JavaScript 実行環境ネイティブの Event オブジェクト
+		*/
 		init(function (type, caller, origin) {
 			this.type = type;
 			this.origin = origin;
 			this.currentTarget = caller;
 		});
 		
+		/**
+		* デフォルトの処理実行をキャンセルします.
+		*/
 		def(function preventDefault() {
 			if (this.origin.preventDefault)
 				this.origin.preventDefault();
@@ -156,6 +194,9 @@ new Namespace(namespace_lib_events).use(function() {
 				this.origin.returnValue = false;
 		});
 		
+		/**
+		* イベントの伝搬を停止します.
+		*/
 		def(function stopPropagation() {
 			if (this.origin.stopPropagation)
 				this.origin.stopPropagation();
@@ -163,14 +204,16 @@ new Namespace(namespace_lib_events).use(function() {
 				this.origin.cancelBubbles = true;
 		});
 		
+		/** @memberOf FLEvent */
 		$$.APP_LAUNCH = "appLaunch";
+		/** @memberOf FLEvent */
 		$$.COMPLETE = "complete";
 	});
 
 	
 	/** 
-	* creating a FLMouseEvent
-	* @class flash の MouseEvent
+	* @class 機能拡張したマウスイベントを定義します.
+	* @augments FLEvent
 	*/
 	proto(function FLMouseEvent() {
 		ex(ns.FLEvent);
@@ -179,15 +222,25 @@ new Namespace(namespace_lib_events).use(function() {
 			this.$super(type, caller, origin);
 		})
 		
+		/** @memberOf FLMouseEvent */
 		$$.CLICK = "click";
+		/** @memberOf FLMouseEvent */
 		$$.DOUBLE_CLICK = "doubleclick";
+		/** @memberOf FLMouseEvent */
 		$$.MOUSE_DOWN = "mousedown";
+		/** @memberOf FLMouseEvent */
 		$$.MOUSE_MOVE = "mousemove";
+		/** @memberOf FLMouseEvent */
 		$$.MOUSE_OUT = "mouseout";
+		/** @memberOf FLMouseEvent */
 		$$.MOUSE_OVER = "mouseover";
+		/** @memberOf FLMouseEvent */
 		$$.MOUSE_UP = "mouseup";
+		/** @memberOf FLMouseEvent */
 		$$.MOUSE_WHEEL = "mousewheel";
+		/** @memberOf FLMouseEvent */
 		$$.ROLL_OUT = "rollout";
+		/** @memberOf FLMouseEvent */
 		$$.ROLL_OVER = "rollover";
 	});
 });

@@ -22,12 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+
 new Namespace(namespace_lib_app).use(function() {
 	var ns = this;
 		
 	 /** 
-	 * accessing a Applciation object
-	 * @class 
+	 * @class Application
+	 * @augments EventDispatcher
 	 */
 	singleton(function Application() {
 		var nse = new Namespace(namespace_lib_events);
@@ -35,8 +36,17 @@ new Namespace(namespace_lib_app).use(function() {
 		
 		init(function() {
 			var self = this;
+			/** 
+			* 表示領域内でのマウスポインタの x 位置
+			* @memberOf Application.prototype
+			*/
 			this.mouseX = 0;
+			/** 
+			* 表示領域内でのマウスポインタの y 位置
+			* @memberOf Application.prototype 
+			*/
 			this.mouseY = 0;
+			/** @memberOf Application.prototype */
 			this.userAgent = new Namespace(namespace_lib_platform).browser.UserAgent.gen();
 			
 			var nscore = (new Namespace(namespace_lib_core));

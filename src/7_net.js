@@ -22,14 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/**
+* @fileOverview ネットワークに関係するオブジェクトが定義されています.
+*/
 new Namespace(namespace_lib_net).use(function () {
 	var ns = this;
 	
 	/** 
-	* creating a URL
-	* @class 
+	* @class URL
 	*/
 	proto(function URL() {
+		/**
+		* 文字列からURLオブジェクトを作成します.
+		* @param url {String}
+		* @memberOf URL
+		*/
 		init(function(url) {
 			this.url = url;
 			this.scheme = 
@@ -42,6 +49,9 @@ new Namespace(namespace_lib_net).use(function () {
 			this.generate();
 		});
 		
+		/** 
+		* @private
+		*/
 		def(function generate() {
 			var r = this.reg.exec(this.url);
 			if (r) {
@@ -70,10 +80,13 @@ new Namespace(namespace_lib_net).use(function () {
 	});
 	
 	/** 
-	* creating a URLRequest
-	* @class flash の URLRequest
+	* @class URL request
 	*/
 	proto(function URLRequest() {
+		/**
+		* @param urlString {String}
+		* @memberOf URLRequest
+		*/
 		init(function (urlString) {
 			this.url = urlString;
 			this.httpMethod = "GET";
@@ -85,14 +98,17 @@ new Namespace(namespace_lib_net).use(function () {
 	
 	
 	/** 
-	* creating a URLLoader
-	* @class flash の URLLoader
+	* @class 非同期でデータを取得します.
+	* @augments EventDispatcher
 	*/
 	proto(function URLLoader() {
 		var nse = new Namespace(namespace_lib_events);
 		
 		ex(nse.EventDispatcher);
 		
+		/**
+		* @memberOf URLLoader
+		*/
 		init(function () {
 			this.currentXHR = null;
 			this.data = null;
@@ -106,6 +122,10 @@ new Namespace(namespace_lib_net).use(function () {
 			}
 		});
 		
+		/**
+		* 通信を開始します.
+		* @param req {URLRequest}
+		*/
 		def(function load(req) {
 			var xhr = this.currentXHR = this.generateXHR();
 			xhr.onreadystatechange = this.readyStateCallback;

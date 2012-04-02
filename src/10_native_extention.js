@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/**
+* @fileOverview JavaScript の組み込み型を拡張します.
+*/
+
 // Number's extention
 Number.prototype.times = function(closure, scope) {
 	for (var i = 0; i < this; i++) {

@@ -22,6 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/** 
+* @fileOverview 未実装　
+*/
 new Namespace(namespace_lib_ui).use(function() {
 	var ns = this;
 	var nsd = new Namespace(namespace_lib_display);

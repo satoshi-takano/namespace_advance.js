@@ -22,6 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/**
+* @fileOverview HTML5 の Canvas 要素に関係するオブジェクトが定義されています.
+*/ 
+
 new Namespace(namespace_lib_canvas).use(function () {
 	var ns = this;
 	var nscore = new Namespace(namespace_lib_core);
@@ -36,15 +40,20 @@ new Namespace(namespace_lib_canvas).use(function () {
 	var globalCtx = global.CanvasRenderingContext2D;
 	
 	/**
-	* @archetype Color
+	* @class 色に関していろいろ操作できるオブジェクトです.
 	* 
 	**/
 	proto(function Color() {
-		// To initialize when the Color.gen(params) called.
+		/**
+		* 引数に 16進数での色の値を与えて Color オブジェクトを作ります.
+		* @param {Number}
+		* @memberOf Color
+		*/
 		init(function(col16) {
 			this.color = col16;
 		})
 		
+		/** red の値. [read-write] */
 		getter("r", function() {
 			return this.color >> 16;
 		})
@@ -52,6 +61,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.color = val << 16 | this.g << 8 | this.b;
 		})
 		
+		/** green の値. [read-write] */
 		getter("g", function() {
 			return this.color >> 8 & 0xff;
 		})
@@ -59,6 +69,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.color = this.r << 16 | this.b << 8 | this.b;
 		})
 		
+		/** blue の値. [read-write] */
 		getter("b", function() {
 			return this.color & 0xff;
 		})
@@ -100,37 +111,43 @@ new Namespace(namespace_lib_canvas).use(function () {
 	
 	
 	/**
-	* @archetype CapStyle
+	* @class CapStyle
 	* 
 	**/
 	singleton(function CapStyle() {
 		// To initialize when the CapStyle.gen(params) called.
 		init(function() {
 		})
+		/** @memberOf CapStyle */
 		$$.NONE = "butt";
+		/** @memberOf CapStyle */
 		$$.ROUND = "round";
+		/** @memberOf CapStyle */
 		$$.SQUARE = "square";
 	})
 	
 	/**
-	* @archetype JointStyle
+	* @class JointStyle
 	* 
 	**/
 	singleton(function JointStyle() {
 		// To initialize when the JointStyle.gen(params) called.
 		init(function(args) {
 		})
+		/** @memberOf JointStyle */
 		$$.BEVEL = "bevel";
+		/** @memberOf JointStyle */
 		$$.MITER = "miter";
+		/** @memberOf JointStyle */
 		$$.ROUND = "round";
 	})
 	
 	/**
-	* @archetype Graphics
+	* @class 線や塗、ビットマップのコピーなどの操作を受け付けます.通常は DisplayObject を介して使用します.
 	* 
 	**/
 	proto(function Graphics() {
-		// To initialize when the Graphics.gen(params) called.
+		/** @private */
 		init(function(displayObject) {
 			this.displayObject = displayObject;
 			this.include(nscore.Recordable.gen());
@@ -150,7 +167,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 			
 		})
 		
-		// beginFill {replace the description here}.
+		/**
+		* 塗を開始します.
+		* @param color {Number} 
+		* @parma alpha {Number}
+		*/
 		def(function beginFill(color, alpha) {
 			if (alpha == undefined) alpha = 1;
 			var col = ns.Color.gen(color);
@@ -160,47 +181,68 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.rec(nscore.Operation.gen(this, ctxSetFillStyle, [style]));
 		})
 		
-		// beginGradientFill {replace the description here}.
 		def(function beginGradientFill(type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod) {
 			
 		})
 		
-		// clear {replace the description here}.
 		def(function clear() {
 
 		})
 		
-		// curveTo {replace the description here}.
+		/**
+		* 曲線を描画します.
+		* @param cpx {Number} コントロールポイントの x 値　
+		* @param cpy {Number} コントロールポイントの y 値　
+		* @param ax {Number} アンカーポイントの x 値
+		* @param ay {Number} アンカーポイントの y 値
+		*/
 		def(function curveTo(cpx, cpy, ax, ay) {
 			this.rec(nscore.Operation.gen(this, ctxCurveTo, [cpx, cpy, ax, ay]));
 		})
 		
-		// drawCircle {replace the description here}.
+		/**
+		* 円を描画します.
+		* @param x {Number} 円の中心の x 座標
+		* @param y {Number} 円の中心の y 座標
+		* @param r {Number} 円の半径
+		*/
 		def(function drawCircle(x, y, r) {
 			this.rec(nscore.Operation.gen(this, ctxArc, [x, y, r]));
 		})
 		
-		// drawEllipse {replace the description here}.
 		def(function drawEllipse(x, y, w, h) {
 			
 		})
 		
-		// drawRect {replace the description here}.
+		/**
+		* 矩形を描画します.
+		* @param x {Number} 描画する矩形の x 座標
+		* @param y {Number} 描画する矩形の y 座標
+		* @param w {Number} 描画する矩形の幅
+		* @param h {Number} 描画する矩形の高さ
+		*/
 		def(function drawRect(x, y, w, h) {
 			this.rec(nscore.Operation.gen(this, ctxFillRect, [x, y, w, h]));
 		})
 		
-		// drawRoundRect {replace the description here}.
 		def(function drawRoundRect(x, y, w, h, ellipseW, ellipseH) {
 		
 		})
 		
-		// endFill {replace the description here}.
+		/** 塗を終了します. */
 		def(function endFill() {
 			this.rec(nscore.Operation.gen(this, ctxEndFill));
 		})
 		
-		// lineStyle {replace the description here}.
+		/**
+		* 線のスタイルを指定します.
+		* @param thickness {Number} 線の太さ
+		* @param color {Number} 16進数の色の値
+		* @param alpha {Number} 
+		* @param caps {String} caps style
+		* @param joints {String} joints style
+		* @param mierLimit {Number}
+		*/
 		def(function lineStyle(thickness, color, alpha, caps, joints, miterLimit) {
 			if (alpha == undefined) var alpha = 1;
 			if (thickness == 0) alpha = 0;
@@ -210,31 +252,57 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.rec(op);
 		})
 		
-		// lineTo {replace the description here}.
+		/** 
+		* 線を引きます.
+		* @param x {Number}
+		* @param y {Number}
+		*/
 		def(function lineTo(x, y) {
 			var op = nscore.Operation.gen(this, ctxLineTo, [x, y]);
 			this.rec(op);
 			updateBound.call(this, x, y);
 		})
 		
-		// moveTo {replace the description here}.
+		/**
+		* ペン先を移動します.
+		* @param x {Number}
+		* @param y {Number}
+		*/
 		def(function moveTo(x, y) {
 			this.rec(nscore.Operation.gen(this, ctxMoveTo, [x, y]));
 			updateBound.call(this, x, y);
 		})
 		
-		// bezierCurveTo {replace the description here}.
+		/**
+		* ベジェ曲線を引きます.
+		* @param cp1x {Number}
+		* @param cp1y {Number}
+		* @param cp2x {Number}
+		* @param cp2y {Number}
+		* @param x {Number}
+		* @param y {Number}
+		*/
 		def(function bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
 			this.rec(nscore.Operation.gen(this, ctxBezierCurveTo, [cp1x, cp1y, cp2x, cp2y, x, y]));
 		})
 		
-		// drawImage {replace the description here}.
+		/**
+		* ビットマップ画像を指定座標に転写します.
+		* @param img {Image} DOM の Image element
+		* @param x {Number} 
+		* @param y {Number}
+		*/
 		def(function drawImage(img, x, y) {
 			this.rec(nscore.Operation.gen(this, ctxDrawImage, [img, x, y]));
 			updateBound.call(this, x + img.width, y + img.height);
 		})
 		
-		// drawText {replace the description here}.
+		/**
+		* 指定座標にテキストを描画します
+		* @param text {String}
+		* @param x {Number}
+		* @param y {Number}
+		*/
 		def(function drawText(text, x, y) {
 			this.rec(nscore.Operation.gen(this, ctxDrawText, [text, x, y]));
 			var c = this.context;
@@ -243,16 +311,17 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		
-		// getGlobalX {replace the description here}.
+		/** @private */
 		def(function getGlobalX() {
 			return this.displayObject.globalX;
 		})
 		
-		// getGlobalY {replace the description here}.
+		/** @private */
 		def(function getGlobalY() {
 			return this.displayObject.globalY;
 		})
 		
+		/** @private */
 		getter("context", function() {
 			return this.displayObject.stage.context;
 		})
@@ -364,11 +433,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 	})
 	
 	/**
-	* @archetype DisplayObject
+	* @class ActionScript の DisplayObject 風インターフェース.
 	* 
 	**/
 	proto(function DisplayObject() {
-		// To initialize when the DisplayObject.gen(params) called.
+		/** @memberOf DisplayObject */
 		init(function() {
 			//this.graphics = ns.Graphics.gen(ns.Stage.getInstance().context);
 			this._mx = 0, this._my = 0;
@@ -380,7 +449,9 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.alpha = 1;
 		})
 		
-		// draw {replace the description here}.
+		/**
+		* 描画します.
+		*/
 		def(function draw() {
 			var c = this._g.context;
 			var sX = this.scaleX;
@@ -398,22 +469,29 @@ new Namespace(namespace_lib_canvas).use(function () {
 			}
 		})
 		
+		/** x 座標. [read-write] */
 		getter("x", function() {return this._mx})
 		setter("x", function(val) {this._mx = val;})
+		/** y 座標. [read-write] */
 		getter("y", function() {return this._my})
 		setter("y", function(val) {this._my = val})
 		
+		/** 幅. [read-only] */
 		getter("width", function() {return this._g.boundWidth})
+		/** 高さ. [read-only] */
 		getter("height", function() {return this._g.boundHeight})
 		
+		/** x scale. [read-write] */
 		getter("scaleX", function() {
 			return this._sx * (this.parent ? this.parent.scaleX : 1);
 		})
 		setter("scaleX", function(val) {this._sx = val})
+		/** y scale. [read-write] */
 		getter("scaleY", function() {
 			return this._sy * (this.parent ? this.parent.scaleY : 1);
 		})
 		setter("scaleY", function(val) {this._sx = val})
+		
 		
 		getter("globalX", function() {
 			if (this.parent == undefined) return 0;
@@ -423,27 +501,32 @@ new Namespace(namespace_lib_canvas).use(function () {
 			if (this.parent == undefined) return 0;
 			return this._my + this.parent.globalY;
 		})
+		/** このオブジェクトの属するステージへの参照. [read-only] */
 		getter("stage", function () {
 			return this._stg;
 		})
+		/** このオブジェクトの持つ graphics オブジェクトへの参照. [read-only] */
 		getter("graphics", function() {return this._g})
 	})
 	
 	/**
-	* @archetype DisplayObjectContainer
-	* 
+	* @class ActionScript の DisplayObjectContainer 風インターフェース.
+	* @augments DisplayObject
 	**/
 	proto(function DisplayObjectContainer() {
 		ex(ns.DisplayObject)
 		
-		// To initialize when the DisplayObjectContainer.gen(params) called.
+		/** @memberOf DisplayObjectContainer */
 		init(function() {
 			this.$super();
 			this.children = [];
 			this._stg = null;
 		})
 		
-		// addChild {replace the description here}.
+		/**
+		* このDisplayObjectContainerオブジェクトの表示ツリーに表示オブジェクトを追加します.
+		* @param child {DisplayObject}
+		*/
 		def(function addChild(child) {
 			this.numChildren.times(function (i) {
 				if (this.children[i] == child) this.children.splice(i, 1);
@@ -453,7 +536,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 			child._stg = this._stg;
 		})
 		
-		// addChildAt {replace the description here}.
+		/**
+		* このDisplayObjectContainerオブジェクトの表示ツリーに、重ね順を指定して表示オブジェクトを追加します.
+		* @param child {DisplayObject}
+		* @param index {Number}
+		*/
 		def(function addChildAt(child, index) {
 			var numChildren = this.numChildren;
 			numChildren.times(function (i) {
@@ -467,7 +554,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 			child._stg = this._stg;
 		})
 		
-		// removeChild {replace the description here}.
+		/**
+		* このDisplayObjectContainerオブジェクトの表示ツリーから表示オブジェクトを削除します.
+		* @param child {DisplayObject}
+		*/
 		def(function removeChild(child) {
 			var i = 0;
 			this.children.each(function (c) {
@@ -479,7 +569,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 			}, this);
 		})
 		
-		
 		// draw {replace the description here}.
 		def(function draw() {
 			this.$super();
@@ -488,17 +577,24 @@ new Namespace(namespace_lib_canvas).use(function () {
 			}, this)
 		})
 		
+		/** 
+		* このDisplayObjectContainerの子である表示オブジェクトの数.　[read-only]
+		*/
 		getter("numChildren", function() {return this.children.length;})
 	})
 	
 	/**
-	* @archetype Stage
-	* 
+	* @class ActionScript の Stage 風インターフェース.
+	* @augments DisplayObjectContainer
 	**/
 	proto(function Stage() {
 		ex(ns.DisplayObjectContainer);
 		
-		// To initialize when the Stage.gen(params) called.
+		/** 
+		* HTMLのCanvasを渡して Stage オブジェクトを作ります.
+		* @param canvas {DOM Canvas Element}
+		* @memberOf Stage
+		*/
 		init(function(canvas) {
 			var context = canvas.getContext("2d");
 			if (context == null) {
@@ -512,7 +608,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this._stg = this;
 		})
 		
-		// addChild {replace the description here}.
+		
 		def(function addChild(child) {
 			this.$super(child);
 		})
@@ -524,8 +620,9 @@ new Namespace(namespace_lib_canvas).use(function () {
 			}, this)
 		})
 		
-		
+		/** Stage の幅です. [read-only] */
 		getter("stageWidth", function() {return this.w});
+		/** Stage の高さです. [read-only] */
 		getter("stageHeight", function() {return this.h});
 	})
 	

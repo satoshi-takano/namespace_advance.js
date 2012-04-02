@@ -21,6 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
+
+/**
+ * @fileOverview 名前空間オブジェクトが定義されています.<br/>
+ */
+
 if (!global.debug || !global.console) {
 	console = {};
 	console.log = 
@@ -33,6 +38,7 @@ if (!global.debug || !global.console) {
 	console.warn = 
 	function(){};
 }
+
 var FunctionPrototype = function() {
 	var self = this;
 	// util
@@ -58,7 +64,8 @@ var FunctionPrototype = function() {
 	};
 	
 	/**
-	* object generation
+	* クラスからインスタンスを得ます.<br/>
+	* 引数に渡したオブジェクトは,クラスのコンストラクタにそのまま引き渡されます.
 	**/
 	this.gen = function() {
 		var obj = new this();
@@ -69,7 +76,8 @@ var FunctionPrototype = function() {
 	};
 	
 	/**
-	* returning singleton object
+	* クラスからシングルトンインスタンスを得ます.<br/>
+	* 引数に渡したオブジェクトは,クラスのコンストラクタにそのまま引き渡されます.
 	**/
 	this.getInstance = function() {
 		var instance = this.instance;
@@ -82,16 +90,30 @@ var FunctionPrototype = function() {
 		return this.instance;
 	}
 	
-	// define method to initialize
+	/**
+	* コンストラクタを定義します.
+	* @param initialize コンストラクト時に呼ばれるクロージャ
+	**/
 	this.init = function(initialize) {
 		self.substance.prototype.initialize = wrap("initialize", initialize);
 	};
+	
+	/**
+	* 継承元を指定します.
+	* @param obj Namespace に定義されている、Singleton ではないクラス(非インスタンス)を渡します.
+	**/
 	this.ex = function(obj) {
 		var proto = obj.gen();
 		self.substance.superClass = obj.prototype;
 		self.substance.prototype = proto;
 		self.substance.prototype.$super = $super;
 	};
+	
+	/**
+	* オブジェクトをモジュールとして mixin します.<br/>
+	* @param {Object} module include したいオブジェクト. これは JavaScript native Object でも可です.
+	* @param {Boolean} overwrite true が渡された場合、既に存在する同名のメンバを上書きします.
+	**/
 	this.include = function(module, overwrite) {
 		for (var p in module) {
 			if (overwrite || this[p] == undefined) {
@@ -99,12 +121,26 @@ var FunctionPrototype = function() {
 			}
 		}
 	};
+	
+	/**
+	* getter メソッドを定義します.<br/>
+	* getter に対応していない環境では定義は行われません.
+	* @param name {String} getter名
+	* @param func getterが呼び出された時に呼ばれるクロージャ.
+	**/
 	this.getter = function (name, func) {
 		var p = self.substance.prototype;
 		if ("__defineGetter__" in p) {
 			p.__defineGetter__(name, func);
 		}
 	}
+	
+	/**
+	* setter メソッドを定義します.<br/>
+	* setter に対応していない環境では定義は行われません.
+	* @param name {String} setter名
+	* @param func setterが呼び出された時に呼ばれるクロージャ.
+	**/
 	this.setter = function (name, func) {
 		var p = self.substance.prototype;
 		if ("__defineSetter__" in p) {
@@ -112,7 +148,10 @@ var FunctionPrototype = function() {
 		}
 	}
 	
-	// define method to method definition
+	/**
+	* メソッドを定義します.
+	* @param method {Function} 名前付き関数.この関数の名前がメソッド名になります.
+	**/
 	this.def = function(method){
 		var name = getMethodName(method);
 		self.substance.prototype[name] = wrap(name, method);
@@ -124,10 +163,16 @@ var FunctionPrototype = function() {
 }
 FunctionPrototype = new FunctionPrototype();
 
+
 var InternalNamespacePrototype = function() {
 	this.nsName = "";
 	var self = this;
 	
+	/**
+	* @memberOf Namespace.prototype
+	* @description この名前空間のスコープを使用します.
+	* @param func クロージャ
+	*/
 	this.use = function(func) {
 		self = this;
 		var oldDef = global.proto;
@@ -139,6 +184,23 @@ var InternalNamespacePrototype = function() {
 		global.singleton = oldSingleton;
 	};
 	
+	/**
+	* @memberOf Namespace.prototype
+	* @description Class (プロトタイプ)を定義します.
+	* @param namedFunc 名前付き関数. この関数名がクラス名になります.
+	* @description このメソッドに渡す名前付き関数のスコープでのみ有効になる,<br/>
+	*  ex, include, init, def, getter, setter, $$ <br/>
+	* というグローバル関数・変数があります.<br/>
+	* それぞれの説明は下記を参照してください.<br/><br/>
+	* ex : {@link ex}<br/>
+	* include : {@link include}<br/>
+	* init : {@link init}<br/>
+	* def : {@link def}<br/>
+	* getter : {@link getter}<br/>
+	* setter : {@link setter}<br/>
+	* $$ : クラスへの参照. $$ に対して def を呼び出すとクラスメソッド,<br/>
+	* $$.hoge = "hoge" とするとクラス変数になります.
+	*/
 	this.proto = function(namedFunc) {
 		var tmpSelf = self;
 		if (this instanceof Namespace) {
@@ -185,6 +247,23 @@ var InternalNamespacePrototype = function() {
 		proto.prototype.proto = proto;
 	};
 	
+	/**
+	* @memberOf Namespace.prototype
+	* @description Singleton Class (プロトタイプ)を定義します.
+	* @param namedFunc 名前付き関数. この関数名がクラス名になります.
+	* @description このメソッドに渡す名前付き関数のスコープでのみ有効になる,<br/>
+	*  ex, include, init, def, getter, setter, $$ <br/>
+	* というグローバル関数・変数があります.<br/>
+	* それぞれの説明は下記を参照してください.<br/><br/>
+	* ex : {@link ex}<br/>
+	* include : {@link include}<br/>
+	* init : {@link init}<br/>
+	* def : {@link def}<br/>
+	* getter : {@link getter}<br/>
+	* setter : {@link setter}<br/>
+	* $$ : クラスへの参照. $$ に対して def を呼び出すとクラスメソッド,<br/>
+	* $$.hoge = "hoge" とするとクラス変数になります.
+	*/
 	this.singleton = function(namedFunc) {
 		var tmpSelf = self;
 		if (this instanceof Namespace) {
@@ -233,6 +312,14 @@ var InternalNamespacePrototype = function() {
 }
 
 var internalNamespacePrototype = new InternalNamespacePrototype();
+
+/**
+* @class all classes are defined to Namespace class.
+* @param str 名前空間を String 型で指定します. (例: "jp.example.hoge")
+* @description "jp.example.hoge" を引数に Namespace を new した場合,<br/>
+* jp, jp.example, jp.example.hoge というオブジェクトが作成されます.<br/>
+* すでに存在する場合は新しく作成されることはありません.
+*/
 Namespace = function(str) {
 	var ns = str.split('.');
 	
@@ -263,28 +350,36 @@ Namespace = function(str) {
 }
 Namespace.prototype = internalNamespacePrototype;
 
+
 new Namespace(namespace_lib_core).use(function () {
 	var ns = this;
 	
-	/** 
-	 * creating a Performer
-	 * @class 
+	 /**
+	 * @class bind object with function
 	 */
 	 proto(function Performer() {
-	 	init(function(target, callback, args) {
+	 	/**
+	 	* @constructs
+	 	* @param target オブジェクト
+	 	* @param func 関数
+	 	* @param func の引数
+	 	*/
+	 	init(function(target, func, args) {
 	 		this.target = target;
-	 		this.callback = callback;
+	 		this.func = func;
 	 		this.args = args;
 	 	});
 	 	
+	 	/**
+	 	* func を実行します.
+	 	*/
 	 	def(function perform() {
-	 		this.callback.apply(this.target, arguments);
+	 		this.func.apply(this.target, arguments);
 	 	})
 	 });
 	
 	/** 
-	 * creating a Utilitie 
-	 * @class 実行環境ごとの差異吸収がメインのしごと
+	 * @private
 	 */
 	proto(function Utilitie() {
 		def(function listen(target, type, func) {
@@ -307,7 +402,7 @@ new Namespace(namespace_lib_core).use(function () {
 	});
 	
 	/**
-	* @archetype Main
+	* @class メインクラス.
 	* 
 	**/
 	singleton(function Main() {
@@ -323,7 +418,9 @@ new Namespace(namespace_lib_core).use(function () {
 				});
 		})
 		
-		// main {replace the description here}.
+		/**
+		* アプリケーションの初期化処理が終わった時に,引数に渡されたクロージャが実行されます.
+		*/
 		def(function main(runner) {
 			this.runner = runner;
 		})

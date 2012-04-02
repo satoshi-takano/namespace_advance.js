@@ -21,6 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
+
+/**
+ * @fileOverview 各名前空間が(String型で)宣言されています.
+ * 別のライブラリなどの名前空間と衝突する場合はこのファイル内の定義を書き換えます.
+ */
+ 
+/**
+* @description  グローバルオブジェクト.<br/>
+* Web Browser なら window が入る.
+*/
 var global = window;
 
 var namespace_lib_core = "jp.example"; // enter your reversed domain.

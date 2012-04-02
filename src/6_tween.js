@@ -22,14 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/**
+* @fileOverview Tweenに関するオブジェクトが定義されています.
+*/
+ 
 new Namespace(namespace_lib_tween).use(function() {
 	var ns = this;
 	
 	/** 
-	* creating a Interpolator
-	* @class 値を easing 関数を使用して補間します
+	* @class easing 関数を使用して補間した値を配列に保持します.
 	*/
 	proto(function Interpolator() {
+		/**
+		* @param to {Number} 終点
+		* @parma from {Number} 始点
+		* @param easing {} イージング関数オブジェクト
+		* @memberOf Interpolator
+		*/
 		init(function(to, from, step, easing) {
 			this.values = [];
 			var t = 0;
@@ -42,16 +51,28 @@ new Namespace(namespace_lib_tween).use(function() {
 	});
 	
 	
-	/** 
-	* creating a Animator
-	* @class 
+	/** 	
+	* @class オブジェクトのパラメータを easing 補間するための高レベル API 
 	*/
 	proto(function Animator() {
+		/** 
+		* @memberOf Animator
+		* @param delay {Number} 遅延時間 (msec unit)
+		*/
 		init(function (delay) {
 			this.delay = delay;
 			this.next = null;
 		});
 		
+		/**
+		* オブジェクトのパラメータを補間します.
+		* @param target {Object} 
+		* @param style {String} css style
+		* @param to {Number} 
+		* @param step {Number} number of step
+		* @param easing {Object} easing function 
+		* @param delay {Number} 遅延時間 (msec unit)
+		*/ 
 		def(function tween(target, style, to, step, easing, delay) {
 			var self = this;
 			this.delay += (delay || 0);
@@ -83,15 +104,21 @@ new Namespace(namespace_lib_tween).use(function() {
 	
 	
 	/**
-	* @archetype Bounce
+	* @class Bounce interpolation
 	* 
 	**/
 	singleton(function Bounce() {
-		// To initialize when the Bounce.gen(params) called.
 		init(function() {
 		})
 
-		// easeIn {replace the description here}.
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Bounce
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			if ((t = (d - t) / d) < (1 / 2.75)) { return c - (c * (7.5625 * t * t)) + b; }
 			if (t < (2 / 2.75)) { return c - (c * (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75)) + b; }
@@ -99,7 +126,14 @@ new Namespace(namespace_lib_tween).use(function() {
  			return c - (c * (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375)) + b;
 		})
 		
-		// easeOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Bounce
+		*/
 		def(function easeOut(t, b, c, d) {
 				if ((t /= d) < (1 / 2.75)) { return c * (7.5625 * t * t) + b; }
 				else if (t < (2 / 2.75)) { return c * (7.5625 * (t -= (1.5 / 2.75)) * t + .75) + b; }
@@ -107,7 +141,14 @@ new Namespace(namespace_lib_tween).use(function() {
 				else { return c * (7.5625 * (t -= (2.625 / 2.75)) * t + .984375) + b; }
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Bounce
+		*/
 		def(function easeInOut(args) {
 			var s = 1.70158;
 			if ((t /= d / 2) < 1) return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
@@ -116,24 +157,45 @@ new Namespace(namespace_lib_tween).use(function() {
 	})
 	
 	/**
-	* @archetype Circ
-	* 
+	* @class Circulate interpolation
 	**/
 	singleton(function Circ() {
 		// To initialize when the Circ.gen(params) called.
 		init(function() {
 		})
 		
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Circ
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			return -c * (Math.sqrt(1 - (t/=d)*t) - 1) + b;
 		})
 		
-		// out {replace the description here}.
+		/** 
+		* easeOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Circ
+		*/
 		$$.def(function easeOut(t, b, c, d) {
 			return c * Math.sqrt(1 - (t=t/d-1)*t) + b;
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Circ
+		*/
 		$$.def(function easeInOut(t, b, c, d) {
 			if ((t/=d/2) < 1) return -c/2 * (Math.sqrt(1 - t*t) - 1) + b;
 			return c/2 * (Math.sqrt(1 - (t-=2)*t) + 1) + b;
@@ -141,7 +203,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	})
 	
 	/**
-	* @archetype Cubic
+	* @class Cubic interpolation
 	* 
 	**/
 	singleton(function Cubic() {
@@ -149,32 +211,59 @@ new Namespace(namespace_lib_tween).use(function() {
 		init(function() {
 		})
 		
-		// in {replace the description here}.
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Cubic
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			return c * (t /= d) * t * t + b;
 		})
 		
-		// out {replace the description here}.
+		/** 
+		* easeOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Cubic
+		*/
 		$$.def(function easeOut(t, b, c, d) {
 			return c * ((t = t / d - 1) * t * t + 1) + b;
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Cubic
+		*/
 		$$.def(function easeInOut(t, b, c, d) {
 			return ((t /= d / 2) < 1) ? c / 2 * t * t * t + b : c / 2 * ((t -= 2) * t * t + 2) + b;
 		})
 	})
 	
 	/**
-	* @archetype Elastic
-	* 
+	* @class Elastic interpolation
 	**/
 	singleton(function Elastic() {
 		// To initialize when the Elastic.gen(params) called.
 		init(function() {
 		})
 		
-		// in {replace the description here}.
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Elastic
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			var a, p;
 			if (t == 0)
@@ -193,7 +282,14 @@ new Namespace(namespace_lib_tween).use(function() {
 			return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
 		})
 		
-		// out {replace the description here}.
+		/** 
+		* easeOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Elastic
+		*/
 		$$.def(function easeOut(t, b, c, d) {
 			var a, p;
 			if (t == 0)
@@ -212,7 +308,14 @@ new Namespace(namespace_lib_tween).use(function() {
 			return (a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b);
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Elastic
+		*/
 		$$.def(function easeInOut(t, b, c, d) {
 			var a, p;
 			if (t == 0)
@@ -235,7 +338,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	})
 	
 	/**
-	* @archetype Expo
+	* @class Expo interpolation
 	* 
 	**/
 	singleton(function Expo() {
@@ -243,17 +346,38 @@ new Namespace(namespace_lib_tween).use(function() {
 		init(function() {
 		})
 		
-		// in {replace the description here}.
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Expo
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			return (t == 0) ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
 		})
 		
-		// out {replace the description here}.
+		/** 
+		* easeOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Expo
+		*/
 		$$.def(function easeOut(t, b, c, d) {
 			return (t == d) ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Expo
+		*/
 		$$.def(function easeInOut(t, b, c, d) {
 			if (t == 0)
 				return b;
@@ -266,25 +390,45 @@ new Namespace(namespace_lib_tween).use(function() {
 	})
 	
 	/**
-	* @archetype Qaud
-	* 
+	* @class Qaud
 	**/
 	singleton(function Qaud() {
 		// To initialize when the Qaud.gen(params) called.
 		init(function() {
 		})
 		
-		// in {replace the description here}.
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quad
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			return c * (t /= d) * t + b;
 		})
 		
-		// out {replace the description here}.
+		/** 
+		* easeOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quad
+		*/
 		$$.def(function easeOut(t, b, c, d) {
 			return -c * (t /= d) * (t - 2) + b;
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quad
+		*/
 		$$.def(function easeInOut(t, b, c, d) {
 			if ((t /= d / 2) < 1)
 			{
@@ -295,7 +439,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	})
 	
 	/**
-	* @archetype Quart
+	* @class Quart
 	* 
 	**/
 	singleton(function Quart() {
@@ -303,17 +447,38 @@ new Namespace(namespace_lib_tween).use(function() {
 		init(function() {
 		})
 		
-		// in {replace the description here}.
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quart
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			return c * Math.pow(t / d, 4) + b;
 		})
 		
-		// out {replace the description here}.
+		/** 
+		* easeOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quart
+		*/
 		$$.def(function easeOut(t, b, c, d) {
 			return -c * (Math.pow(t / d - 1, 4) - 1) + b;
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quart
+		*/
 		$$.def(function easeInOut(t, b, c, d) {
 			if ((t /= d / 2) < 1)
 			{
@@ -324,25 +489,45 @@ new Namespace(namespace_lib_tween).use(function() {
 	})
 	
 	/**
-	* @archetype Quintic
-	* 
+	* @class Quintic
 	**/
 	singleton(function Quintic() {
 		// To initialize when the Quintic.gen(params) called.
 		init(function() {
 		})
 		
-		// in {replace the description here}.
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quintic
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			return c * Math.pow(t/d, 5) + b;
 		})
 		
-		// out {replace the description here}.
+		/** 
+		* easeOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quintic
+		*/
 		$$.def(function easeOut(t, b, c, d) {
 			return c * (Math.pow(t/d-1,5) + 1) + b;
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Quintic
+		*/
 		$$.def(function easeInOut(t, b, c, d) {
 			if ((t/=d/2) < 1)
 				return c/2 * Math.pow (t, 5) + b;
@@ -351,7 +536,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	})
 	
 	/**
-	* @archetype Sine
+	* @class Sine interpolation
 	* 
 	**/
 	singleton(function Sine() {
@@ -359,22 +544,41 @@ new Namespace(namespace_lib_tween).use(function() {
 		init(function() {
 		})
 		
-		// in {replace the description here}.
+		/** 
+		* easeIn interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Sine
+		*/
 		$$.def(function easeIn(t, b, c, d) {
 			return c * (1 - Math.cos(t/d * (Math.PI/2))) + b; 
 		})
 		
-		// out {replace the description here}.
+		/** 
+		* easeOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Sine
+		*/
 		$$.def(function easeOut(t, b, c, d) {
 			return c * Math.sin(t/d * (Math.PI/2)) + b; 
 		})
 		
-		// easeInOut {replace the description here}.
+		/** 
+		* easeInOut interpolation
+		* @param t {Number} iterator
+		* @param b {Number} Starting Point.
+		* @param c {Number} offset length.
+		* @param d {Number} number of total steps
+		* @memberOf Sine
+		*/
 		$$.def(function easeInOut(t, b, c, d) {
 			return c/2 * (1 - Math.cos(Math.PI*t/d)) + b;
 		})
 	})
 
 });
-
-

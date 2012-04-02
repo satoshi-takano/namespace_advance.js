@@ -22,34 +22,58 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/**
+* @fileOverview 計算に関するオブジェクトが定義されています.
+*/ 
+
 new Namespace(namespace_lib_math).use(function () {
 	var ns = this;
 	var M = Math;
 	/**
-	* @archetype Math
+	* @class Math
 	* 
 	**/
 	proto(function Math() {
-		// To initialize when the Math.gen(params) called.
+		/** @memberOf Math */
 		init(function() {
 			
 		})
 		
-		// fact {replace the description here}.
+		/**
+		* 階上を求める.
+		* @param n {Number}
+		* @return {Number}
+		* @memberOf Math
+		*/
 		$$.factorial = function(n) {
 			if (1 < n) return n * ns.Math.factorial(n - 1) 
 			else return 1;
 		}
 		
-		// sigma {replace the description here}.
+		/**
+		* 総和を求める.
+		* @param s {Number}
+		* @param e {Number}
+		* @return {Number}
+		* @memberOf Math
+		*/
 		$$.sigma = function(s, e) {
 			return (s + e) * e / 2;
 		}
 		
+		/**
+		* 任意の値を底とし,対数求める.
+		* @param n {Number}
+		* @return {Number}
+		* @memberOf Math
+		*/
 		$$.log = function(base, trueValue) {
 			return M.log(trueValue) / M.log(base);
 		}
 		
+		/**
+		* 各演算のためのメソッドをグローバルオブジェクトに展開する.
+		*/
 		$$.sugar = function() {
 			var nativeMath = global.Math;
 			global.PI = nativeMath.PI;
@@ -82,16 +106,24 @@ new Namespace(namespace_lib_math).use(function () {
 		}
 		
 		/**
-		* @archetype DFT
+		* @class 離散フーリエ変換
 		* 
 		**/
 		proto(function DFT() {
-			// To initialize when the DFT.gen(params) called.
+			/** 
+			* @param N {Number} DFT size
+			* @memberOf DFT 
+			*/
 			init(function(N) {
 				this.N = N;
 			})
 			
-			// dft {replace the description here}.
+			/**
+			* 離散フーリエ変換　します.
+			* @description 引数の x, y には実行後、周波数領域での値が入っています.
+			* @param x {Array} 実数の入った配列.
+			* @param y {Array} 虚数の入った配列.
+			*/
 			def(function dft(x, y) {
 				var dt = this.N;
 				var calcR = [];
@@ -115,11 +147,13 @@ new Namespace(namespace_lib_math).use(function () {
 		
 		
 		/**
-		* @archetype FFT
-		* 
+		* @class 高速フーリエ変換
 		**/
 		proto(function FFT() {
-			// To initialize when the FFT.gen(params) called.
+			/**
+			* @param N {Number} FFT size
+			* @memberOf FFT
+			*/
 			init(function(N) {
 				this.N = N;
 				
@@ -129,7 +163,12 @@ new Namespace(namespace_lib_math).use(function () {
 				sintbl(N, this.sintable);
 			})
 			
-			// fft {replace the description here}.
+			/**
+			* 高速フーリエ変換します.
+			* @description 引数の x, y には実行後、周波数領域での値が入っています.
+			* @param x {Array} 実数の入った配列.
+			* @param y {Array} 虚数の入った配列.
+			*/
 			def(function fft(x, y) {
 				last_n = 0;
 				var bitrev = this.bitrev;

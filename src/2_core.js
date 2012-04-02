@@ -22,25 +22,34 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+/**
+ * @fileOverview 全体で使用する目的の基礎的なオブジェクトが定義されています.
+ */
+ 
 new Namespace(namespace_lib_core).use(function() {
 	var ns = this;
 	
 	/** 
-	 * creating a Notification
-	 * @class Cocoa の NSNotification みたいな役目
-	 * @param {String} name 通知名
-	 * @param {Object} userData 引き回す用の Object
+	 * @class NotificationCenter へ post する通知オブジェクト.
+	 * 通知名と任意の型のUserDataの対を保持する.
 	 */
 	 proto(function Notification() {
+	 	/**
+	 	* @memberOf Notification
+	 	* @param {String} name 通知名
+		* @param {Object} userData 引き回す用の Object
+		*/
 	 	init(function(name, userData) {
 	 		this.name = name;
 	 		this.userData = userData;
 	 	});
 	 	
+	 	/** @return {String} 通知名を返します. */
 	 	def(function getName() {
 	 		return this.name;
 	 	});
 	 	
+	 	/** @return {Object} コンストラクタに渡されたUserDataを返します. */
 	 	def(function getUserData() {
 	 		return this.userData;
 	 	})
@@ -48,12 +57,18 @@ new Namespace(namespace_lib_core).use(function() {
 	 
 	 
 	 /** 
-	 * accessing a NotificationCenter object
-	 * @class Cocoa の NSNotificationCenter みたいな役目
+	 * @class 通知センター. 多対多のイベント通知構造を表します.
 	 */
-	 this.NotificationCenter = {
-		targets:{},
-		addObserver: function(target, func, notifName) {
+	 singleton(function NotificationCenter() {
+	 	$$.targets = {};
+	 	
+	 	/** Observer を追加します.
+	 	* @param target {Object} 任意の型の Observer.
+	 	* @param func {Function} イベント通知を受け取る関数.
+	 	* @param notifName {String} 受け取る通知名.
+	 	* @memberOf NotificationCenter
+	 	*/
+	 	$$.addObserver = function(target, func, notifName) {
 			var obj = {target:target, func:func};
 			if (!this.targets.hasOwnProperty(notifName))
 				this.targets[notifName] = [];
@@ -70,8 +85,13 @@ new Namespace(namespace_lib_core).use(function() {
 			}
 			if (!isAlreadyPushed)
 				list.push(obj);
-		},
-		removeObserver: function(target, notifName) {
+		}
+		
+		/** 
+		* Observer を削除します.
+	 	* @memberOf NotificationCenter
+		*/
+		$$.removeObserver = function(target, notifName) {
 			var list = this.targets[notifName];
 			var l = list.length;
 			for (var i = 0; i < l; i++) {
@@ -80,8 +100,14 @@ new Namespace(namespace_lib_core).use(function() {
 					return;
 				}
 			}
-		},
-		postNotification: function(notification) {
+		}
+		
+		/**
+		* 通知を発行します.
+		* @param notification {Notification} 通知オブジェクト.
+	 	* @memberOf NotificationCenter
+		*/
+		$$.postNotification = function(notification) {
 			var list = this.targets[notification.name];
 			
 			if (list == null)
@@ -93,22 +119,24 @@ new Namespace(namespace_lib_core).use(function() {
 				obj.func.call(obj.target, notification.object);
 			}
 		}
-	};
+	 })
 	 
 	 /** 
-	 * creating a Timestamp
-	 * @class new された時刻を保持し、そこからの経過時間を出力します
+	 * @class コンストラクタがよばれた時刻を保持します. 経過時間などの出力に使います.
 	 */
 	 proto(function Timestamp() {
+	 	/** @memberOf Timestamp */
 	 	init(function() {
 	 		this.created = new Date();
 	 	});
 	 	
+	 	/** @return {String} オブジェクトの文字列表現 */
 	 	def(function toString() {
 	 		var str = "* Timestamp : " + this.stamp() + " msec";
 			return str;
 	 	});
 	 	
+	 	/** @return {Number} オブジェクトが作成されてからの経過時間をミリ秒単位で返します. */
 	 	def(function stamp() {
 	 		return (new Date().getTime() - this.created.getTime());
 	 	});
@@ -116,41 +144,47 @@ new Namespace(namespace_lib_core).use(function() {
 	 
 	 
 	 /** 
-	 * creating a Identifier
-	 * @class ユニークな識別子
+	 * @class ユニークな識別子.
 	 */
 	 proto(function Identifier() {
+		 /** @memberOf Identifier */
 	 	init(function() {
 	 		this.id = null;
-	 		this.generate();
+	 		generate.call(this);
 	 	});
 	 	
 		$$.IDs = [];
 	 	
-	 	def(function generate() {
+	 	/** @private */
+	 	function generate() {
 	 		this.id = (new Date()).getTime();
-			while (!this.check())
+			while (!check.call(this))
 				this.id = Math.round(this.id * Math.random());
-			this.cls.IDs.push(this.id);
-	 	});
+			this.$class.IDs.push(this.id);
+	 	}
 	 	
-	 	def(function check() {
-	 		var numIDs = this.cls.IDs.length;
+	 	/** @private */
+	 	function check() {
+	 		var numIDs = this.$class.IDs.length;
 			var res = true;
 			for (var i = 0; i < numIDs; i++) {
-				if (this.cls.IDs[i] == this.id)
+				if (this.$class.IDs[i] == this.id)
 					res = false;
 			}
 			return res;
-	 	});
+	 	}
 	 });
 	 
 	 
 	 /** 
-	 * creating a Wait
-	 * @class 指定時間経過後に指定された関数を実行します
+	 * @class 関数を遅延評価します.
 	 */
 	 proto(function Wait() {
+	 	/**
+	 	* @memberOf Wait
+	 	* @param time {Number} 遅延時間をミリ秒単位で指定します.
+	 	* @param callback {Function} 指定時間経過後に呼ばれる関数.
+	 	*/
 	 	init(function(time, callback) {
 	 		this.timer = setTimeout(function(){
 	 			callback.call();
@@ -158,29 +192,58 @@ new Namespace(namespace_lib_core).use(function() {
 	 		callback = callback;
 	 	});
 	 	
+	 	/** 遅延をキャンセルします. キャンセルした場合指定関数は呼ばれません. */
 	 	def(function cancel() {
 	 		clearTimeout(this.timer);
 	 	});
 	 });
 	
+	/**
+	* @class 数値の範囲を表します.
+	*/
 	proto(function Range() {
+		/**
+		* @memberOf Range
+		* @min {Number} 範囲の最小値
+		* @max {Number} 範囲の最大値
+		*/
 		init(function(min, max) {
 			this.min = min;
 			this.max = max;
 		});
 		
+		/**
+		* 引数に渡された Range オブジェクトが、自身の値の範囲内に収まる場合に true を返します.
+		* @param {Range} 評価対象の Range オブジェクト
+		* @return {Boolean}
+		*/
 		def(function contains(range) {
 			return (this.min <= range.min && range.max <= this.max);
 		});
 		
+		/**
+		* 値を別の Range での値に置き換えます.
+		* @description 例えば 0 ~ 100 の Range オブジェクトに対して,<br/>
+		* remap(50, Range.gen(100, 200)); を評価した場合,<br/>
+		* 150 が返されます.
+		* @param value {Number} この範囲内での１点の値.
+		* @param range {Range} 置き換える範囲
+		* @return
+		*/
 		def(function remap(value, range) {
 			return range.min + (range.length()) * this.ratio(value);
 		})
 		
+		/** @return {Number} 範囲の大きさを返します. */
 		def(function length() {
 			return this.max - this.min;
 		})
 		
+		/** 
+		* 引数に渡された値の、この範囲内での割合を返します.
+		* @param val {Number} 評価する値.
+		* @return {Number} 
+		*/
 		def(function ratio (val) {
 			return (val - this.min) / this.length();
 		})
@@ -188,18 +251,23 @@ new Namespace(namespace_lib_core).use(function() {
 	});
 	
 	/**
-	* @archetype Operation
+	* @class 特定の操作を表します.
 	* 
 	**/
 	proto(function Operation() {
-		// To initialize when the Operation.gen(params) called.
+		/**
+		* @memberOf Operation
+		* @param scope {Object} 関数評価時のスコープ.
+		* @param func {Function} 操作を表す関数.
+		* @param args {Array} 関数評価時に引数として渡される arguments 配列. *関数評価時は可変長引数として渡されます.
+		*/
 		init(function(scope, func, args) {
 			this.scope = scope;
 			this.func = func;
 			this.args = args;
 		})
 		
-		// execute {replace the description here}.
+		/** 評価します */
 		def(function execute() {
 			this.func.apply(this.scope, this.args);
 		})
@@ -207,26 +275,34 @@ new Namespace(namespace_lib_core).use(function() {
 	})
 	
 	/**
-	* @archetype OperationQueue
+	* @class 操作シーケンススタック.
 	* 
 	**/
 	proto(function OperationQueue() {
-		// To initialize when the OperationQueue.gen(params) called.
+		/** @memberOf OperationQueue */
 		init(function() {
 			this.operations = [];
 		})
 		
-		// push {replace the description here}.
+		/** 
+		* 操作を追加します.
+		* @param op {Operation} Operation オブジェクト.
+		*/
 		def(function push(op) {
 			this.operations.push(op);
 		})
 		
-		// pop {replace the description here}.
+		/** 
+		* スタックの最後尾にある Operation オブジェクトを削除します.
+		* @return {Operation} 削除した Operation オブジェクト.
+		*/
 		def(function pop() {
 			return this.operations.pop();
 		})
 		
-		// execute {replace the description here}.
+		/**
+		* 一連の操作シーケンスをスタックに追加された順で実行します.
+		*/
 		def(function execute() {
 			this.operations.each(function (op) {
 				op.execute();
@@ -235,11 +311,10 @@ new Namespace(namespace_lib_core).use(function() {
 	})
 	
 	/**
-	* @archetype System
+	* @class FPS など全体の情報を提供します. #予定
 	* 
 	**/
 	singleton(function System() {
-		// To initialize when the System.gen(params) called.
 		init(function(args) {
 			
 		})
@@ -249,16 +324,20 @@ new Namespace(namespace_lib_core).use(function() {
 	
 	
 	/**
-	* @archetype OperationRecorder
-	* 
+	* @class 操作を記録できるAPIを提供します.
+	* @description オブジェクトにモジュールとして include して使用します.
 	**/
 	proto(function Recordable() {
-		// To initialize when the OperationRecorder.gen(params) called.
 		init(function() {
 			this.opq = ns.OperationQueue.gen();
 		})
 		
-		// rec {replace the description here}.
+		/** 
+		* 操作を記録します.
+		* @param op {Operation} 記録する Operation. 省略した場合は rec() を呼び出した関数が記録されます.<br/>
+		* Recordable をモジュールとして include している場合は this.rec() と呼びだすことで<br/>
+		* 現在居るスコープの関数が操作として記録されます.
+		*/
 		def(function rec(op) {
 			if (!op) {
 				var caller = arguments.callee.caller;
@@ -267,12 +346,16 @@ new Namespace(namespace_lib_core).use(function() {
 			this.opq.push(op);
 		})
 		
-		// playback {replace the description here}.
+		/** 
+		* 記録した一連の操作を順に実行します.
+		*/
 		def(function playback() {
 			this.opq.execute();
 		})
 		
-		// clear {replace the description here}.
+		/**
+		* 記録した操作をすべて消去します.
+		*/
 		def(function clear() {
 			this.opq = null;
 		})
