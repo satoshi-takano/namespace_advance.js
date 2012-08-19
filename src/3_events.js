@@ -90,6 +90,8 @@ new Namespace(namespace_lib_events).use(function() {
 		*/
 		def(function removeEventListener(type, callback) {
 			var list = this.observers[type];
+			if (!list) return;
+			
 			var numTargets = list.length;
 			for (var i = 0; i < numTargets; i++) {
 				if (list[i] && list[i] == callback) {
@@ -112,7 +114,7 @@ new Namespace(namespace_lib_events).use(function() {
 			if (list) {
 				var numTargets = list.length;
 				for (var i = 0; i < numTargets; i++) {
-					list[i].call(this, event);
+					if (list[i]) list[i].call(this, event);
 				}
 			}
 		});

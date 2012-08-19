@@ -300,6 +300,10 @@ new Namespace(namespace_lib_core).use(function() {
 			return this.operations.pop();
 		})
 		
+		def(function clear() {
+			this.operations = [];
+		})
+		
 		/**
 		* 一連の操作シーケンスをスタックに追加された順で実行します.
 		*/
@@ -357,7 +361,7 @@ new Namespace(namespace_lib_core).use(function() {
 		* 記録した操作をすべて消去します.
 		*/
 		def(function clear() {
-			this.opq = null;
+			this.opq.clear();
 		})
 	})
 	

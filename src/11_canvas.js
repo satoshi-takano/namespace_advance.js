@@ -185,10 +185,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 			
 		})
 		
-		def(function clear() {
-
-		})
-		
 		/**
 		* 曲線を描画します.
 		* @param cpx {Number} コントロールポイントの x 値　
@@ -296,6 +292,18 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.rec(nscore.Operation.gen(this, ctxDrawImage, [img, x, y]));
 			updateBound.call(this, x + img.width, y + img.height);
 		})
+		
+		def(function setFormat(formatString) {
+			this.rec(nscore.Operation.gen(this, ctxSetFormat, [formatString]));
+			this.currentFormat = formatString;
+		})
+		
+		def(function getTextMetrics(text) {
+			var c = this.context;
+			c.font = this.currentFormat;
+			return c.measureText(text);
+		})
+		
 		
 		/**
 		* 指定座標にテキストを描画します
@@ -417,6 +425,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var gx = this.getGlobalX();
 			var gy = this.getGlobalY();
 			this.context.drawImage(img, x + gx, y + gy);
+		}
+		
+		function ctxSetFormat(formatString) {
+			this.context.font = formatString;
 		}
 		
 		function ctxDrawText(text, x, y) {

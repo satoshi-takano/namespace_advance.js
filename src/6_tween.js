@@ -62,6 +62,7 @@ new Namespace(namespace_lib_tween).use(function() {
 		init(function (delay) {
 			this.delay = delay;
 			this.next = null;
+			this.fps = 60;
 		});
 		
 		/**
@@ -94,12 +95,22 @@ new Namespace(namespace_lib_tween).use(function() {
 					}
 					if (target.rendering) target.rendering();
 					cnt++;
-				}, 1000 / 60);
+				}, 1000 / self.fps);
 			}, this.delay);
 			this.next = ns.Animator.gen(this.delay + 1000 / 60 * step);
 			
 			return this;
 		});
+		
+		def(function update(func) {
+			this.upFunc = func;
+		})
+		
+		def(function complete(func) {
+			this.cbFunc = func;
+		})
+		
+		
 	});
 	
 	
