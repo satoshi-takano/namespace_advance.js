@@ -329,6 +329,12 @@ new Namespace(namespace_lib_geom).use(function() {
 	 */
 	 proto(function Matrix() {
 	 	init(function (a, b, c, d, tx, ty) {
+			if (a == undefined) a = 1, b = 0, c = 0, d = 1, tx = 0, ty = 0;
+			else if (b == undefined) b = 0, c = 0, d = 1, tx = 0, ty = 0;
+			else if (c == undefined) c = 0, d = 1, tx = 0, ty = 0;
+			else if (d == undefined) d = 1, tx = 0, ty = 0;
+			else if (tx == undefined) tx = 0, ty = 0;
+			else if (ty == undefined) ty = 0;
 	 		this.a = a;
 	 		this.b = b;
 	 		this.c = c;
@@ -349,7 +355,7 @@ new Namespace(namespace_lib_geom).use(function() {
 	 	* 乗算します.
 	 	* @param m {Matrix}
 	 	*/
-	 	def(function cancat(m) {
+	 	def(function concat(m) {
 	 		var a = this.a, b = this.b, c = this.c, d = this.d, tx = this.tx, ty = this.ty;	
 			this.a = a * m.a + c * m.b;
 			this.c = a * m.c + c * m.d;

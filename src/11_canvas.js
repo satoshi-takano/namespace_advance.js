@@ -29,6 +29,8 @@ THE SOFTWARE.
 new Namespace(namespace_lib_canvas).use(function () {
 	var ns = this;
 	var nscore = new Namespace(namespace_lib_core);
+	var nsevent = new Namespace(namespace_lib_events);
+	var nsgeom = new Namespace(namespace_lib_geom);
 	
 	if (global.CanvasRenderingContext2D && 
 	    !CanvasRenderingContext2D.prototype.createImageData && 
@@ -459,6 +461,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 
 			this.visible = true;
 			this.alpha = 1;
+			this._rotation = 0;
+			this._matrix = nsgeom.Matrix.gen();
 		})
 		
 		/**
@@ -470,13 +474,14 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var sY = this.scaleY;
 			var offsetX = this.globalX;
 			var offsetY = this.globalY;
-			if (sX != 1 || sY != 1) {
-				c.setTransform(sX, 0, 0, sY, -offsetX * sX, -offsetY * sY);
+			
+			if (1) {
+				c.setTransform(this._matrix.a, this._matrix.b, this._matrix.c, this._matrix.d, -offsetX * sX, -offsetY * sY);
 				c.translate(offsetX / sX, offsetY / sY);
 			}
+			
 			if (this.visible) this._g.playback();
-			if (sX != 1 || sY != 1) {
-				
+			if (1) {
 				c.setTransform(1, 0, 0, 1, 0, 0);
 			}
 		})
@@ -497,13 +502,29 @@ new Namespace(namespace_lib_canvas).use(function () {
 		getter("scaleX", function() {
 			return this._sx * (this.parent ? this.parent.scaleX : 1);
 		})
-		setter("scaleX", function(val) {this._sx = val})
+		setter("scaleX", function(val) {
+			this._matrix.concat(nsgeom.Matrix.gen(val, 0, 0, 1))
+			this.graphics.boundWidth *= val;
+			this._sx = val;
+		})
 		/** y scale. [read-write] */
 		getter("scaleY", function() {
 			return this._sy * (this.parent ? this.parent.scaleY : 1);
 		})
-		setter("scaleY", function(val) {this._sx = val})
+		setter("scaleY", function(val) {
+			this._matrix.concat(nsgeom.Matrix.gen(1, 0, 0, val))
+			this.graphics.boundHeight *= val;
+			this._sy = val;
+		})
 		
+		/** rotation. [read-write] */
+		getter("rotation", function() {
+			return this._rotation;
+		})
+		setter("rotation", function(rot) {
+			this._matrix.rotate(rot * Math.PI / 180);
+			this._rotation = rot;
+		})
 		
 		getter("globalX", function() {
 			if (this.parent == undefined) return 0;
@@ -614,6 +635,9 @@ new Namespace(namespace_lib_canvas).use(function () {
 				return;
 			}
 			
+			context.textBaseline = "top"
+			context.textAlign = "left";
+			
 			this.context = context;
 			this.w = canvas.width;
 			this.h = canvas.height;
@@ -638,5 +662,141 @@ new Namespace(namespace_lib_canvas).use(function () {
 		getter("stageHeight", function() {return this.h});
 	})
 	
+	/**
+	* @class Text
+	**/
+	proto(function Text() {
+		ex(ns.DisplayObject);
+		
+		init(function() {
+			this.$super();
+			this._text = "";
+			this._fontFamily = "_sans";
+			this._fontSize = 12;
+			this._bold = false;
+			this._italic = false;
+			this._color = 0x000000;
+			this._lock = false;
+		})
+		
+		def(function lock() {
+			this._lock = true;
+		})
+		
+		def(function unlock() {
+			this._lock = false;
+		})
+		
+		def(function applyFormat() {
+			this.graphics.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
+		})
+		
+		getter("text", function() {
+			return this._text;
+		})
+		setter("text", function(txt) {
+			this.graphics.drawText(txt, this.x, this.y);
+			this._text = txt;
+		})
+		
+		getter("fontSize", function() {return this._fontSize});
+		setter("fontSize", function(size) {
+			this._fontSize = size;
+		})
+		
+		getter("fontFamily", function() {
+			return this._fontFamily;
+		})
+		setter("fontFamily", function(fam) {
+			this._fontFamily = fam;
+		})
+		
+		getter("bold", function() {return this._bold});
+		setter("bold", function(val) {
+			this._bold = val;
+		})
+		
+		getter("italic", function() {return this._italic});
+		setter("italic", function(val) {
+			this._italic = val;
+		})
+		
+		getter("color", function() {return this._color});
+		setter("color", function(val) {
+			this._color = val;
+			this.graphics.beginFill(val);
+		})
+		
+		function formatString(family, size, bold, italic) {
+			return bold ? "bold " : ""  + size + " " + family;
+		}
+	})
+	
+	/**
+	* @class Image
+	**/
+	proto(function Image() {
+		ex(ns.DisplayObject)
+		
+		init(function(imageElement) {
+			this.$super();
+			this._imageElement = imageElement;
+			this.graphics.drawImage(this._imageElement, 0, 0)
+		})
+	})
+	
+	
+	/**
+	* @class ImageManager
+	**/
+	singleton(function ImageManager() {
+		ex(nsevent.EventDispatcher);
+		
+		init(function() {
+			this.cache = {};
+		})
+		
+		def(function load(resourcePaths) {
+			if (this.nowLoading) {
+				console.warn("ImageManager \"load\" has currently working")
+				return;
+			}
+
+			var l = resourcePaths.length;
+			this._nowLoading = true;
+			this._currentToLoadCount = l;
+			this._currentLoadedCount = 0;
+			
+			l.times(function(i) {
+				var img = new Image();
+				img.src = resourcePaths[i];
+				img.onload = this.onLoadAImage;
+			}, this)
+		})
+		
+		def(function onLoadAImage(e) {
+			var _this = ns.ImageManager.getInstance();
+			var img = e.currentTarget;
+			img.onload = null;
+			var name = /:\/\/.*?(\/.*)/g.exec(img.src)[1];
+			_this.cache[name] = img;
+			if (_this._currentLoadedCount == _this._currentToLoadCount - 1) {
+				_this._nowLoading = false;
+				_this.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLEvent.COMPLETE));
+				_this._currentToLoadCount = 0;
+				_this._currentLoadedCount = 0;
+			}
+		})
+		
+		
+		def(function getImageByName(name) {
+			return this.cache[name];
+		})
+		
+		def(function del(name) {
+			delete this.cache[name];
+		})
+		
+	})
 	
 })

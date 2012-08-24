@@ -17,19 +17,14 @@
 <script type="text/javascript" src="../src/11_canvas.js"></script>
 <script type="text/javascript" src="../src/12_math.js"></script>
 
-<canvas id="world" width='300' height='300'>
+<canvas id="world" width='1024' height='768'>
 </canvas>
-
-<canvas id="world2" width='300' height='300'>
-</canvas>
-<img src="../../../../../Desktop/86159862.jpg" width="100" height="73" alt="86159862" id="img" style="visibility:hidden"/>
 
 <script type="text/javascript">
 new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	var ns = new Namespace(namespace_lib_canvas);
 	
 	createWorld("world");
-	//createWorld("world2");
 	
 	function createWorld(name) {
 		var stage = ns.Stage.gen(document.getElementById(name));
@@ -37,65 +32,44 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		var container = ns.DisplayObjectContainer.gen();
 		stage.addChild(container);
 		container.graphics.beginFill(0x999999);
-		container.graphics.drawRect(0, 0, 300, 300);
-
-		var spA = ns.DisplayObjectContainer.gen();
-		container.addChild(spA)
-		spA.graphics.beginFill(0x333333);
-		spA.graphics.drawRect(0, 0, 100, 100);
-		spA.graphics.beginFill(0x6666ff)
-		spA.graphics.drawRect(10, 10, 10, 10);
-		spA.graphics.drawRect(80, 10, 10, 10);
-		spA.graphics.drawRect(80, 80, 10, 10);
-		spA.graphics.drawRect(10, 80, 10, 10);
-		spA.x = (stage.stageWidth - 100) / 2;
-		spA.y = (stage.stageHeight - 100) / 2;
-		spA.graphics.endFill();
-
-		var spB = ns.DisplayObject.gen();
-		container.addChild(spB);
-		spB.graphics.lineStyle(5, 0);
-		spB.graphics.moveTo(0, 0);
-		spB.graphics.lineTo(30, 30);
-		spB.graphics.moveTo(30, 0);
-		spB.graphics.lineTo(0, 30);
-		spB.graphics.endFill();
-		spB.x = (stage.stageWidth) / 2 - 15;
-		spB.y = (stage.stageHeight) / 2 -15;
+		container.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+		container.graphics.endFill()
 		
-		var spC = ns.DisplayObject.gen();
-		container.addChildAt(spC, 1);
-		spC.graphics.beginFill(0xff6666);
-		spC.graphics.drawCircle(0, 0, 30);
-		spC.x = (stage.stageWidth) / 2;
-		spC.y = (stage.stageHeight) / 2;
-		spC.graphics.endFill();
-
-		var spD = ns.DisplayObjectContainer.gen();
-		container.addChildAt(spD, 0);
-		spD.graphics.lineStyle(2, 0xff0000)
-		spD.graphics.beginFill(0xffffff);
-		spD.graphics.drawCircle(0, 0, 10);
-		spD.graphics.endFill();
-
-		var photo = ns.DisplayObject.gen();
-		var img = document.getElementById("img");
-		photo.graphics.drawImage(img, 0, 0);
-		spD.addChild(photo);
+		var text = ns.Text.gen();
+		container.addChild(text);
 		
-		container.graphics.context.font = "38px Helvetica";
-		container.graphics.beginFill(0xff0000);
-		container.graphics.lineStyle(1, 0xffffff);
-		container.graphics.drawText("alsdfj", 0, stage.stageHeight - 5, 0xff0000, 0xffffff);
-
-		var dtor = Math.PI / 180;
-		(60 * 1000000).frames(function (i) {
-			var tx = stage.stageWidth / 2 + 100 * Math.cos(i * dtor);
-			var ty = stage.stageHeight / 2 + 100 * Math.sin(i * dtor);
-			spD.x = tx;
-			spD.y = ty;
+		var im = ns.ImageManager.getInstance();
+		im.load(["/smaple/img/travel/area_12.png"]);
+		im.addEventListener('complete', function(e) {
+			var img = ns.Image.gen(im.getImageByName("/smaple/img/travel/area_12.png"));
+			container.addChild(img)
+			
+			img.scaleX = 0.5;
+			img.scaleY = 0.5;
+			img.rotation = 20;
+			
+			
+			var text = ns.Text.gen();
+			
+			container.addChild(text);
+			text.text= "hoge"
+			text.fontFamily = "Helvetica";
+			text.color = 0xff0000;
+			text.fontSize = "30";
+			text.applyFormat();
+			
 			stage.draw();
+			
+			var nsa = new Namespace(namespace_lib_tween);
+			var values = nsa.Interpolator.gen(-img.width, 0, 120, nsa.Expo.easeInOut).values;
+			setInterval(function() {
+				if (values.length) img.x = values.shift();
+				stage.draw();
+			}, 1000 / 60)
 		})
+		
+		
+		
 		stage.draw();
 	}
 });
