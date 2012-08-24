@@ -221,6 +221,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		*/
 		def(function drawRect(x, y, w, h) {
 			this.rec(nscore.Operation.gen(this, ctxFillRect, [x, y, w, h]));
+			updateBound.call(this, x + w, y + h);
 		})
 		
 		def(function drawRoundRect(x, y, w, h, ellipseW, ellipseH) {
@@ -380,7 +381,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var gy = this.getGlobalY();
 			var c = this.context;
 			c.beginPath();
-			this.context.fillRect(x + gx, y + gy, w, h);
+			this.context.fillRect(gx, gy, w, h);
 			c.closePath();
 		}
 		
@@ -444,6 +445,12 @@ new Namespace(namespace_lib_canvas).use(function () {
 			if (this.boundWidth < x) this.boundWidth = x;
 			if (this.boundHeight < y) this.boundHeight = y;
 		}
+		// member
+		def(function updateBound(w, h) {
+			if (this.boundWidth < x) this.boundWidth = x;
+			if (this.boundHeight < y) this.boundHeight = y;
+		})
+		
 	})
 	
 	/**
@@ -462,7 +469,14 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.visible = true;
 			this.alpha = 1;
 			this._rotation = 0;
-			this._matrix = nsgeom.Matrix.gen();
+		})
+		
+		def(function addedToStage() {
+
+		})
+		
+		def(function removeFromStage() {
+
 		})
 		
 		/**
@@ -470,13 +484,13 @@ new Namespace(namespace_lib_canvas).use(function () {
 		*/
 		def(function draw() {
 			var c = this._g.context;
-			var sX = this.scaleX;
-			var sY = this.scaleY;
+			var sX = this.globalScaleX;
+			var sY = this.globalScaleY;
 			var offsetX = this.globalX;
 			var offsetY = this.globalY;
 			
 			if (1) {
-				c.setTransform(this._matrix.a, this._matrix.b, this._matrix.c, this._matrix.d, -offsetX * sX, -offsetY * sY);
+				c.setTransform(sX, 0, 0, sY, -offsetX * sX, -offsetY * sY);
 				c.translate(offsetX / sX, offsetY / sY);
 			}
 			
@@ -487,34 +501,38 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		/** x 座標. [read-write] */
-		getter("x", function() {return this._mx})
+		getter("x", function() {return this._mx * this._sx})
 		setter("x", function(val) {this._mx = val;})
 		/** y 座標. [read-write] */
-		getter("y", function() {return this._my})
+		getter("y", function() {return this._my * this._sy})
 		setter("y", function(val) {this._my = val})
 		
 		/** 幅. [read-only] */
-		getter("width", function() {return this._g.boundWidth})
+		getter("width", function() {return this._g.boundWidth * this._sx})
 		/** 高さ. [read-only] */
-		getter("height", function() {return this._g.boundHeight})
+		getter("height", function() {return this._g.boundHeight * this._sy})
 		
 		/** x scale. [read-write] */
 		getter("scaleX", function() {
-			return this._sx * (this.parent ? this.parent.scaleX : 1);
+			return this._sx;
 		})
 		setter("scaleX", function(val) {
-			this._matrix.concat(nsgeom.Matrix.gen(val, 0, 0, 1))
 			this.graphics.boundWidth *= val;
 			this._sx = val;
 		})
+		getter("globalScaleX", function() {
+			return this._sx * (this.parent ? this.parent.globalScaleX : 1);
+		})
 		/** y scale. [read-write] */
 		getter("scaleY", function() {
-			return this._sy * (this.parent ? this.parent.scaleY : 1);
+			return this._sy;
 		})
 		setter("scaleY", function(val) {
-			this._matrix.concat(nsgeom.Matrix.gen(1, 0, 0, val))
 			this.graphics.boundHeight *= val;
 			this._sy = val;
+		})
+		getter("globalScaleY", function() {
+			return this._sy * (this.parent ? this.parent.globalScaleY : 1);
 		})
 		
 		/** rotation. [read-write] */
@@ -522,17 +540,16 @@ new Namespace(namespace_lib_canvas).use(function () {
 			return this._rotation;
 		})
 		setter("rotation", function(rot) {
-			this._matrix.rotate(rot * Math.PI / 180);
 			this._rotation = rot;
 		})
 		
 		getter("globalX", function() {
-			if (this.parent == undefined) return 0;
+			if (this.parent == undefined) return this._mx;
 			return this._mx + this.parent.globalX;
 		})
 		getter("globalY", function() {
-			if (this.parent == undefined) return 0;
-			return this._my + this.parent.globalY;
+			if (this.parent == undefined) return this._my;
+			return this._my +  this.parent.globalY;
 		})
 		/** このオブジェクトの属するステージへの参照. [read-only] */
 		getter("stage", function () {
@@ -566,7 +583,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 			}, this);
 			this.children.push(child);
 			child.parent = this;
-			child._stg = this._stg;
+			if (this._stg) {
+				child._stg = this._stg;
+				child.addedToStage();
+			}
 		})
 		
 		/**
@@ -584,7 +604,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 			left.push(child);
 			this.children = left.concat(right);
 			child.parent = this;
-			child._stg = this._stg;
+			if (this._stg) {
+				child._stg = this._stg;
+				child.addedToStage();
+			}
 		})
 		
 		/**
@@ -596,6 +619,9 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.children.each(function (c) {
 				if (c == child) {
 					this.children.splice(i, 1);
+					child._stg = null;
+					child.parent = null;
+					child.removeFromStage();
 					return 0;
 				}
 				i++;
@@ -610,10 +636,52 @@ new Namespace(namespace_lib_canvas).use(function () {
 			}, this)
 		})
 		
+		def(function addedToStage() {
+			this.$super();
+			
+			var children = this.children;
+			for (var i = 0, l = this.numChildren; i < l; i++) {
+				var child = children[i];
+				child._stg = this._stg;
+				child.addedToStage();
+			}
+		})
+		
+		def(function removeFromStage() {
+			for (var i = 0, l = this.numChildren; i < l; i++) {
+				var child = this.children[i];
+				child.removeFromStage();
+				child._stg = null;
+			}
+		})
+		
+		
 		/** 
 		* このDisplayObjectContainerの子である表示オブジェクトの数.　[read-only]
 		*/
-		getter("numChildren", function() {return this.children.length;})
+		getter("numChildren", function() {return this.children.length;});
+		
+		getter("width", function() {
+			var w = 0;
+			var children = this.children;
+			var s = this._sx;
+			for (var i = 0, l = children.length; i < l; i++) {
+				var child = children[i];
+				w = Math.max(child.x + child.width * s, w);
+			}
+			return w;
+		})
+		
+		getter("height", function() {
+			var h = 0;
+			var children = this.children;
+			var s = this._sy;
+			for (var i = 0, l = children.length; i < l; i++) {
+				var child = children[i];
+				h = Math.max(child.x + child.height * s, h);
+			}
+			return h;
+		})
 	})
 	
 	/**
@@ -646,7 +714,13 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		
 		def(function addChild(child) {
-			this.$super(child);
+			this.numChildren.times(function (i) {
+				if (this.children[i] == child) this.children.splice(i, 1);
+			}, this);
+			this.children.push(child);
+			child.parent = this;
+			child._stg = this._stg;
+			child.addedToStage();
 		})
 		
 		// draw {replace the description here}.
@@ -741,8 +815,34 @@ new Namespace(namespace_lib_canvas).use(function () {
 		init(function(imageElement) {
 			this.$super();
 			this._imageElement = imageElement;
-			this.graphics.drawImage(this._imageElement, 0, 0)
+			this.graphics.drawImage(this._imageElement, this.globalX, this.globalY);
 		})
+		
+		getter("scaleX", function() {
+			return this._sx;
+		})
+		setter("scaleX", function(val) {
+			this.graphics.boundWidth *= val;
+			this._sx = val;
+			this.graphics.clear();
+			this.graphics.drawImage(this._imageElement, this.x, this.y, this.globalScaleX, this.globalScaleY);
+		})
+		getter("scaleY", function() {
+			return this._sy;
+		})
+		setter("scaleY", function(val) {
+			this.graphics.boundHeight *= val;
+			this._sy = val;
+			this.graphics.clear()
+			this.graphics.drawImage(this._imageElement, this.x, this.y, this.globalScaleX, this.globalScaleY);
+		})
+		
+		def(function addedToStage() {
+			this.$super();
+			this.graphics.clear();
+			this.graphics.drawImage(this._imageElement, this.x, this.y, this.globalScaleX, this.globalScaleY);
+		})
+		
 	})
 	
 	

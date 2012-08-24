@@ -37,20 +37,39 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		
 		var text = ns.Text.gen();
 		container.addChild(text);
+		stage.draw();
 		
 		var im = ns.ImageManager.getInstance();
 		im.load(["/smaple/img/travel/area_12.png"]);
 		im.addEventListener('complete', function(e) {
 			var img = ns.Image.gen(im.getImageByName("/smaple/img/travel/area_12.png"));
-			container.addChild(img)
+			var sprite = ns.DisplayObjectContainer.gen();
+			var spsp = ns.DisplayObjectContainer.gen();
+			spsp.addChild(sprite)
+			
+			container.addChild(spsp)
+			
+			spsp.scaleX = 0.5;
+			spsp.scaleY = 0.5;
+			
+			sprite.scaleX = 0.5;
+			sprite.scaleY = 0.5;
 			
 			img.scaleX = 0.5;
 			img.scaleY = 0.5;
-			img.rotation = 20;
+			var re = ns.DisplayObject.gen();
+			re.graphics.beginFill(0)
+
+			sprite.addChild(img);
+
+			re.graphics.drawRect(0, 0, 3500, 100)
+//			sprite.addChild(re);
 			
+			spsp.x = (stage.stageWidth - spsp.width) * 0.5
+			spsp.y = (stage.stageHeight - spsp.height) * 0.5
 			
 			var text = ns.Text.gen();
-			
+
 			container.addChild(text);
 			text.text= "hoge"
 			text.fontFamily = "Helvetica";
@@ -59,7 +78,7 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 			text.applyFormat();
 			
 			stage.draw();
-			
+			return;
 			var nsa = new Namespace(namespace_lib_tween);
 			var values = nsa.Interpolator.gen(-img.width, 0, 120, nsa.Expo.easeInOut).values;
 			setInterval(function() {
@@ -70,7 +89,7 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		
 		
 		
-		stage.draw();
+		
 	}
 });
 
