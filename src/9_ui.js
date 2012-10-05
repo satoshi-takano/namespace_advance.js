@@ -1,5 +1,5 @@
 /* =====================================================
-Copyright (c) 2012 Satoshi Takano (ikke.co)
+Copyright (c) 2012 Satoshi Takano
 
 The MIT License
 
