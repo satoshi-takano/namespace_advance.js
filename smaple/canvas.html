@@ -43,31 +43,31 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		im.load(["/Users/satoshitakano/PKPass/starbucks_sample/background.png"]);
 		im.addEventListener('complete', function(e) {
 			var img = ns.Image.gen(im.getImageByName("/Users/satoshitakano/PKPass/starbucks_sample/background.png"));
-			// img = ns.DisplayObject.gen();
-			// 			img.graphics.beginFill(0);
-			// 			img.graphics.drawRect(0, 0, 100, 100);
+			img = ns.DisplayObject.gen();
+			 			img.graphics.beginFill(0);
+			 			img.graphics.drawRect(0, 0, 100, 100);
 			var sprite = ns.DisplayObjectContainer.gen();
 			var spsp = ns.DisplayObjectContainer.gen();
 			spsp.addChild(sprite)
 			
 			container.addChild(spsp)
 			
-			spsp.scaleX = 0.5;
-			 			spsp.scaleY = 0.5;
-			// 			
-			 			 sprite.scaleX = 0.5;
-			 			 	 			sprite.scaleY = 0.5;
-			// 			
-			 			img.scaleX = 0.5;
-			 			img.scaleY = 0.5;
+			 spsp.scaleX = 0.5;
+			 			 			spsp.scaleY = 0.5;
+			// 			// 			
+			// 			 			 sprite.scaleX = 0.5;
+			// 			 			 	 			sprite.scaleY = 0.5;
+			// 			// 			
+			 			 			img.scaleX = 0.5;
+			 			 			img.scaleY = 0.5;
 			var re = ns.DisplayObject.gen();
 			re.graphics.beginFill(0)
 
 			sprite.addChild(img);
-
+sprite.rotation = 45;
 			re.graphics.drawRect(0, 0, 3500, 100)
 //			sprite.addChild(re);
-			img.rotation = 4
+			img.rotation = 45;
 			img.x = 100;
 			
 			var text = ns.Text.gen();

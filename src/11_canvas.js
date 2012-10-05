@@ -484,16 +484,19 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var sy = this.scaleY;
 			var rsx = 1 / sx;
 			var rsy = 1 / sy;
-			var x = this._mx * (1/sx);
-			var y = this._my * (1/sy);
+			var x = this._mx;
+			var y = this._my;
+			var rot = this.rotation * Math.PI / 180;
 			
-			c.scale(sx, sy);
 			c.translate(x, y);
+			c.scale(sx, sy);
+			c.rotate(rot);
 			
 			if (this.visible) this._g.playback();
 			
-			c.translate(-x, -y);
+			c.rotate(-rot);
 			c.scale(rsx, rsy);
+			c.translate(-x, -y);
 		})
 		
 		/** x 座標. [read-write] */
@@ -631,19 +634,21 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var sy = this.scaleY;
 			var rsx = 1 / sx;
 			var rsy = 1 / sy;
-			var x = this._mx * (1/sx);
-			var y = this._my * (1/sy);
-			
-			c.scale(sx, sy);
+			var x = this._mx;
+			var y = this._my;
+			var r = this.rotation * Math.PI / 180;
 			c.translate(x, y);
+			c.scale(sx, sy);
+			c.rotate(r);
 			
 			if (this.visible) this._g.playback();
 			this.numChildren.times(function (i) {
 				this.children[i].draw();
 			}, this)
 			
-			c.translate(-x, -y);
+			c.rotate(-r);
 			c.scale(rsx, rsy);
+			c.translate(-x, -y);
 		})
 		
 		def(function addedToStage() {
@@ -871,7 +876,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 				_this._currentLoadedCount = 0;
 			}
 		})
-		
 		
 		def(function getImageByName(name) {
 			return this.cache[name];
