@@ -316,9 +316,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 		*/
 		def(function drawText(text) {
 			this.rec(nscore.Operation.gen(this, ctxDrawText, [text]));
-			var c = this.context;
-			var metrics = c.measureText(text);
-			updateBound.call(this, metrics.widht, 0);
 		})
 		
 		
@@ -433,8 +430,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 		}
 		
 		function ctxDrawText(text) {
-				this.context.fillText(text, 0, 0);
-				this.context.strokeText(text, 0, 0);
+			var c = this.context;
+			c.fillText(text, 0, 0);
+			c.strokeText(text, 0, 0);
+			var metrics = c.measureText(text);
+			updateBound.call(this, metrics.width, 0);
 		}
 		
 		function updateBound(x, y) {
@@ -777,13 +777,19 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		def(function applyFormat() {
+			this.graphics.clear();
+			this.graphics.beginFill(this._color);
 			this.graphics.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
+			this.graphics.drawText(this._text);
 		})
 		
 		getter("text", function() {
 			return this._text;
 		})
 		setter("text", function(txt) {
+			this.graphics.clear();
+			this.graphics.beginFill(this._color);
+			this.graphics.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
 			this.graphics.drawText(txt);
 			this._text = txt;
 		})
@@ -813,11 +819,15 @@ new Namespace(namespace_lib_canvas).use(function () {
 		getter("color", function() {return this._color});
 		setter("color", function(val) {
 			this._color = val;
-			this.graphics.beginFill(val);
+		})
+		
+		getter("width", function() {
+			console.log(this.graphics.context.font);
+			return this.graphics.boundWidth;
 		})
 		
 		function formatString(family, size, bold, italic) {
-			return bold ? "bold " : ""  + size + " " + family;
+			return bold ? "bold " : ""  + size + "px " + family;
 		}
 	})
 	
