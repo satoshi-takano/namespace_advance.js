@@ -40,9 +40,12 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		stage.draw();
 		
 		var im = ns.ImageManager.getInstance();
-		im.load(["/smaple/img/travel/area_12.png"]);
+		im.load(["/Users/satoshitakano/PKPass/starbucks_sample/background.png"]);
 		im.addEventListener('complete', function(e) {
-			var img = ns.Image.gen(im.getImageByName("/smaple/img/travel/area_12.png"));
+			var img = ns.Image.gen(im.getImageByName("/Users/satoshitakano/PKPass/starbucks_sample/background.png"));
+			// img = ns.DisplayObject.gen();
+			// 			img.graphics.beginFill(0);
+			// 			img.graphics.drawRect(0, 0, 100, 100);
 			var sprite = ns.DisplayObjectContainer.gen();
 			var spsp = ns.DisplayObjectContainer.gen();
 			spsp.addChild(sprite)
@@ -50,13 +53,13 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 			container.addChild(spsp)
 			
 			spsp.scaleX = 0.5;
-			spsp.scaleY = 0.5;
-			
-			sprite.scaleX = 0.5;
-			sprite.scaleY = 0.5;
-			
-			img.scaleX = 0.5;
-			img.scaleY = 0.5;
+			 			spsp.scaleY = 0.5;
+			// 			
+			 			 sprite.scaleX = 0.5;
+			 			 	 			sprite.scaleY = 0.5;
+			// 			
+			 			img.scaleX = 0.5;
+			 			img.scaleY = 0.5;
 			var re = ns.DisplayObject.gen();
 			re.graphics.beginFill(0)
 
@@ -64,19 +67,20 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 
 			re.graphics.drawRect(0, 0, 3500, 100)
 //			sprite.addChild(re);
-			
-			spsp.x = (stage.stageWidth - spsp.width) * 0.5
-			spsp.y = (stage.stageHeight - spsp.height) * 0.5
+			img.rotation = 4
+			img.x = 100;
 			
 			var text = ns.Text.gen();
 
-			container.addChild(text);
+			spsp.addChild(text);
 			text.text= "hoge"
 			text.fontFamily = "Helvetica";
 			text.color = 0xff0000;
 			text.fontSize = "30";
 			text.applyFormat();
+			text.x = 100;
 			
+			stage.draw();
 			stage.draw();
 			return;
 			var nsa = new Namespace(namespace_lib_tween);

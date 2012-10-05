@@ -291,9 +291,9 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param x {Number} 
 		* @param y {Number}
 		*/
-		def(function drawImage(img, x, y) {
-			this.rec(nscore.Operation.gen(this, ctxDrawImage, [img, x, y]));
-			updateBound.call(this, x + img.width, y + img.height);
+		def(function drawImage(img) {
+			this.rec(nscore.Operation.gen(this, ctxDrawImage, [img]));
+			updateBound.call(this, img.width, img.height);
 		})
 		
 		def(function setFormat(formatString) {
@@ -314,11 +314,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param x {Number}
 		* @param y {Number}
 		*/
-		def(function drawText(text, x, y) {
-			this.rec(nscore.Operation.gen(this, ctxDrawText, [text, x, y]));
+		def(function drawText(text) {
+			this.rec(nscore.Operation.gen(this, ctxDrawText, [text]));
 			var c = this.context;
 			var metrics = c.measureText(text);
-			updateBound.call(this, x + metrics.widht, y);
+			updateBound.call(this, metrics.widht, 0);
 		})
 		
 		
@@ -381,7 +381,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var gy = this.getGlobalY();
 			var c = this.context;
 			c.beginPath();
-			this.context.fillRect(gx, gy, w, h);
+			this.context.fillRect(0, 0, w, h);
 			c.closePath();
 		}
 		
@@ -424,21 +424,17 @@ new Namespace(namespace_lib_canvas).use(function () {
 			if (this.needStroke) c.stroke();
 		}
 		
-		function ctxDrawImage(img, x, y) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			this.context.drawImage(img, x + gx, y + gy);
+		function ctxDrawImage(img) {
+			this.context.drawImage(img, 0, 0);
 		}
 		
 		function ctxSetFormat(formatString) {
 			this.context.font = formatString;
 		}
 		
-		function ctxDrawText(text, x, y) {
-				var gx = this.getGlobalX();
-				var gy = this.getGlobalY();
-				this.context.fillText(text, x + gx, y + gy);
-				this.context.strokeText(text, x + gx, y + gy);
+		function ctxDrawText(text) {
+				this.context.fillText(text, 0, 0);
+				this.context.strokeText(text, 0, 0);
 		}
 		
 		function updateBound(x, y) {
@@ -484,20 +480,20 @@ new Namespace(namespace_lib_canvas).use(function () {
 		*/
 		def(function draw() {
 			var c = this._g.context;
-			var sX = this.globalScaleX;
-			var sY = this.globalScaleY;
-			var offsetX = this.globalX;
-			var offsetY = this.globalY;
+			var sx = this.scaleX;
+			var sy = this.scaleY;
+			var rsx = 1 / sx;
+			var rsy = 1 / sy;
+			var x = this._mx * (1/sx);
+			var y = this._my * (1/sy);
 			
-			if (1) {
-				c.setTransform(sX, 0, 0, sY, -offsetX * sX, -offsetY * sY);
-				c.translate(offsetX / sX, offsetY / sY);
-			}
+			c.scale(sx, sy);
+			c.translate(x, y);
 			
 			if (this.visible) this._g.playback();
-			if (1) {
-				c.setTransform(1, 0, 0, 1, 0, 0);
-			}
+			
+			c.translate(-x, -y);
+			c.scale(rsx, rsy);
 		})
 		
 		/** x 座標. [read-write] */
@@ -630,10 +626,24 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		// draw {replace the description here}.
 		def(function draw() {
-			this.$super();
+			var c = this._g.context;
+			var sx = this.scaleX;
+			var sy = this.scaleY;
+			var rsx = 1 / sx;
+			var rsy = 1 / sy;
+			var x = this._mx * (1/sx);
+			var y = this._my * (1/sy);
+			
+			c.scale(sx, sy);
+			c.translate(x, y);
+			
+			if (this.visible) this._g.playback();
 			this.numChildren.times(function (i) {
 				this.children[i].draw();
 			}, this)
+			
+			c.translate(-x, -y);
+			c.scale(rsx, rsy);
 		})
 		
 		def(function addedToStage() {
@@ -769,7 +779,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			return this._text;
 		})
 		setter("text", function(txt) {
-			this.graphics.drawText(txt, this.x, this.y);
+			this.graphics.drawText(txt);
 			this._text = txt;
 		})
 		
@@ -815,34 +825,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 		init(function(imageElement) {
 			this.$super();
 			this._imageElement = imageElement;
-			this.graphics.drawImage(this._imageElement, this.globalX, this.globalY);
+			this.graphics.drawImage(this._imageElement);
 		})
-		
-		getter("scaleX", function() {
-			return this._sx;
-		})
-		setter("scaleX", function(val) {
-			this.graphics.boundWidth *= val;
-			this._sx = val;
-			this.graphics.clear();
-			this.graphics.drawImage(this._imageElement, this.x, this.y, this.globalScaleX, this.globalScaleY);
-		})
-		getter("scaleY", function() {
-			return this._sy;
-		})
-		setter("scaleY", function(val) {
-			this.graphics.boundHeight *= val;
-			this._sy = val;
-			this.graphics.clear()
-			this.graphics.drawImage(this._imageElement, this.x, this.y, this.globalScaleX, this.globalScaleY);
-		})
-		
-		def(function addedToStage() {
-			this.$super();
-			this.graphics.clear();
-			this.graphics.drawImage(this._imageElement, this.x, this.y, this.globalScaleX, this.globalScaleY);
-		})
-		
 	})
 	
 	
