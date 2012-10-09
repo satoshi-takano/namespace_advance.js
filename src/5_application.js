@@ -52,15 +52,18 @@ new Namespace(namespace_lib_app).use(function() {
 			var nscore = (new Namespace(namespace_lib_core));
 			var util = nscore.Utilitie.gen();
 			var isIE = this.userAgent.isIE();
+			var app = this;
+			this.canTrackMouse = false;
 			util.listen(document, isIE ? "onmousemove" : "mousemove", function(mouseMove) {
 				if (!isIE) {
-					this.mouseX = mouseMove.clientX;
-					this.mouseY = mouseMove.clientY;
+					app.mouseX = mouseMove.clientX;
+					app.mouseY = mouseMove.clientY;
 					if (document.body)	{ this.mouseY +=  document.body.scrollTop;}
 				} else {
-					this.mouseX = mouseMove.clientX;
-					this.mouseY = mouseMove.clientY + document.documentElement.scrollTop;
+					app.mouseX = mouseMove.clientX;
+					app.mouseY = mouseMove.clientY + document.documentElement.scrollTop;
 				}
+				if (app.canTrackMouse == false) app.canTrackMouse = true;
 			});
 			
 		});

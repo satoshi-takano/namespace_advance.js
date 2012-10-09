@@ -454,8 +454,17 @@ new Namespace(namespace_lib_canvas).use(function () {
 	* 
 	**/
 	proto(function DisplayObject() {
+		ex(nsevent.EventDispatcher);
+		var _hitTestCtx;
+		
 		/** @memberOf DisplayObject */
 		init(function() {
+			this.$super();
+			
+			if (_hitTestCtx == null) {
+				_hitTestCtx = document.createElement("canvas").getContext("2d");
+			}
+			
 			//this.graphics = ns.Graphics.gen(ns.Stage.getInstance().context);
 			this._mx = 0, this._my = 0;
 			this._g = ns.Graphics.gen(this);
@@ -479,6 +488,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* 描画します.
 		*/
 		def(function draw() {
+			if (!this.visible || 0 == this.alpha) return;
+			
 			var c = this._g.context;
 			var sx = this.scaleX;
 			var sy = this.scaleY;
@@ -488,15 +499,28 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var y = this._my;
 			var rot = this.rotation * Math.PI / 180;
 			
+			
 			c.translate(x, y);
 			c.scale(sx, sy);
 			c.rotate(rot);
 			
-			if (this.visible) this._g.playback();
+			this.drawNest();
 			
 			c.rotate(-rot);
 			c.scale(rsx, rsy);
 			c.translate(-x, -y);
+		})
+		
+		def(function drawNest() {
+			this._g.playback();
+		})
+		
+		def(function getObjectsUnderPoints(x, y, results) {
+			var stg = this._stg;
+			var c = this.stage.context;
+			c.clearRect(0, 0, stg.stageWidth, stg.stageHeight);
+			this.draw();
+			if (c.getImageData(x, y, 1, 1).data[3]) results.push(this);
 		})
 		
 		/** x 座標. [read-write] */
@@ -627,28 +651,16 @@ new Namespace(namespace_lib_canvas).use(function () {
 			}, this);
 		})
 		
-		// draw {replace the description here}.
-		def(function draw() {
-			var c = this._g.context;
-			var sx = this.scaleX;
-			var sy = this.scaleY;
-			var rsx = 1 / sx;
-			var rsy = 1 / sy;
-			var x = this._mx;
-			var y = this._my;
-			var r = this.rotation * Math.PI / 180;
-			c.translate(x, y);
-			c.scale(sx, sy);
-			c.rotate(r);
-			
-			if (this.visible) this._g.playback();
+		def(function getChildAt(index) {
+			return this.children[index];
+		})
+		
+		
+		def(function drawNest() {
+			this.$super();
 			this.numChildren.times(function (i) {
 				this.children[i].draw();
 			}, this)
-			
-			c.rotate(-r);
-			c.scale(rsx, rsy);
-			c.translate(-x, -y);
 		})
 		
 		def(function addedToStage() {
@@ -670,6 +682,12 @@ new Namespace(namespace_lib_canvas).use(function () {
 			}
 		})
 		
+		def(function getObjectsUnderPoints(x, y, results) {
+			this.$super(x, y, results);
+			for (var i = 0, l = this.numChildren; i < l; i++) {
+				this.getChildAt(i).getObjectsUnderPoints(x, y, results);
+			}
+		})
 		
 		/** 
 		* このDisplayObjectContainerの子である表示オブジェクトの数.　[read-only]
@@ -717,7 +735,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 				console.error("Your browser hasn't support HTML5 Canvas.")
 				return;
 			}
-			
+			this.canvas = canvas;
 			context.textBaseline = "top"
 			context.textAlign = "left";
 			
@@ -725,8 +743,12 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.w = canvas.width;
 			this.h = canvas.height;
 			this._stg = this;
+			
+			this._mouseOverIntervalID = null;
+			this._objectsUnderPointer = [];
+			
+			this.enableMouseEvents();
 		})
-		
 		
 		def(function addChild(child) {
 			this.numChildren.times(function (i) {
@@ -749,6 +771,71 @@ new Namespace(namespace_lib_canvas).use(function () {
 		getter("stageWidth", function() {return this.w});
 		/** Stage の高さです. [read-only] */
 		getter("stageHeight", function() {return this.h});
+		
+		def(function disableMouseOver() {
+			clearinterval(this._mouseOverIntervalID);
+			this._mouseOverIntervalID = null;
+		})
+		
+		def(function enableMouseOver(freq) {
+			if (this._mouseOverIntervalID) return;
+			var self = this;
+			var app = new Namespace(namespace_lib_app).Application.getInstance();
+			var oup = this._objectsUnderPointer;
+			this._mouseOverIntervalID = setInterval(function() {
+				if (app.canTrackMouse) {
+					oup.splice(0, oup.length);
+					self.getObjectsUnderPoints(app.mouseX, app.mouseY, oup);
+					self.draw();
+					if (oup.length) {
+						console.log(oup[0],oup[1],oup[2])
+					}
+				}
+			}, 1000 / freq);
+		})
+		
+		def(function enableMouseEvents() {
+			var util = new Namespace(namespace_lib_core).Utilitie.gen();
+			var self = this;
+			var oup = self._objectsUnderPointer;
+			
+			util.listen(this.canvas, nsevent.DOMMouseEvent.CLICK, function(e) {
+				oup.splice(0, oup.length);
+				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
+				for (var i = 0, l = oup.length; i < l; i++) {
+					var o = oup[i];
+					if (o.hasEventListener(nsevent.FLMouseEvent.CLICK)) {
+						o.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLMouseEvent.CLICK, o));
+					}
+				}
+				self.draw();
+			})
+			
+			util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_DOWN, function(e) {
+				oup.splice(0, oup.length);
+				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
+				for (var i = 0, l = oup.length; i < l; i++) {
+					var o = oup[i];
+					if (o.hasEventListener(nsevent.FLMouseEvent.MOUSE_DOWN)) {
+						o.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLMouseEvent.MOUSE_DOWN, o));
+					}
+				}
+				self.draw();
+			})
+			
+			util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_UP, function(e) {
+				oup.splice(0, oup.length);
+				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
+				for (var i = 0, l = oup.length; i < l; i++) {
+					var o = oup[i];
+					if (o.hasEventListener(nsevent.FLMouseEvent.MOUSE_UP)) {
+						o.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLMouseEvent.MOUSE_UP, o));
+					}
+				}
+				self.draw();
+			})
+		})
+		
 	})
 	
 	/**
@@ -822,7 +909,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		getter("width", function() {
-			console.log(this.graphics.context.font);
 			return this.graphics.boundWidth;
 		})
 		

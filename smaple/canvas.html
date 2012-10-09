@@ -17,8 +17,11 @@
 <script type="text/javascript" src="../src/11_canvas.js"></script>
 <script type="text/javascript" src="../src/12_math.js"></script>
 
-<canvas id="world" width='1024' height='768'>
+<canvas id="world" width='1024' height='768' style="top:0;left:0;position:absolute;">
 </canvas>
+<canvas id="hitTest" width='1024' height='768'>
+</canvas>
+</style>
 
 <script type="text/javascript">
 new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
@@ -31,12 +34,12 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 
 		var container = ns.DisplayObjectContainer.gen();
 		stage.addChild(container);
-		container.graphics.beginFill(0x999999);
-		container.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
-		container.graphics.endFill()
+		// container.graphics.beginFill(0x999999);
+		// 		container.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+		// 		container.graphics.endFill()
 		
 		var text = ns.Text.gen();
-		container.addChild(text);
+		//container.addChild(text);
 		stage.draw();
 		
 		var im = ns.ImageManager.getInstance();
@@ -51,9 +54,8 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 			spsp.addChild(sprite)
 			
 			container.addChild(spsp)
-			
-			 spsp.scaleX = 0.5;
-			 			 			spsp.scaleY = 0.5;
+			 //spsp.scaleX = 0.5;
+			 //			 			spsp.scaleY = 0.5;
 			// 			// 			
 			// 			 			 sprite.scaleX = 0.5;
 			// 			 			 	 			sprite.scaleY = 0.5;
@@ -67,28 +69,49 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 sprite.rotation = 45;
 			re.graphics.drawRect(0, 0, 3500, 100)
 //			sprite.addChild(re);
-			img.rotation = 45;
+			img.rotation = 20;
 			img.x = 100;
 			
 			var text = ns.Text.gen();
-
-			spsp.addChild(text);
+			
+			sprite.graphics.beginFill(0)
+			sprite.graphics.drawRect(0, 0, 200, 100);
+			sprite.rotation = 0;
+			stage.addChild(text);
 			text.text= "hoge"
 			text.fontFamily = "Helvetica";
 			text.color = 0xff0000;
 			text.fontSize = "30";
 			text.applyFormat();
-			text.x = 100;
+			
+			img.x = 500;
+			img.addEventListener(new Namespace(namespace_lib_events).FLMouseEvent.CLICK, function(e) {
+				console.log(e.type)
+			});
+			img.addEventListener(new Namespace(namespace_lib_events).FLMouseEvent.MOUSE_DOWN, function(e) {
+				console.log(e.type)
+			});
+			img.addEventListener(new Namespace(namespace_lib_events).FLMouseEvent.MOUSE_UP, function(e) {
+				console.log(e.type)
+			});
+			// text.addEventListener(new Namespace(namespace_lib_events).FLEvent.CLICK, function(e) {
+			// 				console.log(e.currentTarget)
+			// 			});
+			
+//			stage.enableMouseOver(10);
+			sprite.x = 10;
 			
 			stage.draw();
 			stage.draw();
-			return;
+
+			text.x = (200 - text.width) * 0.5;
 			var nsa = new Namespace(namespace_lib_tween);
-			var values = nsa.Interpolator.gen(-img.width, 0, 120, nsa.Expo.easeInOut).values;
+			var values = nsa.Interpolator.gen(1000, 0, 120, nsa.Expo.easeInOut).values;
 			setInterval(function() {
-				if (values.length) img.x = values.shift();
-				stage.draw();
-			}, 1000 / 60)
+			//	if (values.length) img.x = values.shift();
+			//	stage.draw();
+				
+			}, 1 / 60)
 		})
 		
 		

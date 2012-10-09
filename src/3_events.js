@@ -59,6 +59,10 @@ new Namespace(namespace_lib_events).use(function() {
 		* @param callback {Function} イベント発生時に評価する関数.
 		*/
 		def(function addEventListener(type, callback) {
+			if (type == undefined) {
+				console.error("argument 0 : undefined");
+				return;
+			}
 			var list = this.observers[type];
 			var flg = false;
 			if (list) {
@@ -100,6 +104,13 @@ new Namespace(namespace_lib_events).use(function() {
 				}
 			}
 		});
+		
+		def(function hasEventListener(type) {
+			var list = this.observers[type];
+			if (!list || list.length == 0) return false;
+			else return true;
+		})
+		
 
 		/** 
 		* removeEventListener のエイリアス. 

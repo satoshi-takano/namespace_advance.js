@@ -70,6 +70,7 @@ var FunctionPrototype = function() {
 	this.gen = function() {
 		var obj = new this();
 		if (obj.initialize != undefined) {
+			// if (obj.initialize.superMethod) obj.initialize.superMethod.apply(obj, arguments);
 			obj.initialize.apply(obj, arguments);
 		}
 		return obj;
