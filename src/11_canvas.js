@@ -474,6 +474,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.visible = true;
 			this.alpha = 1;
 			this._rotation = 0;
+			
+			this._mouseOvered = false;
+			// imaichi...
+			this._mouseOutFlag = false;
 		})
 		
 		def(function addedToStage() {
@@ -521,6 +525,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			c.clearRect(0, 0, stg.stageWidth, stg.stageHeight);
 			this.draw();
 			if (c.getImageData(x, y, 1, 1).data[3]) results.push(this);
+			else if (this._mouseOvered) this._mouseOutFlag = true;
 		})
 		
 		/** x 座標. [read-write] */
@@ -746,6 +751,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			
 			this._mouseOverIntervalID = null;
 			this._objectsUnderPointer = [];
+			this._currentMouseOveredObjects = [];
 			
 			this.enableMouseEvents();
 		})
@@ -777,36 +783,58 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this._mouseOverIntervalID = null;
 		})
 		
-		def(function enableMouseOver(freq) {
+		def(function enableMouseOver(checkFreq) {
 			if (this._mouseOverIntervalID) return;
 			var self = this;
 			var app = new Namespace(namespace_lib_app).Application.getInstance();
 			var oup = this._objectsUnderPointer;
+			var E = nsevent.FLMouseEvent;
+			var currentOvered = this._currentMouseOveredObjects;
 			this._mouseOverIntervalID = setInterval(function() {
 				if (app.canTrackMouse) {
 					oup.splice(0, oup.length);
 					self.getObjectsUnderPoints(app.mouseX, app.mouseY, oup);
 					self.draw();
 					if (oup.length) {
-						console.log(oup[0],oup[1],oup[2])
+						for (var i = 0, l = oup.length; i < l; i++) {
+							var o = oup[i];
+							if (!o._mouseOvered && o.hasEventListener(E.MOUSE_OVER)) { 
+								o.dispatchEvent(E.gen(E.MOUSE_OVER, o));
+								o._mouseOvered = true;
+								currentOvered.push(o);
+							}
+						}
 					}
 				}
-			}, 1000 / freq);
+
+				for (var i = 0, l = currentOvered.length; i < l; i++) {
+					var overed = currentOvered[i];
+					
+					if (overed._mouseOutFlag) {
+						if (overed.hasEventListener(E.MOUSE_OUT)) overed.dispatchEvent(E.gen(E.MOUSE_OUT, o));
+						overed._mouseOutFlag = false;
+						overed._mouseOvered = false;
+						currentOvered.splice(i, 1);
+						i--;
+						l--;
+					}
+					
+				}
+			}, 1000 / checkFreq);
 		})
 		
 		def(function enableMouseEvents() {
 			var util = new Namespace(namespace_lib_core).Utilitie.gen();
 			var self = this;
 			var oup = self._objectsUnderPointer;
+			var E = nsevent.FLMouseEvent;
 			
 			util.listen(this.canvas, nsevent.DOMMouseEvent.CLICK, function(e) {
 				oup.splice(0, oup.length);
 				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
 				for (var i = 0, l = oup.length; i < l; i++) {
 					var o = oup[i];
-					if (o.hasEventListener(nsevent.FLMouseEvent.CLICK)) {
-						o.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLMouseEvent.CLICK, o));
-					}
+					if (o.hasEventListener(E.CLICK)) { o.dispatchEvent(E.gen(E.CLICK, o));}
 				}
 				self.draw();
 			})
@@ -816,9 +844,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
 				for (var i = 0, l = oup.length; i < l; i++) {
 					var o = oup[i];
-					if (o.hasEventListener(nsevent.FLMouseEvent.MOUSE_DOWN)) {
-						o.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLMouseEvent.MOUSE_DOWN, o));
-					}
+					if (o.hasEventListener(E.MOUSE_DOWN)) { o.dispatchEvent(nsevent.FLEvent.gen(E.MOUSE_DOWN, o)); }
 				}
 				self.draw();
 			})
@@ -828,9 +854,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
 				for (var i = 0, l = oup.length; i < l; i++) {
 					var o = oup[i];
-					if (o.hasEventListener(nsevent.FLMouseEvent.MOUSE_UP)) {
-						o.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLMouseEvent.MOUSE_UP, o));
-					}
+					if (o.hasEventListener(E.MOUSE_UP)) { o.dispatchEvent(nsevent.FLEvent.gen(E.MOUSE_UP, o)); }
 				}
 				self.draw();
 			})

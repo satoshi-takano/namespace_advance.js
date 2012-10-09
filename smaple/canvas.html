@@ -94,11 +94,17 @@ sprite.rotation = 45;
 			img.addEventListener(new Namespace(namespace_lib_events).FLMouseEvent.MOUSE_UP, function(e) {
 				console.log(e.type)
 			});
+			img.addEventListener(new Namespace(namespace_lib_events).FLMouseEvent.MOUSE_OVER, function(e) {
+				console.log(e.type)
+			});
+			img.addEventListener(new Namespace(namespace_lib_events).FLMouseEvent.MOUSE_OUT, function(e) {
+				console.log(e.type)
+			});
 			// text.addEventListener(new Namespace(namespace_lib_events).FLEvent.CLICK, function(e) {
 			// 				console.log(e.currentTarget)
 			// 			});
 			
-//			stage.enableMouseOver(10);
+			stage.enableMouseOver(10);
 			sprite.x = 10;
 			
 			stage.draw();
