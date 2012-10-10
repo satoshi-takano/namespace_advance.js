@@ -150,8 +150,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 	**/
 	proto(function Graphics() {
 		/** @private */
-		init(function(displayObject) {
-			this.displayObject = displayObject;
+		init(function() {
+			this.context = null;
 			this.include(nscore.Recordable.gen());
 			this.needStroke = false;
 			this.needFill = false;
@@ -318,22 +318,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.rec(nscore.Operation.gen(this, ctxDrawText, [text]));
 		})
 		
-		
-		/** @private */
-		def(function getGlobalX() {
-			return this.displayObject.globalX;
-		})
-		
-		/** @private */
-		def(function getGlobalY() {
-			return this.displayObject.globalY;
-		})
-		
-		/** @private */
-		getter("context", function() {
-			return this.displayObject.stage.context;
-		})
-		
 		// privates
 		function ctxInit() {
 			var c = this.context;
@@ -374,8 +358,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 		}
 		
 		function ctxFillRect(x, y, w, h) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
 			var c = this.context;
 			c.beginPath();
 			this.context.fillRect(0, 0, w, h);
@@ -441,11 +423,6 @@ new Namespace(namespace_lib_canvas).use(function () {
 			if (this.boundWidth < x) this.boundWidth = x;
 			if (this.boundHeight < y) this.boundHeight = y;
 		}
-		// member
-		def(function updateBound(w, h) {
-			if (this.boundWidth < x) this.boundWidth = x;
-			if (this.boundHeight < y) this.boundHeight = y;
-		})
 		
 	})
 	
@@ -455,19 +432,14 @@ new Namespace(namespace_lib_canvas).use(function () {
 	**/
 	proto(function DisplayObject() {
 		ex(nsevent.EventDispatcher);
-		var _hitTestCtx;
-		
+		var ii = 0
 		/** @memberOf DisplayObject */
 		init(function() {
 			this.$super();
 			
-			if (_hitTestCtx == null) {
-				_hitTestCtx = document.createElement("canvas").getContext("2d");
-			}
-			
-			//this.graphics = ns.Graphics.gen(ns.Stage.getInstance().context);
 			this._mx = 0, this._my = 0;
-			this._g = ns.Graphics.gen(this);
+			this._g = ns.Graphics.gen();
+			this.ii = ++ii
 			this._stg = null;
 			this._sx = this._sy = 1;
 
@@ -475,17 +447,18 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.alpha = 1;
 			this._rotation = 0;
 			
+			this.mouseChildren = true;
 			this._mouseOvered = false;
 			// imaichi...
 			this._mouseOutFlag = false;
 		})
 		
 		def(function addedToStage() {
-
+			this._g.context = this._stg.context;
 		})
 		
 		def(function removeFromStage() {
-
+			child._g.context = null;
 		})
 		
 		/**
@@ -503,30 +476,58 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var y = this._my;
 			var rot = this.rotation * Math.PI / 180;
 			
-			
-			c.translate(x, y);
-			c.scale(sx, sy);
-			c.rotate(rot);
+			this.applyTransform(c, rot, sx, sy, x, y);
 			
 			this.drawNest();
 			
-			c.rotate(-rot);
-			c.scale(rsx, rsy);
-			c.translate(-x, -y);
+			this.restoreTransform(c, -rot, rsx, rsy, -x, -y)
+		})
+		
+		def(function applyTransform(ctx, rot, sx, sy, tx, ty) {
+			ctx.translate(tx, ty);
+			ctx.scale(sx, sy);
+			ctx.rotate(rot);
+		})
+		
+		def(function restoreTransform(ctx, rot, sx, sy, tx, ty) {
+			ctx.rotate(rot);
+			ctx.scale(sx, sy);
+			ctx.translate(tx, ty);
 		})
 		
 		def(function drawNest() {
 			this._g.playback();
 		})
 		
-		def(function getObjectsUnderPoints(x, y, results) {
+		def(function getObjectsUnderPoints(px, py, results) {
+			if (!this.visible || 0 == this.alpha) return;
+			
 			var stg = this._stg;
-			var c = this.stage.context;
+			var c = stg.context;
+			
+			var sx = this.scaleX;
+			var sy = this.scaleY;
+			var rsx = 1 / sx;
+			var rsy = 1 / sy;
+			var x = this._mx;
+			var y = this._my;
+			var rot = this.rotation * Math.PI / 180;
+			
 			c.clearRect(0, 0, stg.stageWidth, stg.stageHeight);
-			this.draw();
-			if (c.getImageData(x, y, 1, 1).data[3]) results.push(this);
+			this.applyTransform(c, rot, sx, sy, x, y);
+			this._g.playback();
+			var hasPixel = c.getImageData(px, py, 1, 1).data[3];;
+			if (hasPixel) results.push(this);
 			else if (this._mouseOvered) this._mouseOutFlag = true;
+			this.getObjectsUnderPointsNest(px, py, results);
+			
+			this.restoreTransform(c, -rot, rsx, rsy, -x, -y)
 		})
+		
+		def(function getObjectsUnderPointsNest(px, py, results) {
+			
+		})
+		
 		
 		/** x 座標. [read-write] */
 		getter("x", function() {return this._mx * this._sx})
@@ -680,17 +681,18 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		def(function removeFromStage() {
+			this.$super();
+			
 			for (var i = 0, l = this.numChildren; i < l; i++) {
 				var child = this.children[i];
 				child.removeFromStage();
 				child._stg = null;
 			}
 		})
-		
-		def(function getObjectsUnderPoints(x, y, results) {
-			this.$super(x, y, results);
-			for (var i = 0, l = this.numChildren; i < l; i++) {
-				this.getChildAt(i).getObjectsUnderPoints(x, y, results);
+
+		def(function getObjectsUnderPointsNest(px, py, results) {
+			for (var i = this.numChildren - 1; 0 <= i; i--) {
+				this.getChildAt(i).getObjectsUnderPoints(px, py, results);
 			}
 		})
 		
@@ -700,7 +702,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		getter("numChildren", function() {return this.children.length;});
 		
 		getter("width", function() {
-			var w = 0;
+			var w = this._g.boundWidth;
 			var children = this.children;
 			var s = this._sx;
 			for (var i = 0, l = children.length; i < l; i++) {
@@ -711,7 +713,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		getter("height", function() {
-			var h = 0;
+			var h = this._g.boundHeight;
 			var children = this.children;
 			var s = this._sy;
 			for (var i = 0, l = children.length; i < l; i++) {
@@ -735,6 +737,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @memberOf Stage
 		*/
 		init(function(canvas) {
+			this.$super();
+			
 			var context = canvas.getContext("2d");
 			if (context == null) {
 				console.error("Your browser hasn't support HTML5 Canvas.")
@@ -748,12 +752,16 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.w = canvas.width;
 			this.h = canvas.height;
 			this._stg = this;
-			
+			this._g.context = context;
+
 			this._mouseOverIntervalID = null;
 			this._objectsUnderPointer = [];
 			this._currentMouseOveredObjects = [];
 			
-			this.enableMouseEvents();
+			if (new Namespace(namespace_lib_platform + ".browser").UserAgent.gen().isMobile())
+				this.enableTouchEvents();
+			else
+				this.enableMouseEvents();
 		})
 		
 		def(function addChild(child) {
@@ -768,9 +776,14 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		// draw {replace the description here}.
 		def(function draw() {
-			this.numChildren.times(function (i) {
+			this.context.clearRect(0, 0, this.stageWidth, this.stageHeight);
+			for (var i = this.numChildren - 1; 0 <= i; i--) {
 				this.children[i].draw();
-			}, this)
+			}
+		})
+		
+		def(function drawNest() {
+			
 		})
 		
 		/** Stage の幅です. [read-only] */
@@ -796,12 +809,13 @@ new Namespace(namespace_lib_canvas).use(function () {
 					self.getObjectsUnderPoints(app.mouseX, app.mouseY, oup);
 					self.draw();
 					if (oup.length) {
-						for (var i = 0, l = oup.length; i < l; i++) {
+						for (var i = oup.length - 1; 0 <= i; i--) {
 							var o = oup[i];
 							if (!o._mouseOvered && o.hasEventListener(E.MOUSE_OVER)) { 
 								o.dispatchEvent(E.gen(E.MOUSE_OVER, o));
 								o._mouseOvered = true;
 								currentOvered.push(o);
+								if (!o.mouseChildren) break;
 							}
 						}
 					}
@@ -832,9 +846,12 @@ new Namespace(namespace_lib_canvas).use(function () {
 			util.listen(this.canvas, nsevent.DOMMouseEvent.CLICK, function(e) {
 				oup.splice(0, oup.length);
 				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
-				for (var i = 0, l = oup.length; i < l; i++) {
+				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
-					if (o.hasEventListener(E.CLICK)) { o.dispatchEvent(E.gen(E.CLICK, o));}
+					if (o.hasEventListener(E.CLICK)) {
+						o.dispatchEvent(E.gen(E.CLICK, o));
+						if (!o.mouseChildren) break;
+					}
 				}
 				self.draw();
 			})
@@ -842,9 +859,12 @@ new Namespace(namespace_lib_canvas).use(function () {
 			util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_DOWN, function(e) {
 				oup.splice(0, oup.length);
 				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
-				for (var i = 0, l = oup.length; i < l; i++) {
+				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
-					if (o.hasEventListener(E.MOUSE_DOWN)) { o.dispatchEvent(nsevent.FLEvent.gen(E.MOUSE_DOWN, o)); }
+					if (o.hasEventListener(E.MOUSE_DOWN)) {
+						o.dispatchEvent(nsevent.FLEvent.gen(E.MOUSE_DOWN, o));
+						if (!o.mouseChildren) break;
+					}
 				}
 				self.draw();
 			})
@@ -852,9 +872,46 @@ new Namespace(namespace_lib_canvas).use(function () {
 			util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_UP, function(e) {
 				oup.splice(0, oup.length);
 				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
-				for (var i = 0, l = oup.length; i < l; i++) {
+				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
-					if (o.hasEventListener(E.MOUSE_UP)) { o.dispatchEvent(nsevent.FLEvent.gen(E.MOUSE_UP, o)); }
+					if (o.hasEventListener(E.MOUSE_UP)) {
+						o.dispatchEvent(nsevent.FLEvent.gen(E.MOUSE_UP, o));
+						if (!o.mouseChildren) break;
+					}
+				}
+				self.draw();
+			})
+		})
+		
+		def(function enableTouchEvents() {
+			var util = new Namespace(namespace_lib_core).Utilitie.gen();
+			var self = this;
+			var oup = self._objectsUnderPointer;
+			var E = nsevent.TouchEvent;
+			
+			util.listen(this.canvas, E.TOUCH_START, function(e) {
+				oup.splice(0, oup.length);
+				self.getObjectsUnderPoints(e.pageX, e.pageY, oup);
+				for (var i = oup.length - 1; 0 <= i; i--) {
+					var o = oup[i];
+					if (o.hasEventListener(E.TOUCH_START)) {
+						o.dispatchEvent(E.gen(E.TOUCH_START, o));
+						if (!o.mouseChildren) break;
+					}
+				}
+				self.draw();
+			})
+			
+			util.listen(this.canvas, E.TOUCH_END, function(e) {
+				oup.splice(0, oup.length);
+				var touch = e.changedTouches[0];
+				self.getObjectsUnderPoints(touch.pageX, touch.pageY, oup);
+				for (var i = oup.length - 1; 0 <= i; i--) {
+					var o = oup[i];
+					if (o.hasEventListener(E.TOUCH_END)) {
+						o.dispatchEvent(E.gen(E.TOUCH_END, o));
+						if (!o.mouseChildren) break;
+					}
 				}
 				self.draw();
 			})
@@ -890,6 +947,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function applyFormat() {
 			this.graphics.clear();
 			this.graphics.beginFill(this._color);
+			this.graphics.lineStyle(0);
 			this.graphics.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
 			this.graphics.drawText(this._text);
 		})
@@ -900,6 +958,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		setter("text", function(txt) {
 			this.graphics.clear();
 			this.graphics.beginFill(this._color);
+			this.graphics.lineStyle(0);
 			this.graphics.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
 			this.graphics.drawText(txt);
 			this._text = txt;
@@ -908,6 +967,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		getter("fontSize", function() {return this._fontSize});
 		setter("fontSize", function(size) {
 			this._fontSize = size;
+			this.applyFormat();
 		})
 		
 		getter("fontFamily", function() {
@@ -915,21 +975,25 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		setter("fontFamily", function(fam) {
 			this._fontFamily = fam;
+			this.applyFormat();
 		})
 		
 		getter("bold", function() {return this._bold});
 		setter("bold", function(val) {
 			this._bold = val;
+			this.applyFormat();
 		})
 		
 		getter("italic", function() {return this._italic});
 		setter("italic", function(val) {
 			this._italic = val;
+			this.applyFormat();
 		})
 		
 		getter("color", function() {return this._color});
 		setter("color", function(val) {
 			this._color = val;
+			this.applyFormat();
 		})
 		
 		getter("width", function() {
@@ -952,6 +1016,13 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this._imageElement = imageElement;
 			this.graphics.drawImage(this._imageElement);
 		})
+		
+		getter("width", function() {
+			return this._imageElement.width * this._sx;
+		})
+		getter("height", function() {
+			return this._imageElement.height * this._sy;
+		})
 	})
 	
 	
@@ -963,6 +1034,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		init(function() {
 			this.cache = {};
+			this._currentToLoadCount = 0;
+			this._currentLoadedCount = 0;
 		})
 		
 		def(function load(resourcePaths) {
@@ -987,14 +1060,17 @@ new Namespace(namespace_lib_canvas).use(function () {
 			var _this = ns.ImageManager.getInstance();
 			var img = e.currentTarget;
 			img.onload = null;
-			var name = /:\/\/.*?(\/.*)/g.exec(img.src)[1];
+			//var name = /:\/\/.*?(\/.*)/g.exec(img.src)[1];
+			var name = img.src;
+			_this._currentLoadedCount++;
 			_this.cache[name] = img;
-			if (_this._currentLoadedCount == _this._currentToLoadCount - 1) {
+			if (_this._currentLoadedCount == _this._currentToLoadCount) {
 				_this._nowLoading = false;
 				_this.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLEvent.COMPLETE));
 				_this._currentToLoadCount = 0;
 				_this._currentLoadedCount = 0;
 			}
+			
 		})
 		
 		def(function getImageByName(name) {

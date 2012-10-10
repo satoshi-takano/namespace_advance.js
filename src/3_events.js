@@ -178,13 +178,40 @@ new Namespace(namespace_lib_events).use(function() {
 			$$.MOUSE_UP = "mouseup";
 			$$.MOSUE_WHEEL = "mousewheel";
 		}
-		
 	});
+	
+	/**
+	* @class Event
+	**/
+	proto(function Event() {
+		init(function(type, caller, origin) {
+			this.type = type;
+			this.origin = origin;
+			this.currentTarget = caller;
+		})
+	})
+	
+	/**
+	* @class TouchEvent
+	**/
+	proto(function TouchEvent() {
+		ex(ns.Event)
+		
+		/** @memberOf TouchEvent */
+		$$.TOUCH_START = "touchstart";
+		/** @memberOf TouchEvent */
+		$$.TOUCH_MOVE = "touchmove";
+		/** @memberOf TouchEvent */
+		$$.TOUCH_END = "touchend";
+	})
+
 	
 	/** 
 	* @class FLEvent
 	*/
 	proto(function FLEvent() {
+		ex(ns.Event)
+		
 		/**
 		* @memberOf FLEvent
 		* @param type {String} イベントタイプ
@@ -192,9 +219,7 @@ new Namespace(namespace_lib_events).use(function() {
 		* @param origin {Event} JavaScript 実行環境ネイティブの Event オブジェクト
 		*/
 		init(function (type, caller, origin) {
-			this.type = type;
-			this.origin = origin;
-			this.currentTarget = caller;
+			this.$super(type, caller, origin)
 		});
 		
 		/**
