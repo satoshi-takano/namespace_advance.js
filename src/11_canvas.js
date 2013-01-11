@@ -339,20 +339,16 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		function ctxArc(x, y, r) {
 			var c = this.context;
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
 			c.beginPath();
-			c.arc(x + gx, y + gy, r, 0, Math.PI * 2, false);
+			c.arc(x, y, r, 0, Math.PI * 2, false);
 			if (this.needFill) c.fill();
 			if (this.needStroke) c.stroke();
 			c.closePath();
 		}
 		
 		function ctxCurveTo(cpx, cpy, ax, ay) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
 			var c = this.context;
-			c.quadraticCurveTo(cpx + gx, cpy + gy, ax + gx, ay + gy);
+			c.quadraticCurveTo(cpx, cpy, ax + gx, ay + gy);
 			if (this.needFill) this.context.fill();
 			if (this.needStroke) c.stroke();
 		}
@@ -384,21 +380,18 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		function ctxLineTo(x, y) {
 			var c = this.context;
-			c.lineTo(this.getGlobalX() + x, this.getGlobalY() + y);
+			c.lineTo(x, y);
 			if (this.needFill) c.fill();
 			if (this.needStroke) c.stroke();
 		}
 		
 		function ctxMoveTo(x, y) {
-			this.context.moveTo(this.getGlobalX() + x, this.getGlobalY() + y);
+			this.context.moveTo(x, y);
 		}
 		
 		function ctxBezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
-			var gx = this.getGlobalX();
-			var gy = this.getGlobalY();
-			
 			var c = this.context;
-			c.bezierCurveTo(cp1x + gx, cp1y + gx, cp2x + gx, cp2y + gy, x + gx, y + gy);
+			c.bezierCurveTo(cp1x, cp1y, cp2x + gx, cp2y + gy, x + gx, y + gy);
 			if (this.needFill) c.fill();
 			if (this.needStroke) c.stroke();
 		}
@@ -777,7 +770,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 		// draw {replace the description here}.
 		def(function draw() {
 			this.context.clearRect(0, 0, this.stageWidth, this.stageHeight);
-			for (var i = this.numChildren - 1; 0 <= i; i--) {
+			var l = this.numChildren;
+			for (var i = 0; i < l; i++) {
 				this.children[i].draw();
 			}
 		})

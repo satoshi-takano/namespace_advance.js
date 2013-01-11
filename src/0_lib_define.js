@@ -44,3 +44,4 @@ var namespace_lib_ui = namespace_lib_core + ".ui";
 var namespace_lib_math = namespace_lib_core + ".math";
 var namespace_lib_canvas = namespace_lib_core + ".html5.canvas";
 var namespace_lib_platform = namespace_lib_core + ".platform";
+var namespace_lib_audio = namespace_lib_core + ".audio";

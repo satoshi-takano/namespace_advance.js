@@ -104,7 +104,7 @@ var FunctionPrototype = function() {
 	* @param obj Namespace に定義されている、Singleton ではないクラス(非インスタンス)を渡します.
 	**/
 	this.ex = function(obj) {
-		var proto = obj.gen();
+		var proto = new obj();
 		self.substance.superClass = obj.prototype;
 		self.substance.prototype = proto;
 		self.substance.prototype.$super = $super;
@@ -144,6 +144,10 @@ var FunctionPrototype = function() {
 	**/
 	this.setter = function (name, func) {
 		var p = self.substance.prototype;
+
+		var fullname = "set" + name;
+		self.substance.prototype[fullname] = wrap(fullname, func);
+		
 		if ("__defineSetter__" in p) {
 			p.__defineSetter__(name, func);
 		}
