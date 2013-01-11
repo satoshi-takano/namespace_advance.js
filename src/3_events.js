@@ -258,6 +258,8 @@ new Namespace(namespace_lib_events).use(function() {
 		
 		init(function (type, caller, origin) {
 			this.$super(type, caller, origin);
+			this.mouseX = 0;
+			this.mouseY = 0;
 		})
 		
 		/** @memberOf FLMouseEvent */

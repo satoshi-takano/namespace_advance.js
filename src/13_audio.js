@@ -264,8 +264,8 @@ new Namespace(namespace_lib_audio).use(function() {
 		init(function(context) {
 			this.$super(context);
 			this.raw = context.rawContext.createScriptProcessor(1024, 1, 1);
-			
 			this.raw.onaudioprocess = process;
+			if (window.__webaudioDSPNodes__ == undefined) window.__webaudioDSPNodes__ = [];
 			
 			var raw = this.raw;
 			raw._this = this;
@@ -278,7 +278,10 @@ new Namespace(namespace_lib_audio).use(function() {
 			this._currentFrame = 0;
 			this._isPlaying = false;
 			
-			if (window.__webaudioDSPNodes__ == undefined) window.__webaudioDSPNodes__ = [];
+			this._loopInFrame = 0;
+			this._loopOutFrame = 0;
+			
+			this.loopEnabled = false;
 		})
 
 		function process(e) {
@@ -310,6 +313,14 @@ new Namespace(namespace_lib_audio).use(function() {
 
 			var length = outSamples.length;
 			var c = this._currentFrame;
+			
+			if (this.loopEnabled) {
+				var i = this._loopInFrame;
+				var o = this._loopOutFrame;
+				if (o < c) c = i + (c - o);
+				else if (c < i) c = o - (i - c);
+			}
+			// console.log(c / this._totalFrames, i, o)
 		 	outSamples.set(this._samples.subarray(c, c + length));
 		 	c += length;
 		
@@ -334,6 +345,21 @@ new Namespace(namespace_lib_audio).use(function() {
 		getter("samples", function() {
 			return this._samples;
 		})
+		
+		getter("loopInTime", function() {
+			return this._duration * (this._loopInFrame / this._totalFrames);
+		})
+		setter("loopInTime", function(time) {
+			this._loopInFrame = Math.floor(this._totalFrames * (time / this._duration));
+		})
+		
+		getter("loopOutTime", function() {
+			return this._duration * (this._loopOutFrame / this._totalFrames);
+		})
+		setter("loopOutTime", function(time) {
+			this._loopOutFrame = Math.floor(this._totalFrames * (time / this._duration));
+		})
+		
 	})
 	
 })

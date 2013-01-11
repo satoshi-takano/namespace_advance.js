@@ -131,6 +131,10 @@ var FunctionPrototype = function() {
 	**/
 	this.getter = function (name, func) {
 		var p = self.substance.prototype;
+		
+		var fullname = "get" + name;
+		self.substance.prototype[fullname] = wrap(fullname, func);
+		
 		if ("__defineGetter__" in p) {
 			p.__defineGetter__(name, func);
 		}

@@ -149,10 +149,13 @@ new Namespace(namespace_lib_canvas).use(function () {
 	* 
 	**/
 	proto(function Graphics() {
+		ex(nscore.Recordable)
+		
 		/** @private */
 		init(function() {
+			this.$super();
+			
 			this.context = null;
-			this.include(nscore.Recordable.gen());
 			this.needStroke = false;
 			this.needFill = false;
 			
@@ -317,6 +320,13 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function drawText(text) {
 			this.rec(nscore.Operation.gen(this, ctxDrawText, [text]));
 		})
+		
+		def(function clear() {
+			this.$super();
+			this.boundWidth = 0;
+			this.boundHeight = 0;
+		})
+		
 		
 		// privates
 		function ctxInit() {
@@ -852,11 +862,35 @@ new Namespace(namespace_lib_canvas).use(function () {
 			
 			util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_DOWN, function(e) {
 				oup.splice(0, oup.length);
-				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
+				var mouseX = e.clientX;
+				var mouseY = e.clientY;
+				self.getObjectsUnderPoints(mouseX, mouseY, oup);
 				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
 					if (o.hasEventListener(E.MOUSE_DOWN)) {
-						o.dispatchEvent(nsevent.FLEvent.gen(E.MOUSE_DOWN, o));
+						var e = nsevent.FLEvent.gen(E.MOUSE_DOWN, o);
+						
+						var pos = new Namespace(namespace_lib_geom).Matrix.gen();
+						pos.tx = mouseX;
+						pos.ty = mouseY;
+						
+						var mat = new Namespace(namespace_lib_geom).Matrix.gen();
+						var sx = o.scaleX;
+						var sy = o.scaleY;
+						var rsx = 1 / sx;
+						var rsy = 1 / sy;
+						var x = o._mx;
+						var y = o._my;
+						var rot = o.rotation * Math.PI / 180;
+						mat.translate(-x, -y);
+						mat.scale(sx, sy);
+						mat.rotate(rot);
+						
+						pos.concat(mat);
+						e.mouseX = pos.tx;
+						e.mouseY = pos.ty;
+						
+						o.dispatchEvent(e);
 						if (!o.mouseChildren) break;
 					}
 				}
