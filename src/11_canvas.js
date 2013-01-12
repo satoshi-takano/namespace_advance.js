@@ -531,6 +531,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 			
 		})
 		
+		def(function capture() {
+			var img = this.stage.context.getImageData(this.x, this.y, this.width, this.height);
+			return img;
+		})
 		
 		/** x 座標. [read-write] */
 		getter("x", function() {return this._mx * this._sx})
@@ -541,8 +545,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		/** 幅. [read-only] */
 		getter("width", function() {return this._g.boundWidth * this._sx})
+		setter("width", function(v) {this._g.boundWidth = v;})
 		/** 高さ. [read-only] */
 		getter("height", function() {return this._g.boundHeight * this._sy})
+		setter("height", function(v) {this._g.boundHeight = v;})
 		
 		/** x scale. [read-write] */
 		getter("scaleX", function() {
@@ -785,6 +791,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 				this.children[i].draw();
 			}
 		})
+		
+		def(function clear() {
+			this.context.clearRect(0, 0, this.stageWidth, this.stageHeight);
+		})
+		
 		
 		def(function drawNest() {
 			

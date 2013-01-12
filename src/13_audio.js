@@ -263,7 +263,7 @@ new Namespace(namespace_lib_audio).use(function() {
 		
 		init(function(context) {
 			this.$super(context);
-			this.raw = context.rawContext.createScriptProcessor(1024, 1, 1);
+			this.raw = context.rawContext.createJavaScriptNode(1024, 1, 1);
 			this.raw.onaudioprocess = process;
 			if (window.__webaudioDSPNodes__ == undefined) window.__webaudioDSPNodes__ = [];
 			
@@ -320,7 +320,7 @@ new Namespace(namespace_lib_audio).use(function() {
 				if (o < c) c = i + (c - o);
 				else if (c < i) c = o - (i - c);
 			}
-			// console.log(c / this._totalFrames, i, o)
+
 		 	outSamples.set(this._samples.subarray(c, c + length));
 		 	c += length;
 		
@@ -360,6 +360,9 @@ new Namespace(namespace_lib_audio).use(function() {
 			this._loopOutFrame = Math.floor(this._totalFrames * (time / this._duration));
 		})
 		
+		getter("currentTime", function() {
+			return this._duration * (this._currentFrame / this._totalFrames);
+		})
 	})
 	
 })
