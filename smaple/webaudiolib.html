@@ -28,6 +28,7 @@ body {
 
 <canvas id="canvas" width='500' height='500'>
 </canvas>
+<input type="range" id="reverb">
 <script type="text/javascript">
 
 new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
@@ -43,11 +44,24 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	var waveForm = example.WaveForm.gen();
 	stage.addChild(waveForm);
 	
+	var slider = document.getElementById("reverb");
+	slider.onchange = function() {
+		var r = slider.value / 100;
+		delay.wet = r;
+	}
+	
 	var audio = new Namespace(namespace_lib_audio);
 	var context = audio.AudioContext.gen();
 	var processor = audio.AudioBufferProcessor.gen(context);;
+	var delay = audio.AudioReverb.gen(context);
+	var r = slider.value / 100;
+	delay.gainNode.gain = r;
 	
 	var file = audio.AudioFile.gen(context);
+	var file2 = audio.AudioFile.gen(context);
+	file2.load("http://jslib.localhost/smaple/matrix-reverb1.wav", function() {
+		delay.buffer = file2.buffer;
+	})
 	file.load("http://jslib.localhost/smaple/808_120bpm.wav", function() {
 		processor.buffer = file.buffer;
 		
@@ -58,14 +72,14 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		playButton.graphics.drawRect(0, 0, 100, 30);
 		var lab = canvas.Text.gen();
 		lab.y = 8;
-		lab.text = "Play";
+		lab.text = "Reverb";
 		lab.fontFamily = "Helvetica";
 		lab.color = 0;
 		lab.fontSize = 14;
 		playButton.addChild(lab);
 		playButton.x = 10;
 		playButton.y = stage.stageHeight - playButton.height - 10;
-		// stage.addChild(playButton);
+		stage.addChild(playButton);
 
 		lab.x = (playButton.width - lab.width) * 0.5;
 		
@@ -73,8 +87,10 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 			processor.start(1);
 		})
 		
-		processor.outputPort(0).to(context.inputPort(0));
 		
+		processor.outputPort(0).to(delay.inputPort(0));
+		delay.outputPort(0).to(context.inputPort(0));
+
 		cont.addEventListener(event.FLMouseEvent.MOUSE_DOWN, function(e) {
 			window.addEventListener(event.FLMouseEvent.MOUSE_MOVE, drag)
 			select.graphics.clear();

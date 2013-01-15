@@ -33,31 +33,72 @@ new Namespace(namespace_lib_audio).use(function() {
 	* @class AudioPort
 	**/
 	proto(function AudioPort() {
-		init(function(rawNode) {
-			this.rawNode = rawNode;
-			this.toPorts = [];
-			this.fromPorts = [];
+		init(function(node, delegateNode) {
+			this._node = node;
+			this._delegateNode = delegateNode;
+			this._toPorts = [];
+			this._fromPorts = [];
 			
-			this._tag = 0;
+			this.busNumber = 0;
 		})
 		
 		def(function to(toPort) {
-			toPort._tag = this.toPorts.length;
-			this.rawNode.connect(toPort.rawNode);
-			this.toPorts.push(toPort);
+			this._node._nativeNode.connect(toPort._node._nativeNode, this.busNumber, toPort.busNumber);
+
+			this._toPorts.push(toPort);
+			toPort._fromPorts.push(this);
+			
+			this._delegateNode.onOutputTo(toPort);
+			toPort._delegateNode.onInputFrom(this);
 		})
+		
 		def(function from(fromPort) {
-			fromPort._tag = this.fromPorts.length;
-			fromPort.rawNode.connect(this.rawNode);
-			this.fromPorts.push(fromPort);
+			fromPort._node._nativeNode.connect(this._node._nativeNode, fromPort.busNumber, this.busNumber);
+			
+			this._fromPorts.push(fromPort);
+			fromPort._toPorts.push(this);
+			
+			fromPort._delegateNode.onOutputTo(this);
+			this._delegateNode.onInputFrom(fromPort);
 		})
 		
 		def(function disconnectTo(toPort) {
-			this.rawNode.disconnect(toPort._tag)
+			this._node._nativeNode.disconnect(toPort.busNumber);
+			cleanPorts(this, toPort);
 		})
+		
 		def(function disconnectFrom(fromPort) {
-			fromPort.disconnect(this._tag)
+			fromPort.disconnect(this.busNumber);
+			cleanPorts(fromPort, this);
 		})
+		
+		getter("inputs", function() {
+			return this._fromPorts;
+		})
+		
+		getter("outputs", function() {
+			return this._toPorts;
+		})
+		
+		function cleanPorts(src, dest) {
+			var toPorts = src._toPorts;
+			var tolen = toPorts.length;
+			for (var i = 0; i < tolen; i++) {
+				if (toPorts[i] == dest) {
+					toPorts.splice(i, 1);
+					break;
+				}
+			}
+			
+			var fromPorts = dest._fromPorts;
+			var fromlen = fromPorts.length;
+			for (var i = 0; i < fromlen; i++) {
+				if (fromPorts[i] == src) {
+					fromPorts.splice(i, 1);
+					break;
+				}
+			}
+		}
 	})
 	
 	
@@ -72,29 +113,21 @@ new Namespace(namespace_lib_audio).use(function() {
 			this.busNumber = 0;
 		})
 		
-		def(function addInputPort(port) {
-			this.inputPorts.push(port);
-		})
-		
-		def(function addOutputPort(port) {
-			this.outputPorts.push(port);
-		})
-		
-		def(function removeInputPort(port) {
-			var ports = this.inputPorts;
-			var l = ports.length;
-			for (var i = 0; i < l; i++) {
-				var p = ports[i];
-				if (p == port) this.inputPorts.splice(i, 1);
+		def(function setInputPortNode(node) {
+			var num = node._nativeNode.numberOfInputs;
+			for (var i = 0; i < num; i++) {
+				var port = audio.AudioPort.gen(node, this);
+				port.busNumber = i;
+				this.inputPorts.push(port);
 			}
 		})
 		
-		def(function removeOutputPort(port) {
-			var ports = this.outputPorts;
-			var l = ports.length;
-			for (var i = 0; i < l; i++) {
-				var p = ports[i];
-				if (p == port) this.outputPorts.splice(i, 1);
+		def(function setOutputPortNode(node) {
+			var num = node._nativeNode.numberOfOutputs;
+			for (var i = 0; i < num; i++) {
+				var port = audio.AudioPort.gen(node, this);
+				port.busNumber = i;
+				this.outputPorts.push(port);
 			}
 		})
 		
@@ -106,11 +139,19 @@ new Namespace(namespace_lib_audio).use(function() {
 			return this.outputPorts[bus];
 		})
 		
-		getter("numberOfInput", function() {
+		def(function onInputFrom(source) {
+
+		})
+		
+		def(function onOutputTo(destination) {
+
+		})
+		
+		getter("numberOfInputs", function() {
 			return this.inputPorts.length;
 		})
-		getter("numberOfOutput", function() {
-			return this.outputPorts.lenght;
+		getter("numberOfOutputs", function() {
+			return this.outputPorts.length;
 		})
 	})
 	
@@ -132,7 +173,7 @@ new Namespace(namespace_lib_audio).use(function() {
 			req.open("GET", url);
 			req.responseType = "arraybuffer";
 			req.onload = function() {
-				_this.context.rawContext.decodeAudioData(req.response, function(arraybuffer) {
+				_this.context._nativeContext.decodeAudioData(req.response, function(arraybuffer) {
 					_this.buffer = arraybuffer;
 					// for (var k in arraybuffer) console.log(k, arraybuffer[k])
 					if (loadedCallback) loadedCallback.call();
@@ -150,10 +191,11 @@ new Namespace(namespace_lib_audio).use(function() {
 		ex(audioNamespace.AudioNode)
 		
 		init(function() {
-			this.rawContext = new webkitAudioContext();
+			this._nativeContext = new webkitAudioContext();
+			this._nativeNode = this._nativeContext.destination;
 			this.$super(this);
 
-			this.addInputPort(audioNamespace.AudioPort.gen(this.rawContext.destination));
+			this.setInputPortNode(this)
 		})
 	})
 	
@@ -166,12 +208,13 @@ new Namespace(namespace_lib_audio).use(function() {
 		
 		init(function(context) {
 			this.$super(context);
-			this.rawNode = context.rawContext.createGainNode();
-			this.addInputPort(audioNamespace.AudioPort.gen(this.rawNode));
-			this.parameter = this.rawNode.gain;
+			this._nativeNode = context._nativeContext.createGainNode();
+			this.setInputPortNode(this);
+			this.setOutputPortNode(this);
+			this.parameter = this._nativeNode.gain;
 		})
 		
-		getter("gain", function() {return this.rawNode.gain;})
+		getter("gain", function() {return this._nativeNode.gain;})
 		setter("gain", function(gain) {this.parameter.value = gain;})
 	})
 	
@@ -187,8 +230,7 @@ new Namespace(namespace_lib_audio).use(function() {
 			this.context = context;
 			this.gainNode = audioNamespace.GainNode.gen(context);
 			this._buffer = null;
-			// set gain
-			this.addOutputPort(audioNamespace.AudioPort.gen(this.gainNode.rawNode));
+			this.setOutputPortNode(this.gainNode);
 		})
 		
 		def(function start(positionInSeconds) {
@@ -222,15 +264,15 @@ new Namespace(namespace_lib_audio).use(function() {
 		
 		def(function start(positionInSeconds) {
 			var duration = this.duration - positionInSeconds;
-			var node = this.rawNode = this.context.rawContext.createBufferSource();
+			var node = this._nativeNode = this.context._nativeContext.createBufferSource();
 			node.buffer = this.buffer;
-			node.connect(this.gainNode.rawNode);
+			node.connect(this.gainNode._nativeNode);
 			node.noteGrainOn(0, positionInSeconds, duration);
 		})
 		
 		def(function stop() {
-			this.rawNode.noteOff(0);
-			this.rawNode.disconnect();
+			this._nativeNode.noteOff(0);
+			this._nativeNode.disconnect();
 		})
 	})
 	
@@ -243,11 +285,11 @@ new Namespace(namespace_lib_audio).use(function() {
 		
 		init(function(context) {
 			this.$super(context);
-			this.raw = context.rawContext.createJavaScriptNode(1024, 1, 1);
+			this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 1, 1);
 			
-			this.addInputPort(audioNamespace.AudioPort.gen(this.raw));
-			this.addOutputPort(audioNamespace.AudioPort.gen(this.raw));
-			this.raw.onaudioprocess = process;
+			this.setInputPortNode(this);
+			this.setOutputPortNode(this);
+			this._nativeNode.onaudioprocess = process;
 		})
 		
 		function process(processingEvent) {
@@ -263,11 +305,11 @@ new Namespace(namespace_lib_audio).use(function() {
 		
 		init(function(context) {
 			this.$super(context);
-			this.raw = context.rawContext.createJavaScriptNode(1024, 1, 1);
-			this.raw.onaudioprocess = process;
+			this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 1, 1);
+			this._nativeNode.onaudioprocess = process;
 			if (window.__webaudioDSPNodes__ == undefined) window.__webaudioDSPNodes__ = [];
 			
-			var raw = this.raw;
+			var raw = this._nativeNode;
 			raw._this = this;
 			
 			// Float32Array
@@ -290,9 +332,8 @@ new Namespace(namespace_lib_audio).use(function() {
 		
 		def(function start(positionInSeconds) {
 			this._isPlaying = true;
-			this.raw.connect(this.gainNode.rawNode);
-			window.__webaudioDSPNodes__.push(this.raw);
-			
+			this._nativeNode.connect(this.gainNode._nativeNode);
+			window.__webaudioDSPNodes__.push(this._nativeNode);
 			this._currentFrame = Math.floor(this._totalFrames * (positionInSeconds / this._duration));
 		})
 		
@@ -300,12 +341,12 @@ new Namespace(namespace_lib_audio).use(function() {
 			this._isPlaying = false;
 			var nodes = window.__webaudioDSPNodes__;
 			var l = nodes.length;
-			for (var i = 0; i < l; i++) if (nodes[i] == this.raw) nodes.splice(i, 1);
+			for (var i = 0; i < l; i++) if (nodes[i] == this._nativeNode) nodes.splice(i, 1);
 		})
 		
 		def(function process(processingEvent) {
 			if (!this._isPlaying) {
-				this.raw.disconnect();
+				this._nativeNode.disconnect();
 				return;
 			}
 			
@@ -363,6 +404,87 @@ new Namespace(namespace_lib_audio).use(function() {
 		getter("currentTime", function() {
 			return this._duration * (this._currentFrame / this._totalFrames);
 		})
+	})
+	
+	/**
+	* @class AudioEffect
+	**/
+	proto(function AudioEffect() {
+		ex(audioNamespace.AudioNode)
+		
+		init(function(context, rawNode) {
+			this.$super(context);
+			this._nativeNode = rawNode;
+			this._wet = 1;
+			
+			this.gainNode = audioNamespace.GainNode.gen(context);
+			this.setInputPortNode(this);
+			rawNode.connect(this.gainNode._nativeNode);
+			this.setOutputPortNode(this.gainNode);
+		})
+		
+		def(function onInputFrom(from) {
+			
+		})
+		
+		// to do : disconnection handling
+		def(function onOutputTo(destination) {
+			var numInputs = this.numberOfInputs;
+			for (var i = 0; i < numInputs; i++) {
+				var inPort = this.inputPort(i);
+				var myInPortsInputs = inPort.inputs;
+				var numMyInPortsInputs = myInPortsInputs.length;
+				for (var j = 0; j < numMyInPortsInputs; j++) {
+					destination.from(myInPortsInputs[j]);
+				}
+			}
+		})
+		
+		getter("wet", function() {
+			return this._wet;
+		})
+		setter("wet", function(value) {
+			this._wet = value;
+			this.gainNode.gain = value;
+		})
+	})
+	
+	
+	/**
+	* @class AudioDelayNode
+	**/
+	proto(function AudioDelay() {
+		ex(audio.AudioNode)
+		
+		init(function(context, delayTime) {
+			this.$super(context);
+			
+			var node = this._nativeNode = context._nativeContext.createDelay();
+			node.delayTime.value = 0.5;
+			
+			this.setInputPortNode(this);
+			this.setOutputPortNode(this);
+		})
+	})
+	
+	/**
+	* @class AudioDelayNode
+	**/
+	proto(function AudioReverb() {
+		ex(audio.AudioEffect)
+		
+		init(function(context) {
+			var node = context._nativeContext.createConvolver();
+			this.$super(context, node);
+		})
+		
+		getter("buffer", function() {
+			return this._nativeNode.buffer;
+		})
+		setter("buffer", function(buf) {
+			this._nativeNode.buffer = buf;
+		})
+		
 	})
 	
 })
