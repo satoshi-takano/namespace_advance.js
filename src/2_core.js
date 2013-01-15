@@ -365,4 +365,60 @@ new Namespace(namespace_lib_core).use(function() {
 		})
 	})
 	
+	/**
+	* @class DisplayLink
+	**/
+	singleton(function DisplayLink() {
+		init(function() {
+			var targets = this._targets = [];
+			var renderFunc = this._renderFunc = requestAnimationFrame();
+			
+			function render() {
+				var l = targets.length;
+				for (var i = 0; i < l; i++) {
+					var t = targets[i];
+					t.renderFunc.call(t.target);
+				}
+				renderFunc(render);
+			}
+			render();
+		})
+		
+		def(function addTarget(target, renderFunc) {
+			var targets = this._targets;
+			var l = targets.length;
+			var alreadyAdded = false;
+			for (var i = 0; i < l; i++) {
+				if (targets[i].target == target) {
+					targets[i].renderFunc = renderFunc;
+					alreadyAdded = true;
+				}
+			}
+			if (!alreadyAdded) {
+				this._targets.push({target:target, renderFunc:renderFunc});
+			}
+		})
+		
+		def(function removeTarget(target) {
+			var targets = this._targets;
+			var l = targets.length;
+			for (var i = 0; i < l; i++) {
+				if (targets[i].target == target) {
+					targets.splice(i, 1);
+				}
+			}
+		})
+		
+	})
+	
+	function requestAnimationFrame(renderFunc) {
+		return window.requestAnimationFrame		||
+				window.webkitRequestAnimationFrame	||
+				window.mozRequestAnimationFrame		||
+				window.oRequestAnimationFrame		||
+				window.msRequestAnimationFrame		||
+				function(callback, element){
+					window.setTimeout(callback, 1000 / 60);
+				};
+	}
 });
