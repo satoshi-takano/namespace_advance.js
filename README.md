@@ -74,11 +74,7 @@ JavaScript の学習も兼ねて作っているものです。
 またプロトタイプ定義のコアとなっている Namespace オブジェクトは、
 `new Namespace("jp.example")`としてインスタンス化された時、
 jp, jp.example という JavaScript オブジェクトを自動で作ります。  
-つまり上記の例の Sub を使う場合、`new Namespace("jp.example").Sub.gen();`とすることも`jp.example.Sub.gen()`とすることもできます。
-
-次に、さきほど示した例の`Sub.gen()`の部分を説明します。  
-これはプロトタイプからインスタンスを作るメソッドです。
-ActionScript3.0, C++, Ruby などの`new`にあたるものです。
+つまり`new Namespace("jp.example")`と`jp.example`は等価です。
 
 ### その他 ###
 冒頭で挙げたその他の機能は上記の記法で書かれたライブラリです。
