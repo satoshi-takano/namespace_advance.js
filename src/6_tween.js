@@ -81,7 +81,7 @@ new Namespace(namespace_lib_tween).use(function() {
 				var cnt = 0;
 				var styleValue = target[style];
 				var from = parseInt(styleValue);
-				var interp = ns.Interpolator.gen(to, from, step, easing);
+				var interp = new ns.Interpolator(to, from, step, easing);
 				var values = interp.values;
 				step = step-1;
 				var timerID = setInterval(function(){
@@ -97,7 +97,7 @@ new Namespace(namespace_lib_tween).use(function() {
 					cnt++;
 				}, 1000 / self.fps);
 			}, this.delay);
-			this.next = ns.Animator.gen(this.delay + 1000 / 60 * step);
+			this.next = new ns.Animator(this.delay + 1000 / 60 * step);
 			
 			return this;
 		});
@@ -171,7 +171,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	* @class Circulate interpolation
 	**/
 	singleton(function Circ() {
-		// To initialize when the Circ.gen(params) called.
+		// To initialize when the new Circ(params) called.
 		init(function() {
 		})
 		
@@ -218,7 +218,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	* 
 	**/
 	singleton(function Cubic() {
-		// To initialize when the Cubic.gen(params) called.
+		// To initialize when the new Cubic(params) called.
 		init(function() {
 		})
 		
@@ -263,7 +263,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	* @class Elastic interpolation
 	**/
 	singleton(function Elastic() {
-		// To initialize when the Elastic.gen(params) called.
+		// To initialize when the new Elastic(params) called.
 		init(function() {
 		})
 		
@@ -353,7 +353,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	* 
 	**/
 	singleton(function Expo() {
-		// To initialize when the Expo.gen(params) called.
+		// To initialize when the new Expo(params) called.
 		init(function() {
 		})
 		
@@ -404,7 +404,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	* @class Qaud
 	**/
 	singleton(function Qaud() {
-		// To initialize when the Qaud.gen(params) called.
+		// To initialize when the new Qaud(params) called.
 		init(function() {
 		})
 		
@@ -454,7 +454,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	* 
 	**/
 	singleton(function Quart() {
-		// To initialize when the Quart.gen(params) called.
+		// To initialize when the new Quart(params) called.
 		init(function() {
 		})
 		
@@ -503,7 +503,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	* @class Quintic
 	**/
 	singleton(function Quintic() {
-		// To initialize when the Quintic.gen(params) called.
+		// To initialize when the new Quintic(params) called.
 		init(function() {
 		})
 		
@@ -551,7 +551,7 @@ new Namespace(namespace_lib_tween).use(function() {
 	* 
 	**/
 	singleton(function Sine() {
-		// To initialize when the Sine.gen(params) called.
+		// To initialize when the new Sine(params) called.
 		init(function() {
 		})
 		

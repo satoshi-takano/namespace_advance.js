@@ -64,19 +64,6 @@ var FunctionPrototype = function() {
 	};
 	
 	/**
-	* クラスからインスタンスを得ます.<br/>
-	* 引数に渡したオブジェクトは,クラスのコンストラクタにそのまま引き渡されます.
-	**/
-	this.gen = function() {
-		var obj = new this();
-		if (obj.initialize != undefined) {
-			// if (obj.initialize.superMethod) obj.initialize.superMethod.apply(obj, arguments);
-			obj.initialize.apply(obj, arguments);
-		}
-		return obj;
-	};
-	
-	/**
 	* クラスからシングルトンインスタンスを得ます.<br/>
 	* 引数に渡したオブジェクトは,クラスのコンストラクタにそのまま引き渡されます.
 	**/
@@ -104,7 +91,10 @@ var FunctionPrototype = function() {
 	* @param obj Namespace に定義されている、Singleton ではないクラス(非インスタンス)を渡します.
 	**/
 	this.ex = function(obj) {
-		var proto = new obj();
+		var tmpInit = self.substance.prototype.initialize;
+		var proto = new obj({__callInitialize__:false});
+
+		obj.initialize = tmpInit;
 		self.substance.superClass = obj.prototype;
 		self.substance.prototype = proto;
 		self.substance.prototype.$super = $super;
@@ -215,16 +205,26 @@ var InternalNamespacePrototype = function() {
 		if (this instanceof Namespace) {
 			tmpSelf = this;
 		}
+		// get the name of function
 		var name = FunctionPrototype.getMethodName(namedFunc);
 		if (tmpSelf[name] != undefined) alert("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
-		if (!global.debug)
-			tmpSelf[name] = function() {};
-		else
-			tmpSelf[name] = eval("(function " + name + " () {})");
+		if (!global.debug) {
+			tmpSelf[name] = function() {
+			};
+		}
+		else {
+			tmpSelf[name] = eval("(function " + name + " () {\
+				var internal = arguments[0];\
+				var callInitialize = internal == undefined ? true : internal.__callInitialize__ ;\
+				if (callInitialize == undefined) callInitialize = true;\
+				if (callInitialize && this.initialize) {\
+					this.initialize.apply(this, arguments);\
+				}\
+			})");
+			if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
+		}
 		
-		if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
 		var proto = tmpSelf[name];
-		proto.gen = FunctionPrototype.gen;
 		proto.def = FunctionPrototype.defInObj;
 		proto.prototype.include = FunctionPrototype.include;
 		proto.prototype.$class = proto;
@@ -238,14 +238,18 @@ var InternalNamespacePrototype = function() {
 		var oldSetter = global.setter;
 		FunctionPrototype.substance = proto;
 		
+		// set temporary global methods
 		global.$$ = proto;
 		global.init = namedFunc.init = FunctionPrototype.init;
 		global.ex = namedFunc.ex = FunctionPrototype.ex;
 		global.def = namedFunc.def = FunctionPrototype.def;
 		global.getter = FunctionPrototype.getter;
 		global.setter = FunctionPrototype.setter;
-		namedFunc.call(namedFunc);
+		
+		// build the class
+		namedFunc.call();
 
+		// restore global methods
 		global.$$ = old$$;
 		global.init = oldInit;
 		global.ex = oldEx;
@@ -415,10 +419,9 @@ new Namespace(namespace_lib_core).use(function () {
 	* 
 	**/
 	singleton(function Main() {
-		// To initialize when the Main.gen(params) called.
 		init(function() {
 				var self = this;
-				var util = ns.Utilitie.gen();
+				var util = new ns.Utilitie();
 				var isIE = navigator.userAgent.toLowerCase().indexOf("msie") != -1;
 				
 				util.listen(global, isIE ? "onload" : "load", function () {

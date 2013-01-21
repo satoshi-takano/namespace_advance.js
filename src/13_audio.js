@@ -116,7 +116,7 @@ new Namespace(namespace_lib_audio).use(function() {
 		def(function setInputPortNode(node) {
 			var num = node._nativeNode.numberOfInputs;
 			for (var i = 0; i < num; i++) {
-				var port = audio.AudioPort.gen(node, this);
+				var port = new audio.AudioPort(node, this);
 				port.busNumber = i;
 				this.inputPorts.push(port);
 			}
@@ -125,7 +125,7 @@ new Namespace(namespace_lib_audio).use(function() {
 		def(function setOutputPortNode(node) {
 			var num = node._nativeNode.numberOfOutputs;
 			for (var i = 0; i < num; i++) {
-				var port = audio.AudioPort.gen(node, this);
+				var port = new audio.AudioPort(node, this);
 				port.busNumber = i;
 				this.outputPorts.push(port);
 			}
@@ -208,6 +208,7 @@ new Namespace(namespace_lib_audio).use(function() {
 		
 		init(function(context) {
 			this.$super(context);
+
 			this._nativeNode = context._nativeContext.createGainNode();
 			this.setInputPortNode(this);
 			this.setOutputPortNode(this);
@@ -228,7 +229,7 @@ new Namespace(namespace_lib_audio).use(function() {
 		init(function(context) {
 			this.$super(context);
 			this.context = context;
-			this.gainNode = audioNamespace.GainNode.gen(context);
+			this.gainNode = new audioNamespace.GainNode(context);
 			this._buffer = null;
 			this.setOutputPortNode(this.gainNode);
 		})
@@ -417,7 +418,7 @@ new Namespace(namespace_lib_audio).use(function() {
 			this._nativeNode = rawNode;
 			this._wet = 1;
 			
-			this.gainNode = audioNamespace.GainNode.gen(context);
+			this.gainNode = new audioNamespace.GainNode(context);
 			this.setInputPortNode(this);
 			rawNode.connect(this.gainNode._nativeNode);
 			this.setOutputPortNode(this.gainNode);

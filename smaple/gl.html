@@ -2,6 +2,14 @@
 <script type="text/javascript" charset="utf-8">
 	debug = true;
 </script>
+
+<style type="text/css">
+body {
+	margin: 0;
+	padding: 0;
+}
+</style>
+
 <script type="text/javascript" src="../src/0_lib_define.js"></script>
 <script type="text/javascript" src="../src/1_namespace.js"></script>
 <script type="text/javascript" src="../src/2_core.js"></script>
@@ -16,49 +24,32 @@
 <script type="text/javascript" src="../src/10_native_extention.js"></script>
 <script type="text/javascript" src="../src/11_canvas.js"></script>
 <script type="text/javascript" src="../src/12_math.js"></script>
+<script type="text/javascript" src="../src/13_audio.js"></script>
+<script type="text/javascript" src="../src/14_gl2d.js"></script>
 
+<canvas id="canvas" width='500' height='500'>
+</canvas>
 <script type="text/javascript">
 
-new Namespace("jp.example").use(function() {
-	/**
-	* @archetype Recorder
-	* 
-	**/
-	proto(function Recorder() {
-		// To initialize when the new Recorder(params) called.
-		init(function() {
-			this.include(new (new Namespace(namespace_lib_core)).Recordable());
-		})
-		
-		// op_0 {replace the description here}.
-		def(function op_0(message) {
-			alert("op_0 " + message);
-			this.rec();
-		})
-		
-		// op_1 {replace the description here}.
-		def(function op_1(message) {
-			alert("op_1 " + message);
-			this.rec();
-		})
-		
-		// op_2 {replace the description here}.
-		def(function op_2(message) {
-			alert("op_2 " + message);
-		})
-	})
+var core = new Namespace(namespace_lib_core);
+core.Main.getInstance().main(function (argument) {
+	var gl = new Namespace(namespace_lib_gl2d);
+	var stage = gl.Stage.gen(document.getElementById("canvas"));
+	var displayObject = gl.DisplayObject.gen();
 	
+	
+	var dlink = core.DisplayLink.getInstance();
+	dlink.addTarget(this, function() {
+		// render
+		
+	})
 });
 
-new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
-		var rec = new jp.example.Recorder();
-		rec.op_0("abc");
-		rec.op_1("def");
-		rec.op_2("ghi");
-		rec.playback();
-});
-
+new Namespace("example").use(function() {
+	
+})
 </script>
 <body>
 </body>
 </html>
+

@@ -85,7 +85,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 	* 
 	**/
 	proto(function BitmapData() {
-		// To initialize when the BitmapData.gen(params) called.
+		// To initialize when the new BitmapData(params) called.
 		init(function(w, h) {
 			this.w = w;
 			this.h = h;
@@ -117,7 +117,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 	* 
 	**/
 	singleton(function CapStyle() {
-		// To initialize when the CapStyle.gen(params) called.
+		// To initialize when the new CapStyle(params) called.
 		init(function() {
 		})
 		/** @memberOf CapStyle */
@@ -133,7 +133,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 	* 
 	**/
 	singleton(function JointStyle() {
-		// To initialize when the JointStyle.gen(params) called.
+		// To initialize when the new JointStyle(params) called.
 		init(function(args) {
 		})
 		/** @memberOf JointStyle */
@@ -160,7 +160,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.needFill = false;
 			
 			// initialize context
-			var op = nscore.Operation.gen(this, ctxInit);
+			var op = new nscore.Operation(this, ctxInit);
 			this.rec(op);
 			
 			this.boundWidth = 0;
@@ -179,11 +179,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 		*/
 		def(function beginFill(color, alpha) {
 			if (alpha == undefined) alpha = 1;
-			var col = ns.Color.gen(color);
+			var col = new ns.Color(color);
 			var style = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
 			
-			this.rec(nscore.Operation.gen(this, ctxNeedFill, [true]))
-			this.rec(nscore.Operation.gen(this, ctxSetFillStyle, [style]));
+			this.rec(new nscore.Operation(this, ctxNeedFill, [true]))
+			this.rec(new nscore.Operation(this, ctxSetFillStyle, [style]));
 		})
 		
 		def(function beginGradientFill(type, colors, alphas, ratios, matrix, spreadMethod, interpolationMethod) {
@@ -198,7 +198,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param ay {Number} アンカーポイントの y 値
 		*/
 		def(function curveTo(cpx, cpy, ax, ay) {
-			this.rec(nscore.Operation.gen(this, ctxCurveTo, [cpx, cpy, ax, ay]));
+			this.rec(new nscore.Operation(this, ctxCurveTo, [cpx, cpy, ax, ay]));
 		})
 		
 		/**
@@ -208,7 +208,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param r {Number} 円の半径
 		*/
 		def(function drawCircle(x, y, r) {
-			this.rec(nscore.Operation.gen(this, ctxArc, [x, y, r]));
+			this.rec(new nscore.Operation(this, ctxArc, [x, y, r]));
 		})
 		
 		def(function drawEllipse(x, y, w, h) {
@@ -223,7 +223,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param h {Number} 描画する矩形の高さ
 		*/
 		def(function drawRect(x, y, w, h) {
-			this.rec(nscore.Operation.gen(this, ctxFillRect, [x, y, w, h]));
+			this.rec(new nscore.Operation(this, ctxFillRect, [x, y, w, h]));
 			updateBound.call(this, x + w, y + h);
 		})
 		
@@ -233,7 +233,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		/** 塗を終了します. */
 		def(function endFill() {
-			this.rec(nscore.Operation.gen(this, ctxEndFill));
+			this.rec(new nscore.Operation(this, ctxEndFill));
 		})
 		
 		/**
@@ -248,9 +248,9 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function lineStyle(thickness, color, alpha, caps, joints, miterLimit) {
 			if (alpha == undefined) var alpha = 1;
 			if (thickness == 0) alpha = 0;
-			var col = ns.Color.gen(color);
+			var col = new ns.Color(color);
 			var style = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
-			var op = nscore.Operation.gen(this, ctxSetLineStyle, [thickness, style, caps, joints, miterLimit]);
+			var op = new nscore.Operation(this, ctxSetLineStyle, [thickness, style, caps, joints, miterLimit]);
 			this.rec(op);
 		})
 		
@@ -260,7 +260,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param y {Number}
 		*/
 		def(function lineTo(x, y) {
-			var op = nscore.Operation.gen(this, ctxLineTo, [x, y]);
+			var op = new nscore.Operation(this, ctxLineTo, [x, y]);
 			this.rec(op);
 			updateBound.call(this, x, y);
 		})
@@ -271,7 +271,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param y {Number}
 		*/
 		def(function moveTo(x, y) {
-			this.rec(nscore.Operation.gen(this, ctxMoveTo, [x, y]));
+			this.rec(new nscore.Operation(this, ctxMoveTo, [x, y]));
 			updateBound.call(this, x, y);
 		})
 		
@@ -285,7 +285,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param y {Number}
 		*/
 		def(function bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) {
-			this.rec(nscore.Operation.gen(this, ctxBezierCurveTo, [cp1x, cp1y, cp2x, cp2y, x, y]));
+			this.rec(new nscore.Operation(this, ctxBezierCurveTo, [cp1x, cp1y, cp2x, cp2y, x, y]));
 		})
 		
 		/**
@@ -295,12 +295,12 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param y {Number}
 		*/
 		def(function drawImage(img) {
-			this.rec(nscore.Operation.gen(this, ctxDrawImage, [img]));
+			this.rec(new nscore.Operation(this, ctxDrawImage, [img]));
 			updateBound.call(this, img.width, img.height);
 		})
 		
 		def(function setFormat(formatString) {
-			this.rec(nscore.Operation.gen(this, ctxSetFormat, [formatString]));
+			this.rec(new nscore.Operation(this, ctxSetFormat, [formatString]));
 			this.currentFormat = formatString;
 		})
 		
@@ -318,7 +318,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param y {Number}
 		*/
 		def(function drawText(text) {
-			this.rec(nscore.Operation.gen(this, ctxDrawText, [text]));
+			this.rec(new nscore.Operation(this, ctxDrawText, [text]));
 		})
 		
 		def(function clear() {
@@ -358,7 +358,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		function ctxCurveTo(cpx, cpy, ax, ay) {
 			var c = this.context;
-			c.quadraticCurveTo(cpx, cpy, ax + gx, ay + gy);
+			c.quadraticCurveTo(cpx, cpy, ax, ay);
 			if (this.needFill) this.context.fill();
 			if (this.needStroke) c.stroke();
 		}
@@ -441,7 +441,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this.$super();
 			
 			this._mx = 0, this._my = 0;
-			this._g = ns.Graphics.gen();
+			this._g = new ns.Graphics();
 			this.ii = ++ii
 			this._stg = null;
 			this._sx = this._sy = 1;
@@ -767,7 +767,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this._objectsUnderPointer = [];
 			this._currentMouseOveredObjects = [];
 			
-			if (new Namespace(namespace_lib_platform + ".browser").UserAgent.gen().isMobile())
+			if (new (new Namespace(namespace_lib_platform + ".browser")).UserAgent().isMobile())
 				this.enableTouchEvents();
 			else
 				this.enableMouseEvents();
@@ -827,7 +827,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 						for (var i = oup.length - 1; 0 <= i; i--) {
 							var o = oup[i];
 							if (!o._mouseOvered && o.hasEventListener(E.MOUSE_OVER)) { 
-								o.dispatchEvent(E.gen(E.MOUSE_OVER, o));
+								o.dispatchEvent(new E(E.MOUSE_OVER, o));
 								o._mouseOvered = true;
 								currentOvered.push(o);
 								if (!o.mouseChildren) break;
@@ -840,7 +840,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 					var overed = currentOvered[i];
 					
 					if (overed._mouseOutFlag) {
-						if (overed.hasEventListener(E.MOUSE_OUT)) overed.dispatchEvent(E.gen(E.MOUSE_OUT, o));
+						if (overed.hasEventListener(E.MOUSE_OUT)) overed.dispatchEvent(new E(E.MOUSE_OUT, o));
 						overed._mouseOutFlag = false;
 						overed._mouseOvered = false;
 						currentOvered.splice(i, 1);
@@ -853,7 +853,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		def(function enableMouseEvents() {
-			var util = new Namespace(namespace_lib_core).Utilitie.gen();
+			var util = new (new Namespace(namespace_lib_core)).Utilitie();
 			var self = this;
 			var oup = self._objectsUnderPointer;
 			var E = nsevent.FLMouseEvent;
@@ -864,7 +864,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
 					if (o.hasEventListener(E.CLICK)) {
-						o.dispatchEvent(E.gen(E.CLICK, o));
+						o.dispatchEvent(new E(E.CLICK, o));
 						if (!o.mouseChildren) break;
 					}
 				}
@@ -879,13 +879,13 @@ new Namespace(namespace_lib_canvas).use(function () {
 				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
 					if (o.hasEventListener(E.MOUSE_DOWN)) {
-						var e = nsevent.FLEvent.gen(E.MOUSE_DOWN, o);
+						var e = new nsevent.FLEvent(E.MOUSE_DOWN, o);
 						
-						var pos = new Namespace(namespace_lib_geom).Matrix.gen();
+						var pos = new (new Namespace(namespace_lib_geom)).Matrix();
 						pos.tx = mouseX;
 						pos.ty = mouseY;
 						
-						var mat = new Namespace(namespace_lib_geom).Matrix.gen();
+						var mat = new (new Namespace(namespace_lib_geom)).Matrix();
 						var sx = o.scaleX;
 						var sy = o.scaleY;
 						var rsx = 1 / sx;
@@ -914,7 +914,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
 					if (o.hasEventListener(E.MOUSE_UP)) {
-						o.dispatchEvent(nsevent.FLEvent.gen(E.MOUSE_UP, o));
+						o.dispatchEvent(new nsevent.FLEvent(E.MOUSE_UP, o));
 						if (!o.mouseChildren) break;
 					}
 				}
@@ -923,7 +923,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		def(function enableTouchEvents() {
-			var util = new Namespace(namespace_lib_core).Utilitie.gen();
+			var util = new (new Namespace(namespace_lib_core)).Utilitie();
 			var self = this;
 			var oup = self._objectsUnderPointer;
 			var E = nsevent.TouchEvent;
@@ -934,7 +934,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
 					if (o.hasEventListener(E.TOUCH_START)) {
-						o.dispatchEvent(E.gen(E.TOUCH_START, o));
+						o.dispatchEvent(new E(E.TOUCH_START, o));
 						if (!o.mouseChildren) break;
 					}
 				}
@@ -948,7 +948,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 				for (var i = oup.length - 1; 0 <= i; i--) {
 					var o = oup[i];
 					if (o.hasEventListener(E.TOUCH_END)) {
-						o.dispatchEvent(E.gen(E.TOUCH_END, o));
+						o.dispatchEvent(new E(E.TOUCH_END, o));
 						if (!o.mouseChildren) break;
 					}
 				}
@@ -1105,7 +1105,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 			_this.cache[name] = img;
 			if (_this._currentLoadedCount == _this._currentToLoadCount) {
 				_this._nowLoading = false;
-				_this.dispatchEvent(nsevent.FLEvent.gen(nsevent.FLEvent.COMPLETE));
+				_this.dispatchEvent(new nsevent.FLEvent(nsevent.FLEvent.COMPLETE));
 				_this._currentToLoadCount = 0;
 				_this._currentLoadedCount = 0;
 			}

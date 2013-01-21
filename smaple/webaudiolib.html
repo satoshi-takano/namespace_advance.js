@@ -34,14 +34,14 @@ body {
 new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	var canvas = new Namespace(namespace_lib_canvas);
 	var event = new Namespace(namespace_lib_events);
-	var stage = canvas.Stage.gen(document.getElementById("canvas"))
+	var stage = new canvas.Stage(document.getElementById("canvas"));
 	
-	var cont = canvas.DisplayObjectContainer.gen();
+	var cont = new canvas.DisplayObjectContainer();
 	stage.addChild(cont);
 	cont.graphics.beginFill(0);
 	cont.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 	
-	var waveForm = example.WaveForm.gen();
+	var waveForm = new example.WaveForm();
 	stage.addChild(waveForm);
 	
 	var slider = document.getElementById("reverb");
@@ -51,14 +51,14 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	}
 	
 	var audio = new Namespace(namespace_lib_audio);
-	var context = audio.AudioContext.gen();
-	var processor = audio.AudioBufferProcessor.gen(context);;
-	var delay = audio.AudioReverb.gen(context);
+	var context = new audio.AudioContext();
+	var processor = new audio.AudioBufferProcessor(context);
+	var delay = new audio.AudioReverb(context);
 	var r = slider.value / 100;
 	delay.gainNode.gain = r;
 	
-	var file = audio.AudioFile.gen(context);
-	var file2 = audio.AudioFile.gen(context);
+	var file = new audio.AudioFile(context);
+	var file2 = new audio.AudioFile(context);
 	file2.load("http://jslib.localhost/smaple/matrix-reverb1.wav", function() {
 		delay.buffer = file2.buffer;
 	})
@@ -67,10 +67,10 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		
 		waveForm.samples = processor.samples;
 		
-		var playButton = canvas.DisplayObjectContainer.gen();
+		var playButton = new canvas.DisplayObjectContainer();
 		playButton.graphics.beginFill(0xeeeeee);
 		playButton.graphics.drawRect(0, 0, 100, 30);
-		var lab = canvas.Text.gen();
+		var lab = new canvas.Text();
 		lab.y = 8;
 		lab.text = "Reverb";
 		lab.fontFamily = "Helvetica";
@@ -114,10 +114,10 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 		}
 	})
 	
-	var select = canvas.DisplayObject.gen();
+	var select = new canvas.DisplayObject();
 	stage.addChild(select);
 	
-	var cursor = canvas.DisplayObject.gen();
+	var cursor = new canvas.DisplayObject();
 	cursor.graphics.beginFill(0xff0000, 1);
 	cursor.graphics.drawRect(0, 0, 1, stage.stageHeight);
 	stage.addChild(cursor);
@@ -153,7 +153,7 @@ new Namespace("example").use(function() {
 				var l = Math.floor(samples.length / 2);
 				var c = this.stage.context;
 				c.lineWidth = 0.3;
-				var col = canvas.Color.gen(0x9988ff)
+				var col = new canvas.Color(0x9988ff)
 				c.strokeStyle = "rgba(" + col.r + "," + col.g + "," + col.b + "," + 1 +")";
 				c.beginPath();
 				var sw = this.stage.stageWidth;

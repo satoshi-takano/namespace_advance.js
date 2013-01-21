@@ -117,7 +117,7 @@ new Namespace(namespace_lib_net).use(function () {
 			this.readyStateCallback = function(e) {
 				if (self.currentXHR.readyState == ns.URLLoader.DONE) {
 					self.data = self.currentXHR.responseText;
-					self.dispatchEvent(nse.FLEvent.gen(nse.FLEvent.COMPLETE, self, e || null));
+					self.dispatchEvent(new nse.FLEvent(nse.FLEvent.COMPLETE, self, e || null));
 				}
 			}
 		});

@@ -48,7 +48,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @param p {Point} 
 		*/
 		def(function add(p) {
-			return ns.Point.gen(this.x + p.x, this.y + p.y);
+			return new ns.Point(this.x + p.x, this.y + p.y);
 		});
 		
 		/** 
@@ -56,7 +56,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @return {Point} clone
 		*/
 		def(function clone() {
-			return ns.Point.gen(this.x, this.y);
+			return new ns.Point(this.x, this.y);
 		});
 		
 		/**
@@ -93,7 +93,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @param p {Point}
 		*/
 		def(function subtract(p) {
-			return ns.Point.gen(this.x - p.x, this.y - p.y);
+			return new ns.Point(this.x - p.x, this.y - p.y);
 		});
 		
 		/**
@@ -117,7 +117,7 @@ new Namespace(namespace_lib_geom).use(function() {
 			var dy = p2.y - p1.y;
 			var tx = p1.x + dx * (1-f);
 			var ty = p1.y + dy * (1-f);
-			return ns.Point.gen(tx, ty);
+			return new ns.Point(tx, ty);
 		});
 		
 		/** 
@@ -125,7 +125,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @memberOf Point
 		*/
 		$$.def(function polar(length, radian) {
-			return ns.Point.gen(length * Math.cos(radian), length * Math.sin(radian));
+			return new ns.Point(length * Math.cos(radian), length * Math.sin(radian));
 		});
 	});
 	
@@ -153,7 +153,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @return {Rectangle} 
 		*/
 		def(function clone() {
-			return ns.Rectangle.gen(this.x, this.y, this.width, this.height);
+			return new ns.Rectangle(this.x, this.y, this.width, this.height);
 		});
 		
 		/** 
@@ -217,7 +217,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @return {Rectangle}
 		*/
 		def(function intersection(rect) {
-			var r = ns.Rectangle.gen(0, 0, 0, 0);
+			var r = new ns.Rectangle(0, 0, 0, 0);
 			r.x = Math.max(this.x, rect.x);
 			r.y = Math.max(this.y, rect.y);
 			var w;
@@ -275,7 +275,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		*/
 		def(function union(rect) {
 			var intersection = this.intersection(rect);
-			var r = ns.Rectangle.gen(0,0,0,0);
+			var r = new ns.Rectangle(0,0,0,0);
 			r.x = Math.min(this.x, rect.x);
 			r.y = Math.min(this.y, rect.y);
 			r.width = this.width + rect.width - intersection.width;
@@ -296,7 +296,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @return {Point}
 		*/
 		def(function getBottomRight() {
-			return ns.Point.gen(this.getRight(), this.getBottom());
+			return new ns.Point(this.getRight(), this.getBottom());
 		});
 		
 		/**
@@ -312,7 +312,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @return {Point}
 		*/
 		def(function getSize() {
-			return ns.Point.gen(this.width, this.height);
+			return new ns.Point(this.width, this.height);
 		});
 		
 		/**
@@ -320,7 +320,7 @@ new Namespace(namespace_lib_geom).use(function() {
 		* @return {Point}
 		*/
 		def(function getTopLeft() {
-			return ns.Point.gen(this.x, this.y);
+			return new ns.Point(this.x, this.y);
 		});
 	 });
 	 
@@ -348,7 +348,7 @@ new Namespace(namespace_lib_geom).use(function() {
 	 	* @return {Matrix}
 	 	*/
 	 	def(function clone() {
-		 	return ns.Matrix.gen(this.a, this.b, this.c, this.d, this.tx, this.ty);
+		 	return new ns.Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
 	 	});
 	 	
 	 	/**
@@ -378,7 +378,7 @@ new Namespace(namespace_lib_geom).use(function() {
 	 	* @param radian {Number} 
 	 	*/
 	 	def(function rotate(radian) {
-	 		var rot = ns.Matrix.gen(0, 0, 0, 0, 0, 0);
+	 		var rot = new ns.Matrix(0, 0, 0, 0, 0, 0);
 	 		var s = Math.sin(radian);
 	 		var c = Math.cos(radian);
 			rot.a = c;
@@ -393,7 +393,7 @@ new Namespace(namespace_lib_geom).use(function() {
 	 	* @param scl {Number}
 	 	*/
 	 	def(function scale(scl) {
-	 		var s = ns.Matrix.gen(scl, 0, 0, scl, 0, 0);
+	 		var s = new ns.Matrix(scl, 0, 0, scl, 0, 0);
 			this.concat(s);
 	 	});
 	 	

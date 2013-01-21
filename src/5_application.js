@@ -47,10 +47,10 @@ new Namespace(namespace_lib_app).use(function() {
 			*/
 			this.mouseY = 0;
 			/** @memberOf Application.prototype */
-			this.userAgent = new Namespace(namespace_lib_platform).browser.UserAgent.gen();
+			this.userAgent = new (new Namespace(namespace_lib_platform)).browser.UserAgent();
 			
 			var nscore = (new Namespace(namespace_lib_core));
-			var util = nscore.Utilitie.gen();
+			var util = new nscore.Utilitie();
 			var isIE = this.userAgent.isIE();
 			var app = this;
 			this.canTrackMouse = false;

@@ -224,7 +224,7 @@ new Namespace(namespace_lib_core).use(function() {
 		/**
 		* 値を別の Range での値に置き換えます.
 		* @description 例えば 0 ~ 100 の Range オブジェクトに対して,<br/>
-		* remap(50, Range.gen(100, 200)); を評価した場合,<br/>
+		* remap(50, new Range(100, 200)); を評価した場合,<br/>
 		* 150 が返されます.
 		* @param value {Number} この範囲内での１点の値.
 		* @param range {Range} 置き換える範囲
@@ -333,7 +333,7 @@ new Namespace(namespace_lib_core).use(function() {
 	**/
 	proto(function Recordable() {
 		init(function() {
-			this.opq = ns.OperationQueue.gen();
+			this.opq = new ns.OperationQueue();
 		})
 		
 		/** 
@@ -345,7 +345,7 @@ new Namespace(namespace_lib_core).use(function() {
 		def(function rec(op) {
 			if (!op) {
 				var caller = arguments.callee.caller;
-				op = ns.Operation.gen(this, caller, caller.arguments);
+				op = new ns.Operation(this, caller, caller.arguments);
 			}
 			this.opq.push(op);
 		})

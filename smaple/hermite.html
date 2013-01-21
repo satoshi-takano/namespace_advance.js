@@ -23,9 +23,9 @@
 
 new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	var ns = new Namespace(namespace_lib_canvas)
-	var stage = ns.Stage.gen(document.getElementById("canvas"))
+	var stage = new ns.Stage(document.getElementById("canvas"))
 	
-	var cont = ns.DisplayObjectContainer.gen();
+	var cont = new ns.DisplayObjectContainer();
 	stage.addChild(cont);
 	cont.graphics.beginFill(0);
 	cont.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);

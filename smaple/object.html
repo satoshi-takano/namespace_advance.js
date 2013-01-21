@@ -74,7 +74,7 @@ new Namespace("jp.example").use(function() {
 });
 
 new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
-	var subsubClass = jp.example.SubsubClass.gen(
+	var subsubClass = new jp.example.SubsubClass(
 		"property A",
 		"property B",
 		"property C",
