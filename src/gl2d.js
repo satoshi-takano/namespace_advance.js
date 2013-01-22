@@ -23,26 +23,63 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
- * @fileOverview 各名前空間が(String型で)宣言されています.
- * 別のライブラリなどの名前空間と衝突する場合はこのファイル内の定義を書き換えます.
- */
- 
-/**
-* @description  グローバルオブジェクト.<br/>
-* Web Browser なら window が入る.
-*/
-var global = window;
+* @fileOverview 
+*/ 
 
-var namespace_lib_core = "jp.example"; // enter your reversed domain.
-var namespace_lib_app = namespace_lib_core + ".application";
-var namespace_lib_geom = namespace_lib_core + ".geom";
-var namespace_lib_events = namespace_lib_core + ".events";
-var namespace_lib_tween = namespace_lib_core + ".tween";
-var namespace_lib_net = namespace_lib_core + ".net";
-var namespace_lib_display = namespace_lib_core + ".display";
-var namespace_lib_ui = namespace_lib_core + ".ui";
-var namespace_lib_math = namespace_lib_core + ".math";
-var namespace_lib_canvas = namespace_lib_core + ".html5.canvas";
-var namespace_lib_platform = namespace_lib_core + ".platform";
-var namespace_lib_audio = namespace_lib_core + ".audio";
-var namespace_lib_gl2d = namespace_lib_core + ".gl2d";
+new Namespace(NS_GL2D).use(function() {
+	var namespace = this;
+	var gl;
+	
+	/**
+	* @class GLContext
+	**/
+	proto(function Stage() {
+		init(function(canvasElement) {
+			this._backgroundColor = [0, 0, 0, 1];
+			
+			gl = this.gl = canvasElement.getContext("webgl") || canvasElement.getContext("experimental-webgl");
+			gl.viewportWidth = canvas.width;
+			gl.viewportHeight = canvas.height;
+			gl.viewport(0, 0, canvasElement.width, canvasElement.height);
+			gl.clearColor(this._backgroundColor[0], this._backgroundColor[1], this._backgroundColor[2], 1);
+			gl.clear(gl.COLOR_BUFFER_BIT);
+		})
+		
+		getter("backgroundColor", function() {
+			return this._backgroundColor;
+		})
+		setter("backgroundColor", function(vec4) {
+			this._backgroundColor = vec4;
+		})
+	})
+	
+	/**
+	* @class Program
+	**/
+	proto(function Program() {
+		init(function() {
+			this._program = gl.createProgram();
+		})
+	})
+	
+	/**
+	* @class Shader
+	**/
+	proto(function Shader() {
+		init(function(src) {
+			
+		})
+	})
+	
+	
+	/**
+	* @class DisplayObject
+	**/
+	proto(function DisplayObject() {
+		init(function() {
+			this._program = new namespace.Program();
+		})
+	})
+	
+	
+})

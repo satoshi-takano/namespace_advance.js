@@ -26,7 +26,7 @@ THE SOFTWARE.
  * @fileOverview 幾何学に関するオブジェクトが定義されています.
  */
  
-new Namespace(namespace_lib_geom).use(function() {
+new Namespace(NS_GEOM).use(function() {
 	var ns = this;
 	
 	 /** 

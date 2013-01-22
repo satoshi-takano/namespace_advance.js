@@ -2,36 +2,26 @@
 <script type="text/javascript" charset="utf-8">
 	debug = true;
 </script>
-<script type="text/javascript" src="../src/0_lib_define.js"></script>
-<script type="text/javascript" src="../src/1_namespace.js"></script>
-<script type="text/javascript" src="../src/2_core.js"></script>
-<script type="text/javascript" src="../src/2.1_platform.js"></script>
-<script type="text/javascript" src="../src/3_events.js"></script>
-<script type="text/javascript" src="../src/4_geom.js"></script>
-<script type="text/javascript" src="../src/5_application.js"></script>
-<script type="text/javascript" src="../src/6_tween.js"></script>
-<script type="text/javascript" src="../src/7_net.js"></script>
-<script type="text/javascript" src="../src/8_display.js"></script>
-<script type="text/javascript" src="../src/9_ui.js"></script>
-<script type="text/javascript" src="../src/10_native_extention.js"></script>
-<script type="text/javascript" src="../src/11_canvas.js"></script>
-<script type="text/javascript" src="../src/12_math.js"></script>
+<script type="text/javascript" src="../src/namespace.js"></script>
 
-<canvas id="canvas" width='450' height='450'>
+<canvas id="canvas2d" width='450' height='450'>
 </canvas>
 <script type="text/javascript">
-
-new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
-	var ns = new Namespace(namespace_lib_canvas)
-	var nsmath = new Namespace(namespace_lib_math)
-	var stage = new ns.Stage(document.getElementById("canvas"))
+Namespace.jsPath = "../src";
+new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
+	Namespace.require(NS_CANVAS);
+	Namespace.require(NS_MATH);
+	
+	var ns = new Namespace(NS_CANVAS)
+	var nsmath = new Namespace(NS_MATH)
+	var stage = new ns.Stage(document.getElementById("canvas2d"))
 	
 	var cont = new ns.DisplayObjectContainer();
 	stage.addChild(cont);
 	cont.graphics.beginFill(0);
 	cont.graphics.drawRect(0, 0, stage.stageWidth, (stage.stageHeight - 40));
 	
-	new Namespace(namespace_lib_math).Math.sugar();
+	new Namespace(NS_MATH).Math.sugar();
 	
 	var dt = Math.pow(2, 9);
 	var samples = [];

@@ -22,8 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
+Namespace.require(NS_EVENTS);
 
-new Namespace(namespace_lib_app).use(function() {
+new Namespace(NS_APP).use(function() {	
 	var ns = this;
 		
 	 /** 
@@ -31,7 +32,7 @@ new Namespace(namespace_lib_app).use(function() {
 	 * @augments EventDispatcher
 	 */
 	singleton(function Application() {
-		var nse = new Namespace(namespace_lib_events);
+		var nse = new Namespace(NS_EVENTS);
 		ex(nse.EventDispatcher);
 		
 		init(function() {
@@ -47,9 +48,9 @@ new Namespace(namespace_lib_app).use(function() {
 			*/
 			this.mouseY = 0;
 			/** @memberOf Application.prototype */
-			this.userAgent = new (new Namespace(namespace_lib_platform)).browser.UserAgent();
+			this.userAgent = new (new Namespace(NS_PLATFORM)).UserAgent();
 			
-			var nscore = (new Namespace(namespace_lib_core));
+			var nscore = (new Namespace(NS_CORE));
 			var util = new nscore.Utilitie();
 			var isIE = this.userAgent.isIE();
 			var app = this;

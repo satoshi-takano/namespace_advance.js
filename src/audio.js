@@ -26,7 +26,7 @@ THE SOFTWARE.
 * @fileOverview 
 */ 
 
-new Namespace(namespace_lib_audio).use(function() {
+new Namespace(NS_AUDIO).use(function() {
 	var audioNamespace = this;
 	
 	/**

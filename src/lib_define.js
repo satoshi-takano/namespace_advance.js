@@ -23,63 +23,11 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
-* @fileOverview 
-*/ 
-
-new Namespace(namespace_lib_gl2d).use(function() {
-	var namespace = this;
-	var gl;
-	
-	/**
-	* @class GLContext
-	**/
-	proto(function Stage() {
-		init(function(canvasElement) {
-			this._backgroundColor = [0, 0, 0, 1];
-			
-			gl = this.gl = canvasElement.getContext("webgl") || canvasElement.getContext("experimental-webgl");
-			gl.viewportWidth = canvas.width;
-			gl.viewportHeight = canvas.height;
-			gl.viewport(0, 0, canvasElement.width, canvasElement.height);
-			gl.clearColor(this._backgroundColor[0], this._backgroundColor[1], this._backgroundColor[2], 1);
-			gl.clear(gl.COLOR_BUFFER_BIT);
-		})
-		
-		getter("backgroundColor", function() {
-			return this._backgroundColor;
-		})
-		setter("backgroundColor", function(vec4) {
-			this._backgroundColor = vec4;
-		})
-	})
-	
-	/**
-	* @class Program
-	**/
-	proto(function Program() {
-		init(function() {
-			this._program = gl.createProgram();
-		})
-	})
-	
-	/**
-	* @class Shader
-	**/
-	proto(function Shader() {
-		init(function(src) {
-			
-		})
-	})
-	
-	
-	/**
-	* @class DisplayObject
-	**/
-	proto(function DisplayObject() {
-		init(function() {
-			this._program = new namespace.Program();
-		})
-	})
-	
-	
-})
+ * @fileOverview 各名前空間が(String型で)宣言されています.
+ * 別のライブラリなどの名前空間と衝突する場合はこのファイル内の定義を書き換えます.
+ */
+ 
+/**
+* @description  グローバルオブジェクト.<br/>
+* Web Browser なら window が入る.
+*/

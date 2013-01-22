@@ -26,12 +26,12 @@ THE SOFTWARE.
 * @fileOverview DOM の View に関係するオブジェクトが定義されています.
 */
 
-new Namespace(namespace_lib_display).use(function() {
+new Namespace(NS_DISPLAY).use(function() {
 	var ns = this;
-	var nsc = new Namespace(namespace_lib_core);
-	var nse = new Namespace(namespace_lib_events);
-	var nsg = new Namespace(namespace_lib_geom);
-	var app = (new Namespace(namespace_lib_app)).Application.getInstance();
+	var nsc = new Namespace(NS_CORE);
+	var nse = new Namespace(NS_EVENTS);
+	var nsg = new Namespace(NS_GEOM);
+	var app = (new Namespace(NS_APP)).Application.getInstance();
 	
 	/** 
 	* @class DOM の表示オブジェクトように高レベルAPIを提供します.

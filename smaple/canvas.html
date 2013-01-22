@@ -2,29 +2,21 @@
 <script type="text/javascript" charset="utf-8">
 	debug = true;
 </script>
-<script type="text/javascript" src="../src/0_lib_define.js"></script>
-<script type="text/javascript" src="../src/1_namespace.js"></script>
-<script type="text/javascript" src="../src/2_core.js"></script>
-<script type="text/javascript" src="../src/2.1_platform.js"></script>
-<script type="text/javascript" src="../src/3_events.js"></script>
-<script type="text/javascript" src="../src/4_geom.js"></script>
-<script type="text/javascript" src="../src/5_application.js"></script>
-<script type="text/javascript" src="../src/6_tween.js"></script>
-<script type="text/javascript" src="../src/7_net.js"></script>
-<script type="text/javascript" src="../src/8_display.js"></script>
-<script type="text/javascript" src="../src/9_ui.js"></script>
-<script type="text/javascript" src="../src/10_native_extention.js"></script>
-<script type="text/javascript" src="../src/11_canvas.js"></script>
-<script type="text/javascript" src="../src/12_math.js"></script>
+<script type="text/javascript" src="../src/namespace.js"></script>
 
-<canvas id="canvas" width='1024' height='768' style="top:0;left:0;position:absolute;">
+<canvas id="canvas2d" width='1024' height='768' style="top:0;left:0;position:absolute;">
 </canvas>
 </style>
 
 <script type="text/javascript">
-new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
-	var ns = new Namespace(namespace_lib_canvas);
+var core = new Namespace(NS_CORE);
+
+Namespace.jsPath = "../src";
+new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
+	Namespace.require(NS_CANVAS);
 	
+	var ns = new Namespace(NS_CANVAS);
+	console.log(ns === jp.example.canvas)
 	//testDisplayObjecthHierarchy();
 	//testExternalImage();
 	//testTransform();
@@ -32,7 +24,7 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	//testAnimation();
 	
 	function testDisplayObjecthHierarchy() {
-		var stage = new ns.Stage(document.getElementById("canvas"));
+		var stage = new ns.Stage(document.getElementById("canvas2d"));
 		var container = new ns.DisplayObjectContainer();
 		container.graphics.beginFill(0);
 		container.graphics.drawRect(0, 0, 500, 500);
@@ -63,8 +55,8 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	}
 	
 	function testExternalImage() {
-		var stage = new ns.Stage(document.getElementById("canvas"));
-		var nse = new Namespace(namespace_lib_events);
+		var stage = new ns.Stage(document.getElementById("canvas2d"));
+		var nse = new Namespace(NS_EVENTS);
 		
 		var imgManager = ns.ImageManager.getInstance();
 		imgManager.load([
@@ -88,7 +80,7 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	}
 	
 	function testTransform() {
-		var stage = new ns.Stage(document.getElementById("canvas"));
+		var stage = new ns.Stage(document.getElementById("canvas2d"));
 		
 		var container = new ns.DisplayObjectContainer();
 		container.graphics.beginFill(0);
@@ -126,8 +118,8 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	}
 	
 	function testInteraction() {
-		var stage = new ns.Stage(document.getElementById("canvas"));
-		var nse = new Namespace(namespace_lib_events);
+		var stage = new ns.Stage(document.getElementById("canvas2d"));
+		var nse = new Namespace(NS_EVENTS);
 		
 		var container = new ns.DisplayObjectContainer();
 		container.graphics.beginFill(0);
@@ -200,8 +192,8 @@ new Namespace(namespace_lib_core).Main.getInstance().main(function (argument) {
 	}
 	
 	function testAnimation() {
-		var stage = new ns.Stage(document.getElementById("canvas"));
-		var nsa = new Namespace(namespace_lib_tween);
+		var stage = new ns.Stage(document.getElementById("canvas2d"));
+		var nsa = new Namespace(NS_TWEEN);
 		
 		var sp = new ns.DisplayObject();
 		sp.graphics.beginFill(0);

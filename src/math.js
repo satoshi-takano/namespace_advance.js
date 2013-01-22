@@ -26,7 +26,7 @@ THE SOFTWARE.
 * @fileOverview 計算に関するオブジェクトが定義されています.
 */ 
 
-new Namespace(namespace_lib_math).use(function () {
+new Namespace(NS_MATH).use(function () {
 	var ns = this;
 	var M = Math;
 	/**

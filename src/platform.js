@@ -26,10 +26,9 @@ THE SOFTWARE.
  * @fileOverview プラットフォームに関するオブジェクトが定義されています.
  */
 
-new Namespace(namespace_lib_platform).use(function() {
+new Namespace(NS_PLATFORM).use(function() {
 	var ns = this;
 	
-	new Namespace(ns.nsName + ".browser").use(function() {
 		/** 
 		 * @class ユーザーエージェント周りの処理を受け持ちます.
 		 */
@@ -91,5 +90,5 @@ new Namespace(namespace_lib_platform).use(function() {
 				return this.ua.indexOf("android") != -1;
 			});
 		});
-	});
+
 });

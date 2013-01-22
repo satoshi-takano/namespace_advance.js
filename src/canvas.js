@@ -26,11 +26,17 @@ THE SOFTWARE.
 * @fileOverview HTML5 の Canvas 要素に関係するオブジェクトが定義されています.
 */ 
 
-new Namespace(namespace_lib_canvas).use(function () {
+Namespace.require(NS_CORE);
+Namespace.require(NS_APP);
+Namespace.require(NS_GEOM);
+Namespace.require(NS_EVENTS);
+Namespace.require(NS_PLATFORM);
+
+new Namespace(NS_CANVAS).use(function () {
 	var ns = this;
-	var nscore = new Namespace(namespace_lib_core);
-	var nsevent = new Namespace(namespace_lib_events);
-	var nsgeom = new Namespace(namespace_lib_geom);
+	var nscore = new Namespace(NS_CORE);
+	var nsevent = new Namespace(NS_EVENTS);
+	var nsgeom = new Namespace(NS_GEOM);
 	
 	if (global.CanvasRenderingContext2D && 
 	    !CanvasRenderingContext2D.prototype.createImageData && 
@@ -616,9 +622,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param child {DisplayObject}
 		*/
 		def(function addChild(child) {
-			this.numChildren.times(function (i) {
+			var l = this.numChildren;
+			for (var i = 0; i < l; i++) {
 				if (this.children[i] == child) this.children.splice(i, 1);
-			}, this);
+			}
 			this.children.push(child);
 			child.parent = this;
 			if (this._stg) {
@@ -634,9 +641,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 		*/
 		def(function addChildAt(child, index) {
 			var numChildren = this.numChildren;
-			numChildren.times(function (i) {
+			var l = this.numChildren;
+			for (var i = 0; i < l; i++) {
 				if (this.children[i] == child) this.children.splice(i, 1);
-			}, this);
+			}
 			var left = this.children.splice(0, index);
 			var right = this.children.splice(0, this.numChildren);
 			left.push(child);
@@ -653,8 +661,8 @@ new Namespace(namespace_lib_canvas).use(function () {
 		* @param child {DisplayObject}
 		*/
 		def(function removeChild(child) {
-			var i = 0;
-			this.children.each(function (c) {
+			var l = this.numChildren;
+			for (var i = 0; i < l; i++) {
 				if (c == child) {
 					this.children.splice(i, 1);
 					child._stg = null;
@@ -662,8 +670,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 					child.removeFromStage();
 					return 0;
 				}
-				i++;
-			}, this);
+			}
 		})
 		
 		def(function getChildAt(index) {
@@ -673,9 +680,10 @@ new Namespace(namespace_lib_canvas).use(function () {
 		
 		def(function drawNest() {
 			this.$super();
-			this.numChildren.times(function (i) {
+			var l = this.numChildren;
+			for (var i = 0; i < l; i++) {
 				this.children[i].draw();
-			}, this)
+			}
 		})
 		
 		def(function addedToStage() {
@@ -767,16 +775,17 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this._objectsUnderPointer = [];
 			this._currentMouseOveredObjects = [];
 			
-			if (new (new Namespace(namespace_lib_platform + ".browser")).UserAgent().isMobile())
+			if (new (new Namespace(NS_PLATFORM)).UserAgent().isMobile())
 				this.enableTouchEvents();
 			else
 				this.enableMouseEvents();
 		})
 		
 		def(function addChild(child) {
-			this.numChildren.times(function (i) {
+			var l = this.numChildren;
+			for (var i = 0; i < l; i++) {
 				if (this.children[i] == child) this.children.splice(i, 1);
-			}, this);
+			}
 			this.children.push(child);
 			child.parent = this;
 			child._stg = this._stg;
@@ -814,7 +823,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		def(function enableMouseOver(checkFreq) {
 			if (this._mouseOverIntervalID) return;
 			var self = this;
-			var app = new Namespace(namespace_lib_app).Application.getInstance();
+			var app = new Namespace(NS_APP).Application.getInstance();
 			var oup = this._objectsUnderPointer;
 			var E = nsevent.FLMouseEvent;
 			var currentOvered = this._currentMouseOveredObjects;
@@ -853,7 +862,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		def(function enableMouseEvents() {
-			var util = new (new Namespace(namespace_lib_core)).Utilitie();
+			var util = new (new Namespace(NS_CORE)).Utilitie();
 			var self = this;
 			var oup = self._objectsUnderPointer;
 			var E = nsevent.FLMouseEvent;
@@ -881,11 +890,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 					if (o.hasEventListener(E.MOUSE_DOWN)) {
 						var e = new nsevent.FLEvent(E.MOUSE_DOWN, o);
 						
-						var pos = new (new Namespace(namespace_lib_geom)).Matrix();
+						var pos = new (new Namespace(NS_GEOM)).Matrix();
 						pos.tx = mouseX;
 						pos.ty = mouseY;
 						
-						var mat = new (new Namespace(namespace_lib_geom)).Matrix();
+						var mat = new (new Namespace(NS_GEOM)).Matrix();
 						var sx = o.scaleX;
 						var sy = o.scaleY;
 						var rsx = 1 / sx;
@@ -923,7 +932,7 @@ new Namespace(namespace_lib_canvas).use(function () {
 		})
 		
 		def(function enableTouchEvents() {
-			var util = new (new Namespace(namespace_lib_core)).Utilitie();
+			var util = new (new Namespace(NS_CORE)).Utilitie();
 			var self = this;
 			var oup = self._objectsUnderPointer;
 			var E = nsevent.TouchEvent;
@@ -1088,11 +1097,11 @@ new Namespace(namespace_lib_canvas).use(function () {
 			this._currentToLoadCount = l;
 			this._currentLoadedCount = 0;
 			
-			l.times(function(i) {
+			for (var i = 0; i < l; i++) {
 				var img = new Image();
 				img.src = resourcePaths[i];
 				img.onload = this.onLoadAImage;
-			}, this)
+			}
 		})
 		
 		def(function onLoadAImage(e) {

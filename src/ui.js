@@ -25,9 +25,9 @@ THE SOFTWARE.
 /** 
 * @fileOverview 未実装　
 */
-new Namespace(namespace_lib_ui).use(function() {
+new Namespace(NS_UI).use(function() {
 	var ns = this;
-	var nsd = new Namespace(namespace_lib_display);
+	var nsd = new Namespace(NS_DISPLAY);
 	
 	proto(function Label() {
 		ex(nsd.DisplayObject);

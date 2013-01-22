@@ -26,7 +26,7 @@ THE SOFTWARE.
 * @fileOverview Tweenに関するオブジェクトが定義されています.
 */
  
-new Namespace(namespace_lib_tween).use(function() {
+new Namespace(NS_TWEEN).use(function() {
 	var ns = this;
 	
 	/** 

@@ -26,7 +26,7 @@ THE SOFTWARE.
  * @fileOverview 全体で使用する目的の基礎的なオブジェクトが定義されています.
  */
  
-new Namespace(namespace_lib_core).use(function() {
+new Namespace(NS_CORE).use(function() {
 	var ns = this;
 	
 	/** 
@@ -308,9 +308,8 @@ new Namespace(namespace_lib_core).use(function() {
 		* 一連の操作シーケンスをスタックに追加された順で実行します.
 		*/
 		def(function execute() {
-			this.operations.each(function (op) {
-				op.execute();
-			})
+			var l = this.operations.length;
+			for (var i = 0; i < l; i++) this.operations[i].execute();
 		})
 	})
 	

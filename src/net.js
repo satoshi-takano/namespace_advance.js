@@ -25,7 +25,7 @@ THE SOFTWARE.
 /**
 * @fileOverview ネットワークに関係するオブジェクトが定義されています.
 */
-new Namespace(namespace_lib_net).use(function () {
+new Namespace(NS_NET).use(function () {
 	var ns = this;
 	
 	/** 
@@ -102,7 +102,7 @@ new Namespace(namespace_lib_net).use(function () {
 	* @augments EventDispatcher
 	*/
 	proto(function URLLoader() {
-		var nse = new Namespace(namespace_lib_events);
+		var nse = new Namespace(NS_EVENTS);
 		
 		ex(nse.EventDispatcher);
 		

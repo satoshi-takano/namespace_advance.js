@@ -25,12 +25,13 @@ THE SOFTWARE.
 /**
  * @fileOverview イベントに関するオブジェクトが定義されています.
  */
- 
-new Namespace(namespace_lib_events).use(function() {
+Namespace.require(NS_PLATFORM);
+
+new Namespace(NS_EVENTS).use(function() {
 	var ns = this;
 	// dynamical creating a internal namespace
 	var nsi = new Namespace(ns.nsName + ".internal");
-	var userAgent = new (new Namespace(namespace_lib_platform)).browser.UserAgent();
+	var userAgent = new (new Namespace(NS_PLATFORM)).UserAgent();
 	
 	/* internal */
 	nsi.proto(function EventTargetSet(listener) {
