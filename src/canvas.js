@@ -1081,6 +1081,8 @@ new Namespace(NS_CANVAS).use(function () {
 		ex(nsevent.EventDispatcher);
 		
 		init(function() {
+			this.$super();
+			
 			this.cache = {};
 			this._currentToLoadCount = 0;
 			this._currentLoadedCount = 0;
@@ -1099,7 +1101,7 @@ new Namespace(NS_CANVAS).use(function () {
 			
 			for (var i = 0; i < l; i++) {
 				var img = new Image();
-				img.src = resourcePaths[i];
+				img.src = img._name = resourcePaths[i];
 				img.onload = this.onLoadAImage;
 			}
 		})
@@ -1109,8 +1111,9 @@ new Namespace(NS_CANVAS).use(function () {
 			var img = e.currentTarget;
 			img.onload = null;
 			//var name = /:\/\/.*?(\/.*)/g.exec(img.src)[1];
-			var name = img.src;
+			var name = img._name;
 			_this._currentLoadedCount++;
+			
 			_this.cache[name] = img;
 			if (_this._currentLoadedCount == _this._currentToLoadCount) {
 				_this._nowLoading = false;

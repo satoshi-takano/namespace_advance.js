@@ -11,165 +11,145 @@ body {
 </style>
 
 <script type="text/javascript" src="../src/namespace.js"></script>
-
 <canvas id="canvas2d" width='500' height='500'>
 </canvas>
-
 <input type="range" id="reverb">
 <script type="text/javascript">
 
-new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
-	Namespace.jsPath = "../src";
-	Namespace.require("jp.example.audio");
-	Namespace.require("jp.example.canvas");
-	
-	jp.example.use(function() {
+
+Namespace.jsPath = "../src";
+// require audio and canvas library.
+Namespace.require("jp.example.audio");
+Namespace.require("jp.example.canvas");
+
+new Namespace("audiolibrary2.example").use(function() {
+	/**
+	* @class WaveForm
+	**/
+	proto(function WaveForm() {
+		ex((new Namespace(NS_CANVAS)).DisplayObject);
+		init(function() {
+			this.$super();
+			this.samples = null;
+			this._buffer = null;
+			this.width = 500;
+			this.height = 500;
+		})
 		
+		def(function drawNest() {
+			var samples = this.samples;
+			if (samples == null) return;
 
-		var context = new jp.example.audio.AudioContext();
-			/**
-			* @class WaveForm
-			**/
-			proto(function WaveForm() {
-				ex((new Namespace(NS_CANVAS)).DisplayObject)
+			if (this._buffer == null) {
+				var l = Math.floor(samples.length / 2);
+				var c = this.stage.context;
+				c.lineWidth = 0.3;
+				var col = new canvas.Color(0x9988ff)
+				c.strokeStyle = "rgba(" + col.r + "," + col.g + "," + col.b + "," + 1 +")";
+				c.beginPath();
+				var sw = this.stage.stageWidth;
+				var cy = this.stage.stageHeight * 0.5;
+				c.moveTo(0, cy);
 
-				init(function() {
-					this.$super();
-					this.samples = null;
-					this._buffer = null;
-					this.width = 500;
-					this.height = 500;
-				})
+				for (var i = 0; i < l; i+=2) {
+					var x = sw * (i / (l - 1));
+					c.lineTo(x, cy + samples[i] * 100);
+				}
+				c.stroke();
+				this._buffer = this.capture();
+			}
 
-				def(function drawNest() {
+			this.stage.context.putImageData(this._buffer, 0, 0);
+		})
+		
+	})
+})
 
-					var samples = this.samples;
-					if (samples == null) return;
-
-					if (this._buffer == null) {
-						// this.stage.clear();
-						var l = Math.floor(samples.length / 2);
-						var c = this.stage.context;
-						c.lineWidth = 0.3;
-						var col = new canvas.Color(0x9988ff)
-						c.strokeStyle = "rgba(" + col.r + "," + col.g + "," + col.b + "," + 1 +")";
-						c.beginPath();
-						var sw = this.stage.stageWidth;
-						var cy = this.stage.stageHeight * 0.5;
-						c.moveTo(0, cy);
-
-						for (var i = 0; i < l; i+=2) {
-							var x = sw * (i / (l - 1));
-							c.lineTo(x, cy + samples[i] * 100);
-						}
-						c.stroke();
-						this._buffer = this.capture();
-					}
-
-					this.stage.context.putImageData(this._buffer, 0, 0);
-				})
-
-			})
-	});
-	
+// bootstrap
+new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
+	// namespaces
 	var canvas = new Namespace(NS_CANVAS);
-		var event = new Namespace(NS_EVENTS);
-		var stage = new canvas.Stage(document.getElementById("canvas2d"));
+	var event = new Namespace(NS_EVENTS);
+	var audio = new Namespace(NS_AUDIO);
+	
+	// view 
+	var context = new jp.example.audio.AudioContext();
+	var stage = new canvas.Stage(document.getElementById("canvas2d"));
 	var cont = new canvas.DisplayObjectContainer();
+	
 	stage.addChild(cont);
 	cont.graphics.beginFill(0);
 	cont.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
-	
 	var waveForm = new jp.example.WaveForm();
 	stage.addChild(waveForm);
-	
-	var slider = document.getElementById("reverb");
-	slider.onchange = function() {
-		var r = slider.value / 100;
-		delay.wet = r;
-	}
-	
-	var audio = new Namespace(NS_AUDIO);
-	var context = new audio.AudioContext();
-	var processor = new audio.AudioBufferProcessor(context);
-	var delay = new audio.AudioReverb(context);
-	var r = slider.value / 100;
-	delay.gainNode.gain = r;
-	
-	var file = new audio.AudioFile(context);
-	var file2 = new audio.AudioFile(context);
-	file2.load("http://jslib.localhost/smaple/matrix-reverb1.wav", function() {
-		delay.buffer = file2.buffer;
-	})
-	file.load("http://jslib.localhost/smaple/808_120bpm.wav", function() {
-		processor.buffer = file.buffer;
-		
-		waveForm.samples = processor.samples;
-		
-		var playButton = new canvas.DisplayObjectContainer();
-		playButton.graphics.beginFill(0xeeeeee);
-		playButton.graphics.drawRect(0, 0, 100, 30);
-		var lab = new canvas.Text();
-		lab.y = 8;
-		lab.text = "Reverb";
-		lab.fontFamily = "Helvetica";
-		lab.color = 0;
-		lab.fontSize = 14;
-		playButton.addChild(lab);
-		stage.addChild(playButton);
-		stage.draw();
-		playButton.x = 10;
-		playButton.y = stage.stageHeight - playButton.height - 10;
-		stage.addChild(playButton);
-
-		lab.x = (playButton.width - lab.width) * 0.5;
-		
-		playButton.ae(event.FLMouseEvent.CLICK, function() {
-			processor.start(1);
-		})
-		
-		
-		processor.outputPort(0).to(delay.inputPort(0));
-		delay.outputPort(0).to(context.inputPort(0));
-
-		cont.addEventListener(event.FLMouseEvent.MOUSE_DOWN, function(e) {
-			
-			window.addEventListener(event.FLMouseEvent.MOUSE_MOVE, drag)
-			select.graphics.clear();
-			select.graphics.beginFill(0x333333, 0.5);
-			
-			select.x = cont.x + e.mouseX;
-			processor.stop();
-		})
-		cont.addEventListener(event.FLMouseEvent.MOUSE_UP, function(e) {
-			window.removeEventListener(event.FLMouseEvent.MOUSE_MOVE, drag);
-			processor.start(processor.duration * (select.x / stage.stageWidth));
-			processor.loopInTime = processor.duration * (select.x / stage.stageWidth);
-			processor.loopOutTime = processor.duration * ((select.x + select.width) / stage.stageWidth);
-
-			processor.loopEnabled = true;
-		})
-		function drag(e) {
-			select.graphics.clear();
-			select.graphics.beginFill(0x7788ff, 0.5);
-			select.graphics.drawRect(0, 0, e.clientX - select.x, stage.stageHeight);
-		}
-	})
-	
-	var select = new canvas.DisplayObject();
-	stage.addChild(select);
-	
 	var cursor = new canvas.DisplayObject();
 	cursor.graphics.beginFill(0xff0000, 1);
 	cursor.graphics.drawRect(0, 0, 1, stage.stageHeight);
 	stage.addChild(cursor);
-// waveForm.x = 100;
+	var selectRect = new canvas.DisplayObject();
+	stage.addChild(selectRect);
+	
+	// audio nodes
+	var context = new audio.AudioContext();
+	var processor = new audio.AudioBufferProcessor(context);
+	var effect = new audio.AudioReverb(context);
+	
+	// event handler of the slider
+	var slider = document.getElementById("reverb");
+	slider.onchange = function() {
+		var r = slider.value / 100;
+		effect.wet = r;
+	}
+	effect.wet = slider.value / 100;
+	
+	var file = new audio.AudioFile(context);
+	var file2 = new audio.AudioFile(context);
+	file2.load("http://jslib.localhost/smaple/matrix-reverb1.wav", function() {
+		effect.buffer = file2.buffer;
+	})
+	file.load("http://jslib.localhost/smaple/808_120bpm.wav", function() {
+		processor.buffer = file.buffer;
+		// set samples for rendering the waveform
+		waveForm.samples = processor.samples;
+		
+		// connect the node to node
+		processor.outputPort(0).to(effect.inputPort(0));
+		effect.outputPort(0).to(context.inputPort(0));
+		
+		
+		
+		
+		// handling mouse down
+		cont.addEventListener(event.FLMouseEvent.MOUSE_DOWN, function(e) {
+			window.addEventListener(event.FLMouseEvent.MOUSE_MOVE, drag)
+			selectRect.graphics.clear();
+			selectRect.graphics.beginFill(0x333333, 0.5);
+			selectRect.x = cont.x + e.mouseX;
+			processor.stop();
+		})
+		
+		// handling mouse up
+		cont.addEventListener(event.FLMouseEvent.MOUSE_UP, function(e) {
+			window.removeEventListener(event.FLMouseEvent.MOUSE_MOVE, drag);
+			processor.start(processor.duration * (selectRect.x / stage.stageWidth));
+			processor.loopInTime = processor.duration * (selectRect.x / stage.stageWidth);
+			processor.loopOutTime = processor.duration * ((selectRect.x + selectRect.width) / stage.stageWidth);
+			processor.loopEnabled = true;
+		})
+		
+		function drag(e) {
+			selectRect.graphics.clear();
+			selectRect.graphics.beginFill(0x7788ff, 0.5);
+			selectRect.graphics.drawRect(0, 0, e.clientX - selectRect.x, stage.stageHeight);
+		}
+	})
+	
 	var dlink = core.DisplayLink.getInstance();
+	// rendering
 	dlink.addTarget(this, function() {
 		cursor.x = stage.stageWidth * (processor.currentTime / processor.duration);
 		stage.draw();
 	})
-
 });
 
 </script>

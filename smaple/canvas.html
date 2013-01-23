@@ -9,225 +9,100 @@
 </style>
 
 <script type="text/javascript">
-var core = new Namespace(NS_CORE);
 
 Namespace.jsPath = "../src";
+Namespace.require(NS_CANVAS);
+
 new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
-	Namespace.require(NS_CANVAS);
-	
 	var ns = new Namespace(NS_CANVAS);
-	console.log(ns === jp.example.canvas)
-	//testDisplayObjecthHierarchy();
-	//testExternalImage();
-	//testTransform();
-	testInteraction();
-	//testAnimation();
-	
-	function testDisplayObjecthHierarchy() {
-		var stage = new ns.Stage(document.getElementById("canvas2d"));
-		var container = new ns.DisplayObjectContainer();
-		container.graphics.beginFill(0);
-		container.graphics.drawRect(0, 0, 500, 500);
-		var containerLabel = new ns.Text();
-		containerLabel.text = "Container";
-		containerLabel.fontFamily = "Helvetica";
-		containerLabel.color = 0xffffff;
-		containerLabel.fontSize = 14;
-		container.addChild(containerLabel);
 
-		var content = new ns.DisplayObjectContainer();
-		content.graphics.beginFill(0x666666);
-		content.graphics.drawRect(0, 0, 300, 300);
-		var contentLabel = new ns.Text();
-		contentLabel.text = "Content";
-		contentLabel.fontFamily = "Helvetica";
-		contentLabel.color = 0xffffff;
-		contentLabel.fontSize = 14;
-		content.addChild(contentLabel);
-		
-		content.x = (container.width - content.width) * 0.5;
-		content.y = (container.height - content.height) * 0.5;
-		
-		container.addChild(content);
-		stage.addChild(container);
-		
-		stage.draw();
-	}
+	var stage = new ns.Stage(document.getElementById("canvas2d"));
+	var nse = new Namespace(NS_EVENTS);
 	
-	function testExternalImage() {
-		var stage = new ns.Stage(document.getElementById("canvas2d"));
-		var nse = new Namespace(NS_EVENTS);
-		
-		var imgManager = ns.ImageManager.getInstance();
-		imgManager.load([
-			"http://www.keiko-aso.com/blog/img/img587_neko.jpg",
-			"http://fc06.deviantart.net/fs70/f/2011/081/c/2/onsen_love_by_neko_dlyn-d3c7gwz.jpg"
-		]);
-		imgManager.addEventListener(nse.FLEvent.COMPLETE, function(e) {
-			imgManager.removeEventListener(nse.FLEvent.COMPLETE, arguments.callee);
+	var container = new ns.DisplayObjectContainer();
+	container.graphics.beginFill(0);
+	container.graphics.drawRect(0, 0, 500, 500);
+	var containerLabel = new ns.Text();
+	containerLabel.text = "Container";
+	containerLabel.fontFamily = "Helvetica";
+	containerLabel.color = 0xffffff;
+	containerLabel.fontSize = 14;
+	container.addChild(containerLabel);
 
-			var img0 = new ns.Image(imgManager.getImageByName("http://www.keiko-aso.com/blog/img/img587_neko.jpg"));
-			stage.addChild(img0);
-			img0.scaleX = img0.scaleY = 0.5;
-			
-			var img1 = new ns.Image(imgManager.getImageByName("http://fc06.deviantart.net/fs70/f/2011/081/c/2/onsen_love_by_neko_dlyn-d3c7gwz.jpg"));
-			stage.addChild(img1);
-			img1.scaleX = img1.scaleY = 0.5;
-			img1.x = img0.width;
-			
-			stage.draw();
-		})	
-	}
+	var content = new ns.DisplayObjectContainer();
+	content.graphics.beginFill(0x666666);
+	content.graphics.drawRect(0, 0, 300, 300);
+	var contentLabel = new ns.Text();
+	contentLabel.text = "Content";
+	contentLabel.fontFamily = "Helvetica";
+	contentLabel.color = 0xffffff;
+	contentLabel.fontSize = 14;
+	content.addChild(contentLabel);
 	
-	function testTransform() {
-		var stage = new ns.Stage(document.getElementById("canvas2d"));
-		
-		var container = new ns.DisplayObjectContainer();
-		container.graphics.beginFill(0);
-		container.graphics.drawRect(0, 0, 500, 500);
-		var containerLabel = new ns.Text();
-		containerLabel.text = "Container";
-		containerLabel.fontFamily = "Helvetica";
-		containerLabel.color = 0xffffff;
-		containerLabel.fontSize = 14;
-		container.addChild(containerLabel);
+	content.x = (container.width - content.width) * 0.5;
+	content.y = (container.height - content.height) * 0.5;
+	
+	container.addChild(content);
+	stage.addChild(container);
+	
+	// transform
+	container.x = 200;
+	container.scaleX = container.scaleY = 0.7;
+	container.rotation = 20;
+	content.rotation = 20;
+	
+	var imgManager = ns.ImageManager.getInstance();
+	imgManager.load([
+		"./octcat.jpg"
+	]);
+	imgManager.addEventListener(nse.FLEvent.COMPLETE, function(e) {
+		imgManager.removeEventListener(nse.FLEvent.COMPLETE, arguments.callee);
 
-		var content = new ns.DisplayObjectContainer();
-		content.graphics.beginFill(0x666666);
-		content.graphics.drawRect(0, 0, 300, 300);
-		var contentLabel = new ns.Text();
-		contentLabel.text = "Content";
-		contentLabel.fontFamily = "Helvetica";
-		contentLabel.color = 0xffffff;
-		contentLabel.fontSize = 14;
-		content.addChild(contentLabel);
-		
-		content.x = (container.width - content.width) * 0.5;
-		content.y = (container.height - content.height) * 0.5;
-		
-		container.addChild(content);
-		stage.addChild(container);
-		
-		// transform
-		container.x = 200;
-		container.scaleX = container.scaleY = 0.7;
-		container.rotation = 20;
-		content.rotation = 45;
-		
+		var img0 = new ns.Image(imgManager.getImageByName("./octcat.jpg"));
+		stage.addChild(img0);
+		img0.scaleX = img0.scaleY = 0.5;
+		img0.rotation = -10;
+		img0.x = 200;
+		img0.y = 150;
 		stage.draw();
-	}
+	})
 	
-	function testInteraction() {
-		var stage = new ns.Stage(document.getElementById("canvas2d"));
-		var nse = new Namespace(NS_EVENTS);
-		
-		var container = new ns.DisplayObjectContainer();
-		container.graphics.beginFill(0);
-		container.graphics.drawRect(0, 0, 500, 500);
-		var containerLabel = new ns.Text();
-		containerLabel.text = "Container";
-		containerLabel.fontFamily = "Helvetica";
-		containerLabel.color = 0xffffff;
-		containerLabel.fontSize = 14;
-		container.addChild(containerLabel);
-
-		var content = new ns.DisplayObjectContainer();
-		content.graphics.beginFill(0x666666);
-		content.graphics.drawRect(0, 0, 300, 300);
-		var contentLabel = new ns.Text();
-		contentLabel.text = "Content";
-		contentLabel.fontFamily = "Helvetica";
-		contentLabel.color = 0xffffff;
-		contentLabel.fontSize = 14;
-		content.addChild(contentLabel);
-		
-		content.x = (container.width - content.width) * 0.5;
-		content.y = (container.height - content.height) * 0.5;
-		
-		container.addChild(content);
-		stage.addChild(container);
-		
-		// transform
-		container.x = 200;
-		container.scaleX = container.scaleY = 0.7;
-		container.rotation = 20;
-		content.rotation = 20;
-		
-		// set events
-		stage.enableMouseOver(10);
-		content.mouseChildren = false;
-		container.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
-			console.log("Mouse over : container");
-		})
-		container.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
-			console.log("Mouse out : container");
-		});
-		container.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
-			console.log("Mouse down : container");
-		})
-		container.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
-			console.log("Mouse up : container");
-		})
-		container.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
-			console.log("Click : container");
-		})
-		
-		content.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
-			console.log("Mouse over : content");
-		})
-		content.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
-			console.log("Mouse out : content");
-		});
-		content.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
-			console.log("Mouse down : content");
-		})
-		content.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
-			console.log("Mouse up : content");
-		})
-		content.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
-			console.log("Click : content");
-		})
-		
-		stage.draw();
-	}
+	// set events
+	stage.enableMouseOver(10);
+	content.mouseChildren = false;
+	container.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
+		console.log("Mouse over : container");
+	})
+	container.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
+		console.log("Mouse out : container");
+	});
+	container.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
+		console.log("Mouse down : container");
+	})
+	container.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
+		console.log("Mouse up : container");
+	})
+	container.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
+		console.log("Click : container");
+	})
 	
-	function testAnimation() {
-		var stage = new ns.Stage(document.getElementById("canvas2d"));
-		var nsa = new Namespace(NS_TWEEN);
-		
-		var sp = new ns.DisplayObject();
-		sp.graphics.beginFill(0);
-		sp.graphics.drawRect(0, 0, 200, 200);
-		stage.addChild(sp);
-		
-		var length = 300;
-		var animIndex = 0;
-		var interpX = new nsa.Interpolator(length, 0, 60, nsa.Expo.easeInOut).values;
-		var interpY = new nsa.Interpolator(0, 0, 60, nsa.Expo.easeInOut).values;
-		var id = setInterval(function() {
-			sp.x = interpX.shift();
-			sp.y = interpY.shift();
-			stage.draw();
-			
-			if (interpX.length == 0) {
-				if (animIndex == 0) {
-					interpX = new nsa.Interpolator(length, length, 60, nsa.Expo.easeInOut).values;
-					interpY = new nsa.Interpolator(length, 0, 60, nsa.Expo.easeInOut).values;
-				} else if (animIndex == 1) {
-					interpX = new nsa.Interpolator(0, length, 60, nsa.Expo.easeInOut).values;
-					interpY = new nsa.Interpolator(length, length, 60, nsa.Expo.easeInOut).values;
-				} else if (animIndex == 2) {
-					interpX = new nsa.Interpolator(0, 0, 60, nsa.Expo.easeInOut).values;
-					interpY = new nsa.Interpolator(0, length, 60, nsa.Expo.easeInOut).values;
-				} else {
-					clearInterval(id);
-				}
-				animIndex++;
-			}
-		}, 1000 / 60)
-		
-		stage.draw();
-	}
+	content.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
+		console.log("Mouse over : content");
+	})
+	content.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
+		console.log("Mouse out : content");
+	});
+	content.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
+		console.log("Mouse down : content");
+	})
+	content.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
+		console.log("Mouse up : content");
+	})
+	content.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
+		console.log("Click : content");
+	})
+	
+	stage.draw();
 });
 
 
