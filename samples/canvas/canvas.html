@@ -2,7 +2,7 @@
 <script type="text/javascript" charset="utf-8">
 	debug = true;
 </script>
-<script type="text/javascript" src="../src/namespace.js"></script>
+<script type="text/javascript" src="../../src/namespace.js"></script>
 
 <canvas id="canvas2d" width='1024' height='768' style="top:0;left:0;position:absolute;">
 </canvas>
@@ -10,7 +10,7 @@
 
 <script type="text/javascript">
 
-Namespace.jsPath = "../src";
+Namespace.jsPath = "../../src";
 Namespace.require(NS_CANVAS);
 
 new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
@@ -53,12 +53,12 @@ new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
 	
 	var imgManager = ns.ImageManager.getInstance();
 	imgManager.load([
-		"./octcat.jpg"
+		"./images/octcat.jpg"
 	]);
 	imgManager.addEventListener(nse.FLEvent.COMPLETE, function(e) {
 		imgManager.removeEventListener(nse.FLEvent.COMPLETE, arguments.callee);
 
-		var img0 = new ns.Image(imgManager.getImageByName("./octcat.jpg"));
+		var img0 = new ns.Image(imgManager.getImageByName("./images/octcat.jpg"));
 		stage.addChild(img0);
 		img0.scaleX = img0.scaleY = 0.5;
 		img0.rotation = -10;

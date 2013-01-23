@@ -3,13 +3,13 @@
 	debug = true;
 </script>
 
-<script type="text/javascript" src="../src/namespace.js"></script>
-<script type="text/javascript" src="../src/native_extention.js"></script>
+<script type="text/javascript" src="../../src/namespace.js"></script>
+<script type="text/javascript" src="../../src/native_extention.js"></script>
 
 <script type="text/javascript">
 
 new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
-	Namespace.jsPath = "../src";
+	Namespace.jsPath = "../../src";
 	Namespace.require(NS_CORE);
 	
 	1000..after(function (argument) {

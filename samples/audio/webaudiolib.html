@@ -10,17 +10,17 @@ body {
 }
 </style>
 
-<script type="text/javascript" src="../src/namespace.js"></script>
+<script type="text/javascript" src="../../src/namespace.js"></script>
 <canvas id="canvas2d" width='500' height='500'>
 </canvas>
 <input type="range" id="reverb">
 <script type="text/javascript">
 
 
-Namespace.jsPath = "../src";
+Namespace.jsPath = "../../src";
 // require audio and canvas library.
-Namespace.require("jp.example.audio");
-Namespace.require("jp.example.canvas");
+Namespace.require(NS_AUDIO);
+Namespace.require(NS_CANVAS);
 
 new Namespace("audiolibrary2.example").use(function() {
 	/**
