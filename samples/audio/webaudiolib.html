@@ -21,6 +21,7 @@ Namespace.jsPath = "../../src";
 // require audio and canvas library.
 Namespace.require(NS_AUDIO);
 Namespace.require(NS_CANVAS);
+Namespace.require(NS_NET);
 
 new Namespace("audiolibrary2.example").use(function() {
 	/**
@@ -76,6 +77,7 @@ new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
 	var context = new jp.example.audio.AudioContext();
 	var stage = new canvas.Stage(document.getElementById("canvas2d"));
 	var cont = new canvas.DisplayObjectContainer();
+	var pad = new canvas.DisplayObjectContainer();
 	
 	stage.addChild(cont);
 	cont.graphics.beginFill(0);
@@ -89,10 +91,36 @@ new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
 	var selectRect = new canvas.DisplayObject();
 	stage.addChild(selectRect);
 	
+	pad.graphics.beginFill(0x666666);
+	pad.graphics.drawRect(0, 0, 200, 200);
+	pad.x = stage.stageWidth - pad.width;
+	pad.y = stage.stageHeight - pad.height;
+	pad.addEventListener(event.FLMouseEvent.MOUSE_DOWN, function(e) {
+		e.stopPropagation();
+		window.addEventListener(event.FLMouseEvent.MOUSE_MOVE, padMove)
+	})
+	pad.addEventListener(event.FLMouseEvent.MOUSE_UP, function(e) {
+		e.stopPropagation();
+		window.removeEventListener(event.FLMouseEvent.MOUSE_MOVE, padMove)
+	})
+	
+	function padMove(e) {
+		filter.Q.value = 100 * pad.mouseY / pad.height;
+		filter.gain.value = -40 + 80 * pad.mouseY / pad.height;
+		var min = filter.frequency.minValue;
+		filter.frequency.value = min + (filter.frequency.maxValue - min) * pad.mouseX / pad.width;
+	}
+	stage.addChild(pad);
+	
 	// audio nodes
 	var context = new audio.AudioContext();
 	var processor = new audio.AudioBufferProcessor(context);
 	var effect = new audio.AudioReverb(context);
+	var filter = new audio.AudioFilter(context, new (new Namespace(NS_NET)).URL(location.href).query.filterType);
+	console.log(filter.frequency, filter.detune, filter.Q, filter.gain)
+	filter.Q.value = 10;
+	filter.frequency.value = 4000;
+	
 	
 	// event handler of the slider
 	var slider = document.getElementById("reverb");
@@ -104,18 +132,18 @@ new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
 	
 	var file = new audio.AudioFile(context);
 	var file2 = new audio.AudioFile(context);
-	file2.load("http://jslib.localhost/smaple/matrix-reverb1.wav", function() {
+	file2.load("./sounds/matrix-reverb1.wav", function() {
 		effect.buffer = file2.buffer;
 	})
-	file.load("http://jslib.localhost/smaple/808_120bpm.wav", function() {
+	file.load("./sounds/808_120bpm.wav", function() {
 		processor.buffer = file.buffer;
 		// set samples for rendering the waveform
 		waveForm.samples = processor.samples;
 		
 		// connect the node to node
 		processor.outputPort(0).to(effect.inputPort(0));
-		effect.outputPort(0).to(context.inputPort(0));
-		
+		effect.outputPort(0).to(filter.inputPort(0));
+		filter.outputPort(0).to(context.inputPort(0));
 		
 		
 		

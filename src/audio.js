@@ -288,13 +288,78 @@ new Namespace(NS_AUDIO).use(function() {
 			this.$super(context);
 			this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 1, 1);
 			
-			this.setInputPortNode(this);
-			this.setOutputPortNode(this);
-			this._nativeNode.onaudioprocess = process;
+			// this.setInputPortNode(this);
+			// 			this.setOutputPortNode(this);
+			var _this = this;
+			this._nativeNode.onaudioprocess = function(e) {
+				_this.process(e);
+			};
 		})
 		
-		function process(processingEvent) {
-		}
+		def(function process(e) {
+			
+		})
+		
+	})
+	
+	/**
+	* @class Panner
+	**/
+	proto(function Panner() {
+		ex(audioNamespace.AudioNode)
+		
+		init(function(context) {
+			this.$super(context);
+			
+			this._x = 0;
+			this._y = 0;
+			this._z = 0;
+			
+			var panner = context._nativeContext.createPanner();
+			this._nativeNode = panner;
+			
+			var max = 20;
+			var min = -20;
+			panner.setPosition(0, 0, 0);
+
+			this.setInputPortNode(this);
+			this.setOutputPortNode(this);
+		})
+		
+		getter("x", function() { return this._x; })
+		setter("x", function(v) { this._x = v; this._nativeNode.setPosition(v, this._y, this._z); })
+		
+		getter("y", function() { return this._y; })
+		setter("y", function(v) { this._y = v; this._nativeNode.setPosition(this._x, v, this._z); })
+		
+		getter("z", function() { return this._z; })
+		setter("z", function(v) { this._z = v; this._nativeNode.setPosition(this._x, this._y, v); })
+	})
+	
+	
+	/**
+	* @class Noise
+	**/
+	proto(function WhiteNoise() {
+		ex(audioNamespace.AudioSignalProcessingNode)
+		
+		init(function(context, frequency) {
+			this.$super(context);
+			
+			this.panner = new audioNamespace.Panner(context);
+			
+			this._nativeNode.connect(this.panner._nativeNode);
+			this.setOutputPortNode(this.panner);
+		})
+		
+		def(function process(e) {
+			var outBufferL = e.outputBuffer.getChannelData(0);
+			// var outBufferR = e.outputBuffer.getChannelData(1);
+		 	for (var i = 0, l = outBufferL.length; i < l; i++) {
+     		outBufferL[i] = Math.random() * 2 - 1;
+  		}
+		})
+		
 	})
 	
 	
@@ -467,6 +532,50 @@ new Namespace(NS_AUDIO).use(function() {
 			this.setOutputPortNode(this);
 		})
 	})
+	
+	/**
+	* @class AudioFilter
+	**/
+	proto(function AudioFilter() {
+		ex(audio.AudioEffect)
+		
+		$$.LOW_PASS = 0;
+		$$.HIGH_PASS = 1;
+		$$.LOW_SHELF = 3;
+		$$.HIGH_SHELF = 4;
+		
+		init(function(context, filterType) {
+			this._nativeNode = context._nativeContext.createBiquadFilter();
+			this._nativeNode.type = filterType;
+			this.$super(context, this._nativeNode);
+		})
+		
+		getter("frequency", function() {
+			return this._nativeNode.frequency;
+		})
+		setter("frequency", function(f) {
+			this._nativeNode.frequency = f;
+		})
+		getter("detune", function() {
+			return this._nativeNode.detune;
+		})
+		setter("detune", function(d) {
+			this._nativeNode.detune = d;
+		})
+		getter("Q", function() {
+			return this._nativeNode.Q;
+		})
+		setter("Q", function(q) {
+			this._nativeNode.Q = q;
+		})
+		getter("gain", function() {
+			return this._nativeNode.gain;
+		})
+		setter("gain", function(g) {
+			this._nativeNode.gain = gain;
+		})
+	})
+	
 	
 	/**
 	* @class AudioDelayNode

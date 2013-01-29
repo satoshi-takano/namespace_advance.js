@@ -53,12 +53,18 @@ new Namespace(NS_NET).use(function () {
 		* @private
 		*/
 		def(function generate() {
-			var r = this.reg.exec(this.url);
+			var r = ns.URL.reg.exec(this.url);
 			if (r) {
 				var value = "";
-				for (var f in this.fields) {
-					value = r[this.fields[f]];
+				var regex = new RegExp("(.*?)=(.*?)$", "g");
+				for (var f in ns.URL.fields) {
+					value = r[ns.URL.fields[f]];
 					if (value) {
+						if (f == "query") {
+							var kvp = regex.exec(value);
+							value = {};
+							value[kvp[1]] = kvp[2];
+						}
 						this[f] = value;
 					}
 				}

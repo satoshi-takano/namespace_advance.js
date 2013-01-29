@@ -37,6 +37,7 @@ new Namespace(NS_CANVAS).use(function () {
 	var nscore = new Namespace(NS_CORE);
 	var nsevent = new Namespace(NS_EVENTS);
 	var nsgeom = new Namespace(NS_GEOM);
+	var app = new Namespace(NS_APP).Application.getInstance();
 	
 	if (global.CanvasRenderingContext2D && 
 	    !CanvasRenderingContext2D.prototype.createImageData && 
@@ -601,6 +602,13 @@ new Namespace(NS_CANVAS).use(function () {
 		})
 		/** このオブジェクトの持つ graphics オブジェクトへの参照. [read-only] */
 		getter("graphics", function() {return this._g})
+		
+		getter("mouseX", function() {
+			return app.mouseX - this.globalX;
+		})
+		getter("mouseY", function() {
+			return app.mouseY - this.globalY;
+		})
 	})
 	
 	/**
@@ -885,10 +893,10 @@ new Namespace(NS_CANVAS).use(function () {
 				var mouseX = e.clientX;
 				var mouseY = e.clientY;
 				self.getObjectsUnderPoints(mouseX, mouseY, oup);
-				for (var i = oup.length - 1; 0 <= i; i--) {
+				for (var i = 0, len = oup.length; i < len; i++) {
 					var o = oup[i];
 					if (o.hasEventListener(E.MOUSE_DOWN)) {
-						var e = new nsevent.FLEvent(E.MOUSE_DOWN, o);
+						var e = new nsevent.FLEvent(E.MOUSE_DOWN, o, e);
 						
 						var pos = new (new Namespace(NS_GEOM)).Matrix();
 						pos.tx = mouseX;
@@ -911,7 +919,8 @@ new Namespace(NS_CANVAS).use(function () {
 						e.mouseY = pos.ty;
 						
 						o.dispatchEvent(e);
-						if (!o.mouseChildren) break;
+
+						if (!e.doBubbling || !o.mouseChildren) break;
 					}
 				}
 				self.draw();
@@ -920,11 +929,12 @@ new Namespace(NS_CANVAS).use(function () {
 			util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_UP, function(e) {
 				oup.splice(0, oup.length);
 				self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
-				for (var i = oup.length - 1; 0 <= i; i--) {
+				for (var i = 0, len = oup.length; i < len; i++) {
 					var o = oup[i];
 					if (o.hasEventListener(E.MOUSE_UP)) {
-						o.dispatchEvent(new nsevent.FLEvent(E.MOUSE_UP, o));
-						if (!o.mouseChildren) break;
+						var e = new nsevent.FLEvent(E.MOUSE_UP, o, e);
+						o.dispatchEvent(e);
+						if (!e.doBubble || !o.mouseChildren) break;
 					}
 				}
 				self.draw();

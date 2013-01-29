@@ -221,6 +221,7 @@ new Namespace(NS_EVENTS).use(function() {
 		*/
 		init(function (type, caller, origin) {
 			this.$super(type, caller, origin)
+			this.doBubbling = true;
 		});
 		
 		/**
@@ -237,6 +238,7 @@ new Namespace(NS_EVENTS).use(function() {
 		* イベントの伝搬を停止します.
 		*/
 		def(function stopPropagation() {
+			this.doBubbling = false;
 			if (this.origin.stopPropagation)
 				this.origin.stopPropagation();
 			else
