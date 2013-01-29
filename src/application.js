@@ -21,53 +21,52 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
+new Namespace(NS_APP).require([NS_EVENTS], function() {
+	this.use(function() {
+		var ns = this;
 
-Namespace.require(NS_EVENTS);
+		 /** 
+		 * @class Application
+		 * @augments EventDispatcher
+		 */
+		singleton(function Application() {
+			var nse = new Namespace(NS_EVENTS);
+			ex(nse.EventDispatcher);
 
-new Namespace(NS_APP).use(function() {	
-	var ns = this;
-		
-	 /** 
-	 * @class Application
-	 * @augments EventDispatcher
-	 */
-	singleton(function Application() {
-		var nse = new Namespace(NS_EVENTS);
-		ex(nse.EventDispatcher);
-		
-		init(function() {
-			var self = this;
-			/** 
-			* 表示領域内でのマウスポインタの x 位置
-			* @memberOf Application.prototype
-			*/
-			this.mouseX = 0;
-			/** 
-			* 表示領域内でのマウスポインタの y 位置
-			* @memberOf Application.prototype 
-			*/
-			this.mouseY = 0;
-			/** @memberOf Application.prototype */
-			this.userAgent = new (new Namespace(NS_PLATFORM)).UserAgent();
-			
-			var nscore = (new Namespace(NS_CORE));
-			var util = new nscore.Utilitie();
-			var isIE = this.userAgent.isIE();
-			var app = this;
-			this.canTrackMouse = false;
-			util.listen(document, isIE ? "onmousemove" : "mousemove", function(mouseMove) {
-				if (!isIE) {
-					app.mouseX = mouseMove.clientX;
-					app.mouseY = mouseMove.clientY;
-					if (document.body)	{ this.mouseY +=  document.body.scrollTop;}
-				} else {
-					app.mouseX = mouseMove.clientX;
-					app.mouseY = mouseMove.clientY + document.documentElement.scrollTop;
-				}
-				if (app.canTrackMouse == false) app.canTrackMouse = true;
+			init(function() {
+				var self = this;
+				/** 
+				* 表示領域内でのマウスポインタの x 位置
+				* @memberOf Application.prototype
+				*/
+				this.mouseX = 0;
+				/** 
+				* 表示領域内でのマウスポインタの y 位置
+				* @memberOf Application.prototype 
+				*/
+				this.mouseY = 0;
+				/** @memberOf Application.prototype */
+				this.userAgent = new (new Namespace(NS_PLATFORM)).UserAgent();
+
+				var nscore = (new Namespace(NS_CORE));
+				var util = new nscore.Utilitie();
+				var isIE = this.userAgent.isIE();
+				var app = this;
+				this.canTrackMouse = false;
+				util.listen(document, isIE ? "onmousemove" : "mousemove", function(mouseMove) {
+					if (!isIE) {
+						app.mouseX = mouseMove.clientX;
+						app.mouseY = mouseMove.clientY;
+						if (document.body)	{ this.mouseY +=  document.body.scrollTop;}
+					} else {
+						app.mouseX = mouseMove.clientX;
+						app.mouseY = mouseMove.clientY + document.documentElement.scrollTop;
+					}
+					if (app.canTrackMouse == false) app.canTrackMouse = true;
+				});
+
 			});
-			
 		});
-	});
-
-});
+		
+	})
+})

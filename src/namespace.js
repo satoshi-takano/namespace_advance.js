@@ -94,31 +94,10 @@ var NS_PLATFORM = Namespace.domain + ".platform";
 var NS_AUDIO = Namespace.domain + ".audio";
 var NS_GL2D = Namespace.domain + ".gl2d";
 Namespace.jsPath = "./js";
-Namespace.require = function($package) {
-	var ns = new Namespace($package);
-	if (!ns._imported) {
-		var xhr;
-		if (global.XMLHttpRequest != undefined) {
-			xhr = new XMLHttpRequest();
-		} else if (global.ActiveXObject){
-			xhr = new ActiveXObject("Microsoft.XMLHTTP");
-		}
-		var jsURL = Namespace.jsPath + "/" + ns.nsName.substr(Namespace.domain.length + 1, ns.nsName.length) + ".js";
-		xhr.open("GET", jsURL, false, null);
-		xhr.send(null);
-		var src;
-		if (xhr.status == 200) {
-			src = xhr.responseText;
-		}
-		var script = document.createElement("script");
-		script.appendChild(document.createTextNode(src));
-		document.body.appendChild(script);
-		ns._imported = true;
-	}
-}
 Namespace.prototype = new (function() {
 	var FunctionPrototype = function() {
 		var self = this;
+		
 		// util
 		function getMethodName(method) {
 			var name = method.name;
@@ -240,6 +219,8 @@ Namespace.prototype = new (function() {
 	
 	this.nsName = "";
 	this._imported = false;
+	this._loading = false;
+	this._loaded = false;
 	
 	var self = this;
 	
@@ -284,7 +265,7 @@ Namespace.prototype = new (function() {
 		// get the name of function
 		var name = functionPrototype.getMethodName(namedFunc);
 
-		if (tmpSelf[name] != undefined) alert("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
+		if (tmpSelf[name] != undefined) console.warn("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
 		if (!global.debug) {
 			tmpSelf[name] = function() {
 				var internal = arguments[0];
@@ -366,7 +347,7 @@ Namespace.prototype = new (function() {
 			tmpSelf = this;
 		}
 		var name = functionPrototype.getMethodName(namedFunc);
-		if (tmpSelf[name] != undefined) alert("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
+		if (tmpSelf[name] != undefined) console.warn("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
 		
 		if (!global.debug) {
 			tmpSelf[name] = function() {
@@ -427,6 +408,66 @@ Namespace.prototype = new (function() {
 	};
 })();
 
+Namespace.prototype.require = function(packages, callback) {
+	var _this = this;
+	this.numPackages = packages.length;
+	this.numPackages2 = 0;
+	var info = {
+		parentInfo: [],
+		packages: packages,
+		completion: function(callee) {
+			_this.numPackages--;
+			
+			var next = _this.info.packages.splice(_this.info.packages.length - 1, 1)[0];
+			_this.numPackages += callee.numPackages ? callee.numPackages : 0;
+			console.log(_this.nsName, _this.info.packages.length, callee.numPackages)
+
+			if (_this.info.packages.length) {
+				addTag(next)
+			}
+			else if (!callee.numPackages) {
+				
+				callback.call(_this);
+			}
+		}
+	};
+	this.info = info;
+	
+	var t = [];
+	for (var i = 0, l = packages.length; i < l; i++) {
+		if (!packages[i]._loading && !packages[i]._loaded) t.push(packages[i]);
+	}
+	packages = t;
+	
+	this.info.packages = packages;
+	
+	var $package = packages[0];
+	addTag($package);
+	
+	function addTag($package) {
+		var ns = new Namespace($package);
+		
+		if (ns._loading || ns._loaded) {
+			_this.info.packages.splice(_this.info.packages.length - 1, 1)
+			_this.info.completion(ns);
+			return;
+		}
+		// console.log(' load', $package, ns._imported, ns._loading, ns._loaded)		
+		ns._loading = true;
+		var jsURL = Namespace.jsPath + "/" + ns.nsName.substr(Namespace.domain.length + 1, ns.nsName.length) + ".js";
+		var script = document.createElement("script");
+		script.type = "text/javascript";
+		script.src = jsURL;
+		script.onload = function() {
+			ns._loading = false;
+			ns._loaded = true;
+			// console.log('  loaded', ns.nsName)
+			_this.info.completion(ns);
+		}
+		script.onreadystatechange = function(e) {if(e.readyState=="loaded"||e.readyState=="complete") script.onload();}
+		document.body.appendChild(script);
+	}
+}
 
 // ----------------------------------------------------
 // bootstrap
@@ -456,6 +497,7 @@ new Namespace(NS_CORE).use(function () {
 				target.detachEvent(type, func);
 		})		
 	});
+	
 	
 	/**
 	* @class メインクラス.

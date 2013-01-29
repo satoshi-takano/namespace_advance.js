@@ -596,5 +596,4 @@ new Namespace(NS_AUDIO).use(function() {
 		})
 		
 	})
-	
 })
