@@ -27,6 +27,8 @@ THE SOFTWARE.
 */ 
 
 new Namespace(NS_AUDIO).use(function() {
+	console.log('build audio')
+	
 	var audioNamespace = this;
 	
 	/**

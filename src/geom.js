@@ -28,6 +28,7 @@ THE SOFTWARE.
  
 new Namespace(NS_GEOM).use(function() {
 	var ns = this;
+	console.log('build geom')
 	
 	 /** 
 	 * @class 点を表します.

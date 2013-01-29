@@ -23,6 +23,8 @@ THE SOFTWARE.
 ===================================================== */
 new Namespace(NS_APP).require([NS_EVENTS], function() {
 	this.use(function() {
+		console.log('build application')
+		
 		var ns = this;
 
 		 /** 

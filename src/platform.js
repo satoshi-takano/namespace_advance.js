@@ -27,6 +27,7 @@ THE SOFTWARE.
  */
 
 new Namespace(NS_PLATFORM).use(function() {
+	console.log('build platform')
 	var ns = this;
 	
 		/** 

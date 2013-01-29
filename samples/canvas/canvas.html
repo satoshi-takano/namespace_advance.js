@@ -11,98 +11,101 @@
 <script type="text/javascript">
 
 Namespace.jsPath = "../../src";
-Namespace.require(NS_CANVAS);
 
 new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
 	var ns = new Namespace(NS_CANVAS);
+	new Namespace("test").require([NS_CANVAS], function () {
+		console.log(this)
+		var stage = new ns.Stage(document.getElementById("canvas2d"));
+		var nse = new Namespace(NS_EVENTS);
 
-	var stage = new ns.Stage(document.getElementById("canvas2d"));
-	var nse = new Namespace(NS_EVENTS);
-	
-	var container = new ns.DisplayObjectContainer();
-	container.graphics.beginFill(0);
-	container.graphics.drawRect(0, 0, 500, 500);
-	var containerLabel = new ns.Text();
-	containerLabel.text = "Container";
-	containerLabel.fontFamily = "Helvetica";
-	containerLabel.color = 0xffffff;
-	containerLabel.fontSize = 14;
-	container.addChild(containerLabel);
+		var container = new ns.DisplayObjectContainer();
+		container.graphics.beginFill(0);
+		container.graphics.drawRect(0, 0, 500, 500);
+		var containerLabel = new ns.Text();
+		containerLabel.text = "Container";
+		containerLabel.fontFamily = "Helvetica";
+		containerLabel.color = 0xffffff;
+		containerLabel.fontSize = 14;
+		container.addChild(containerLabel);
 
-	var content = new ns.DisplayObjectContainer();
-	content.graphics.beginFill(0x666666);
-	content.graphics.drawRect(0, 0, 300, 300);
-	var contentLabel = new ns.Text();
-	contentLabel.text = "Content";
-	contentLabel.fontFamily = "Helvetica";
-	contentLabel.color = 0xffffff;
-	contentLabel.fontSize = 14;
-	content.addChild(contentLabel);
-	
-	content.x = (container.width - content.width) * 0.5;
-	content.y = (container.height - content.height) * 0.5;
-	
-	container.addChild(content);
-	stage.addChild(container);
-	
-	// transform
-	container.x = 200;
-	container.scaleX = container.scaleY = 0.7;
-	container.rotation = 20;
-	content.rotation = 20;
-	
-	var imgManager = ns.ImageManager.getInstance();
-	imgManager.load([
-		"./images/octcat.jpg"
-	]);
-	imgManager.addEventListener(nse.FLEvent.COMPLETE, function(e) {
-		imgManager.removeEventListener(nse.FLEvent.COMPLETE, arguments.callee);
+		var content = new ns.DisplayObjectContainer();
+		content.graphics.beginFill(0x666666);
+		content.graphics.drawRect(0, 0, 300, 300);
+		var contentLabel = new ns.Text();
+		contentLabel.text = "Content";
+		contentLabel.fontFamily = "Helvetica";
+		contentLabel.color = 0xffffff;
+		contentLabel.fontSize = 14;
+		content.addChild(contentLabel);
 
-		var img0 = new ns.Image(imgManager.getImageByName("./images/octcat.jpg"));
-		stage.addChild(img0);
-		img0.scaleX = img0.scaleY = 0.5;
-		img0.rotation = -10;
-		img0.x = 200;
-		img0.y = 150;
+		content.x = (container.width - content.width) * 0.5;
+		content.y = (container.height - content.height) * 0.5;
+
+		container.addChild(content);
+		stage.addChild(container);
+
+		// transform
+		container.x = 200;
+		container.scaleX = container.scaleY = 0.7;
+		container.rotation = 20;
+		content.rotation = 20;
+
+		var imgManager = ns.ImageManager.getInstance();
+		imgManager.load([
+			"./images/octcat.jpg"
+		]);
+		imgManager.addEventListener(nse.FLEvent.COMPLETE, function(e) {
+			imgManager.removeEventListener(nse.FLEvent.COMPLETE, arguments.callee);
+
+			var img0 = new ns.Image(imgManager.getImageByName("./images/octcat.jpg"));
+			stage.addChild(img0);
+			img0.scaleX = img0.scaleY = 0.5;
+			img0.rotation = -10;
+			img0.x = 200;
+			img0.y = 150;
+			stage.draw();
+		})
+
+		// set events
+		stage.enableMouseOver(10);
+		content.mouseChildren = false;
+		container.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
+			console.log("Mouse over : container");
+		})
+		container.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
+			console.log("Mouse out : container");
+		});
+		container.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
+			console.log("Mouse down : container");
+		})
+		container.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
+			console.log("Mouse up : container");
+		})
+		container.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
+			console.log("Click : container");
+		})
+
+		content.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
+			console.log("Mouse over : content");
+		})
+		content.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
+			console.log("Mouse out : content");
+		});
+		content.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
+			console.log("Mouse down : content");
+		})
+		content.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
+			console.log("Mouse up : content");
+		})
+		content.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
+			console.log("Click : content");
+		})
+
 		stage.draw();
 	})
+
 	
-	// set events
-	stage.enableMouseOver(10);
-	content.mouseChildren = false;
-	container.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
-		console.log("Mouse over : container");
-	})
-	container.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
-		console.log("Mouse out : container");
-	});
-	container.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
-		console.log("Mouse down : container");
-	})
-	container.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
-		console.log("Mouse up : container");
-	})
-	container.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
-		console.log("Click : container");
-	})
-	
-	content.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
-		console.log("Mouse over : content");
-	})
-	content.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
-		console.log("Mouse out : content");
-	});
-	content.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
-		console.log("Mouse down : content");
-	})
-	content.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
-		console.log("Mouse up : content");
-	})
-	content.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
-		console.log("Click : content");
-	})
-	
-	stage.draw();
 });
 
 

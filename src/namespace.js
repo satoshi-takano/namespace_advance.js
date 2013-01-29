@@ -413,6 +413,7 @@ Namespace.prototype.require = function(packages, callback) {
 	this.numPackages = packages.length;
 	this.numPackages2 = 0;
 	var info = {
+		ns: this,
 		parentInfo: [],
 		packages: packages,
 		completion: function(callee) {
@@ -420,15 +421,21 @@ Namespace.prototype.require = function(packages, callback) {
 			
 			var next = _this.info.packages.splice(_this.info.packages.length - 1, 1)[0];
 			_this.numPackages += callee.numPackages ? callee.numPackages : 0;
-			console.log(_this.nsName, _this.info.packages.length, callee.numPackages)
+			// console.log("       ",_this.nsName, _this.info.packages.length, callee.numPackages)
 
 			if (_this.info.packages.length) {
 				addTag(next)
 			}
 			else if (!callee.numPackages) {
-				
+				// console.log(_this.parentInfo.ns.nsName, callee.nsName)
 				callback.call(_this);
+				if (_this.parentInfo)
+					_this.parentInfo.callback.call(_this.parentInfo.ns, callee)
 			}
+		},
+		callback: function(callee) {
+			if (_this.info.packages.length == 0 &&  !callee.numPackages)
+				callback.call(_this)
 		}
 	};
 	this.info = info;
@@ -446,7 +453,7 @@ Namespace.prototype.require = function(packages, callback) {
 	
 	function addTag($package) {
 		var ns = new Namespace($package);
-		
+		ns.parentInfo = info;
 		if (ns._loading || ns._loaded) {
 			_this.info.packages.splice(_this.info.packages.length - 1, 1)
 			_this.info.completion(ns);

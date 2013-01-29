@@ -27,6 +27,7 @@ THE SOFTWARE.
  */
  
 new Namespace(NS_CORE).use(function() {
+	console.log('build core')
 	var ns = this;
 	
 	/** 

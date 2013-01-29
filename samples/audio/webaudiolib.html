@@ -20,9 +20,9 @@ body {
 Namespace.jsPath = "../../src";
 // bootstrap
 new Namespace(NS_CORE).Main.getInstance().main(function (argument) {
-	new Namespace("hoge").require([NS_CANVAS], function() {
+	new Namespace("hoge").require([NS_AUDIO, NS_CANVAS, NS_NET], function() {
 		console.log('end')
-		return;
+
 		new Namespace("audiolibrary2.example").use(function() {
 			/**
 			* @class WaveForm

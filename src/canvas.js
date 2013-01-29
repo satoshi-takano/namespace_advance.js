@@ -27,6 +27,7 @@ THE SOFTWARE.
 */ 
 new Namespace(NS_CANVAS).require([NS_CORE, NS_APP, NS_GEOM, NS_EVENTS, NS_PLATFORM], function() {
 	this.use(function() {
+		console.log('build canvas')
 		
 		var ns = this;
 		var nscore = new Namespace(NS_CORE);

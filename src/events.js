@@ -28,6 +28,7 @@ THE SOFTWARE.
 
 new Namespace(NS_EVENTS).require([NS_PLATFORM], function() {
 	this.use(function() {
+		console.log('build event')
 		
 		var ns = this;
 		// dynamical creating a internal namespace
