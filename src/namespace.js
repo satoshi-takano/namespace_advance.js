@@ -26,7 +26,6 @@ THE SOFTWARE.
  * @fileOverview 名前空間オブジェクトが定義されています.<br/>
  */
 var global = window;
-
 if (!global.debug || !global.console) {
 	console = {};
 	console.log = 
@@ -39,10 +38,6 @@ if (!global.debug || !global.console) {
 	console.warn = 
 	function(){};
 }
-
-
-
-
 
 /**
 * @class all classes are defined to Namespace class.
@@ -72,9 +67,6 @@ Namespace = function(str) {
 		if (i > 0) name += ".";
 		name += ns[i];
 		here[ns[i]].nsName = name;
-		/* else {
-			// 他のライブラリ等ですでに使われてしまっている場合は mix
-		}*/
 		here = here[ns[i]];
 	}
 	return here;
@@ -98,7 +90,6 @@ Namespace.prototype = new (function() {
 	var FunctionPrototype = function() {
 		var self = this;
 		
-		// util
 		function getMethodName(method) {
 			var name = method.name;
 			if (name == undefined) {
@@ -109,7 +100,6 @@ Namespace.prototype = new (function() {
 		}
 		this.getMethodName = getMethodName;
 
-		// hierarchie util
 		function wrap(key, method) {
 			var wrapper = method;
 			// use by $super() method
@@ -218,7 +208,6 @@ Namespace.prototype = new (function() {
 	functionPrototype = new FunctionPrototype();
 	
 	this.nsName = "";
-	this._imported = false;
 	this._loading = false;
 	this._loaded = false;
 	
@@ -377,7 +366,7 @@ Namespace.prototype = new (function() {
 		proto.prototype.include = functionPrototype.include;
 		proto.prototype.$class = proto;
 		
-		// fake dynamic scope
+		// set temporary global method
 		var old$ = global.$;
 		var old$$ = global.$$;
 		var oldInit = global.init;
@@ -410,56 +399,49 @@ Namespace.prototype = new (function() {
 
 Namespace.prototype.require = function(packages, callback) {
 	var _this = this;
-	this.numPackages = packages.length;
-	this.numPackages2 = 0;
+	// 依存しているファイルの数.
+	this._numToReadPackages = packages.length;
 	var info = {
-		ns: this,
-		parentInfo: [],
+		clientNamespace: this,
 		packages: packages,
-		completion: function(callee) {
-			_this.numPackages--;
-			
-			var next = _this.info.packages.splice(_this.info.packages.length - 1, 1)[0];
-			_this.numPackages += callee.numPackages ? callee.numPackages : 0;
-			// console.log("       ",_this.nsName, _this.info.packages.length, callee.numPackages)
-
-			if (_this.info.packages.length) {
-				addTag(next)
+		
+		childCompletion: function(child) {
+			if (!child._numToReadPackages) {
+				// 依存先で依存しているファイルをすべて読み込み終えたら次を読み込み始める
+				_this._numToReadPackages--;
+				// まだ読み込み終えてないのがあったら読む
+				if (_this.info.packages.length) {
+					var next = _this.info.packages.splice(0, 1)[0];
+					addTag(next);
+				} else {
+				// すべて読み込み終えたらコールバックを呼びつつ、自分の完了を親の childCompletion を呼び出してしらせる
+					if (!_this._imported) {
+						callback.call(_this);
+						_this._imported = true;
+					}
+					if (_this.parentInfo)
+						_this.parentInfo.childCompletion(_this);
+				}
 			}
-			else if (!callee.numPackages) {
-				// console.log(_this.parentInfo.ns.nsName, callee.nsName)
-				callback.call(_this);
-				if (_this.parentInfo)
-					_this.parentInfo.callback.call(_this.parentInfo.ns, callee)
-			}
-		},
-		callback: function(callee) {
-			if (_this.info.packages.length == 0 &&  !callee.numPackages)
-				callback.call(_this)
 		}
 	};
+	
 	this.info = info;
 	
-	var t = [];
-	for (var i = 0, l = packages.length; i < l; i++) {
-		if (!packages[i]._loading && !packages[i]._loaded) t.push(packages[i]);
-	}
-	packages = t;
-	
-	this.info.packages = packages;
-	
-	var $package = packages[0];
+	var $package = packages.splice(0, 1)[0];
 	addTag($package);
 	
 	function addTag($package) {
 		var ns = new Namespace($package);
 		ns.parentInfo = info;
+		
+		// すでに読み込み済み or 読込中の場合は捨てる
 		if (ns._loading || ns._loaded) {
-			_this.info.packages.splice(_this.info.packages.length - 1, 1)
-			_this.info.completion(ns);
+			_this.info.childCompletion(ns);
 			return;
 		}
-		// console.log(' load', $package, ns._imported, ns._loading, ns._loaded)		
+		
+		// script tag 作って読み込み
 		ns._loading = true;
 		var jsURL = Namespace.jsPath + "/" + ns.nsName.substr(Namespace.domain.length + 1, ns.nsName.length) + ".js";
 		var script = document.createElement("script");
@@ -468,8 +450,7 @@ Namespace.prototype.require = function(packages, callback) {
 		script.onload = function() {
 			ns._loading = false;
 			ns._loaded = true;
-			// console.log('  loaded', ns.nsName)
-			_this.info.completion(ns);
+			_this.info.childCompletion(ns);
 		}
 		script.onreadystatechange = function(e) {if(e.readyState=="loaded"||e.readyState=="complete") script.onload();}
 		document.body.appendChild(script);
