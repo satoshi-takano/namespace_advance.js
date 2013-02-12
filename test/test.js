@@ -15,6 +15,11 @@ window.onload = function() {
 				})
 				def(function returnTrue() {return true;})
 				def(function returnFalse() {return false;})
+
+				$$.def(function classMethod() {
+					return "This is class method of _test.namespace.js.Test";
+				})
+				$$.classVar = "I'm defined"
 			})
 		})
 
@@ -23,6 +28,8 @@ window.onload = function() {
 		equal(new _test.namespace.js.Test('Test instance').name, 'Test instance', "new _test.namespace.js.Test('test instance').name is equal to 'test instance'");
 		strictEqual(new _test.namespace.js.Test('Test instance').returnTrue(), true, "Test#returnTrue() returns true");
 		strictEqual(new _test.namespace.js.Test('Test instance').returnFalse(), false, "Test#returnFalse() returns false");
+		equal(_test.namespace.js.Test.classMethod(), "This is class method of _test.namespace.js.Test", "_test.namespace.js.Test.classMethod() says " + _test.namespace.js.Test.classMethod());
+		equal(_test.namespace.js.Test.classVar, "I'm defined", "_test.namespace.js.Test.classVar says " + _test.namespace.js.Test.classVar);
 	})
 
 	test('extends', function() {
