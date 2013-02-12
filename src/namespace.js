@@ -23,7 +23,7 @@ THE SOFTWARE.
 ===================================================== */
 
 var global = window;
-if (!global.debug || !global.console) {
+/*if (!global.debug || !global.console) {
 	console = {};
 	console.log = 
 	console.error = 
@@ -34,7 +34,7 @@ if (!global.debug || !global.console) {
 	console.trace = 
 	console.warn = 
 	function(){};
-}
+}*/
 
 /**
 * @class 名前空間オブジェクト
@@ -44,10 +44,10 @@ if (!global.debug || !global.console) {
 * new Namespace(hoge) した時にすでに同名の名前空間が存在する場合は再定義されることはなく、
 * 既存の Namespace オブジェクトが返されます。
 */
-Namespace = function(str) {
+Namespace = function(str, here) {
 	var ns = str.split('.');
 	
-	var here = global;
+	var here = here || global;
 	if (ns.length == 1) {
 		if (here[str] != undefined)
 			return here[str];
@@ -60,7 +60,7 @@ Namespace = function(str) {
 	var name = "";
 	for (var i = 0, l = ns.length, ll = l-1; i < l; i++) {
 		if (typeof(here[ns[i]]) == "undefined") {
-			here[ns[i]] = new Namespace(ns[i]);
+			here[ns[i]] = new Namespace(ns[i], here);
 		}
 		if (i > 0) name += ".";
 		name += ns[i];
@@ -441,8 +441,7 @@ Namespace.prototype.require = function(packages, callback) {
 		
 		// script tag 作って読み込み
 		ns._loading = true;
-		var jsURL = Namespace.jsPath + "/" + ns.nsName.replace(".", "/") + ".js";
-
+		var jsURL = Namespace.jsPath + "/" + ns.nsName.replace(/\./g, "/") + ".js";
 		var script = document.createElement("script");
 		script.type = "text/javascript";
 		script.src = jsURL;
