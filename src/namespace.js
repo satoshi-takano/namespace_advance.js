@@ -22,9 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
 
-/**
- * @fileOverview 名前空間オブジェクトが定義されています.<br/>
- */
 var global = window;
 if (!global.debug || !global.console) {
 	console = {};
@@ -40,11 +37,12 @@ if (!global.debug || !global.console) {
 }
 
 /**
-* @class all classes are defined to Namespace class.
+* @class 名前空間オブジェクト
 * @param str 名前空間を String 型で指定します. (例: "jp.example.hoge")
 * @description "jp.example.hoge" を引数に Namespace を new した場合,<br/>
-* jp, jp.example, jp.example.hoge というオブジェクトが作成されます.<br/>
-* すでに存在する場合は新しく作成されることはありません.
+* ネイティブのグローバルオブジェクトに対し、jp, jp.example, jp.example.hoge というオブジェクトが定義されます.<br/>
+* new Namespace(hoge) した時にすでに同名の名前空間が存在する場合は再定義されることはなく、
+* 既存の Namespace オブジェクトが返されます。
 */
 Namespace = function(str) {
 	var ns = str.split('.');
@@ -72,19 +70,6 @@ Namespace = function(str) {
 	return here;
 }
 Namespace.domain = "jp.example";
-var NS_CORE = Namespace.domain + ".core";
-var NS_APP = Namespace.domain + ".application";
-var NS_GEOM = Namespace.domain + ".geom";
-var NS_EVENTS = Namespace.domain + ".events";
-var NS_TWEEN = Namespace.domain + ".tween";
-var NS_NET = Namespace.domain + ".net";
-var NS_DISPLAY = Namespace.domain + ".display";
-var NS_UI = Namespace.domain + ".ui";
-var NS_MATH = Namespace.domain + ".math";
-var NS_CANVAS = Namespace.domain + ".canvas";
-var NS_PLATFORM = Namespace.domain + ".platform";
-var NS_AUDIO = Namespace.domain + ".audio";
-var NS_GL2D = Namespace.domain + ".gl2d";
 Namespace.jsPath = "./js";
 Namespace.prototype = new (function() {
 	var FunctionPrototype = function() {
@@ -141,7 +126,9 @@ Namespace.prototype = new (function() {
 
 			obj.initialize = tmpInit;
 			self.substance.superClass = obj.prototype;
+
 			self.substance.prototype = proto;
+			self.substance.prototype.$class = self.substance;
 			self.substance.prototype.$super = $super;
 		};
 
@@ -280,6 +267,7 @@ Namespace.prototype = new (function() {
 		var proto = tmpSelf[name];
 		proto.def = functionPrototype.defInObj;
 		proto.prototype.include = functionPrototype.include;
+		proto.prototype.name = name;
 		proto.prototype.$class = proto;
 		
 		// fake dynamic scope
@@ -364,8 +352,9 @@ Namespace.prototype = new (function() {
 		proto.getInstance = functionPrototype.getInstance;
 		proto.def = functionPrototype.defInObj;
 		proto.prototype.include = functionPrototype.include;
+		proto.prototype.name = name;
 		proto.prototype.$class = proto;
-		
+
 		// set temporary global method
 		var old$ = global.$;
 		var old$$ = global.$$;
@@ -397,6 +386,14 @@ Namespace.prototype = new (function() {
 	};
 })();
 
+/**
+* @memberOf Namespace.prototype
+* @param packages 名前空間の名前の配列
+* @param callback 名前空間の読み込み完了時に呼び出されるコールバック関数
+* @description 別の .js ファイルで定義された名前空間を非同期で読み込みます。</br>
+* 読み込み先の名前空間で更に別の名前空間に依存されていた場合は再帰的に読み込み、必要なすべての名前空間が読み込み終わった時初めてコールバック関数を実行します。
+* このメソッドによって同じ名前空間が重複して読み込まれることはありません。
+**/
 Namespace.prototype.require = function(packages, callback) {
 	var _this = this;
 	// 依存しているファイルの数.
@@ -429,12 +426,13 @@ Namespace.prototype.require = function(packages, callback) {
 	this.info = info;
 	
 	var $package = packages.splice(0, 1)[0];
+
 	addTag($package);
 	
 	function addTag($package) {
 		var ns = new Namespace($package);
 		ns.parentInfo = info;
-		
+
 		// すでに読み込み済み or 読込中の場合は捨てる
 		if (ns._loading || ns._loaded) {
 			_this.info.childCompletion(ns);
@@ -443,7 +441,8 @@ Namespace.prototype.require = function(packages, callback) {
 		
 		// script tag 作って読み込み
 		ns._loading = true;
-		var jsURL = Namespace.jsPath + "/" + ns.nsName.substr(Namespace.domain.length + 1, ns.nsName.length) + ".js";
+		var jsURL = Namespace.jsPath + "/" + ns.nsName.replace(".", "/") + ".js";
+
 		var script = document.createElement("script");
 		script.type = "text/javascript";
 		script.src = jsURL;
@@ -458,9 +457,9 @@ Namespace.prototype.require = function(packages, callback) {
 }
 
 // ----------------------------------------------------
-// bootstrap
+// core namespace
 // ----------------------------------------------------
-new Namespace(NS_CORE).use(function () {
+new Namespace("foundation").use(function () {
 	var ns = this;
 	
 	/** 
@@ -504,7 +503,7 @@ new Namespace(NS_CORE).use(function () {
 		})
 		
 		/**
-		* アプリケーションの初期化処理が終わった時に,引数に渡されたクロージャが実行されます.
+		* bootstrap
 		*/
 		def(function main(runner) {
 			this.runner = runner;
