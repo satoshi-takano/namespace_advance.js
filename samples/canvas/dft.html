@@ -1,0 +1,78 @@
+<html>
+<script type="text/javascript" charset="utf-8">
+	debug = true;
+</script>
+<script type="text/javascript" src="../../namespace.js/src/namespace.js"></script>
+
+<canvas id="canvas2d" width='450' height='450'>
+</canvas>
+<script type="text/javascript">
+Namespace.jsPath = "../../src";
+new Namespace("foundation").Main.getInstance().main(function (argument) {
+	new Namespace("example").require(["advanced.canvas", "advanced.math"], function() {
+
+		var ns = new Namespace("advanced.canvas")
+		var nsmath = new Namespace("advanced.math")
+		var stage = new ns.Stage(document.getElementById("canvas2d"))
+		
+		var cont = new ns.DisplayObjectContainer();
+		stage.addChild(cont);
+		cont.graphics.beginFill(0);
+		cont.graphics.drawRect(0, 0, stage.stageWidth, (stage.stageHeight - 40));
+		
+		new Namespace("advanced.math").Math.sugar();
+		
+		var dt = Math.pow(2, 9);
+		var samples = [];
+		var real = [];
+		var imag = [];
+		
+		for (var i = 0; i <= dt; i++) {
+			samples[i] = 0;
+			samples[i] += 2 * sin(441 * i * 2 * Math.PI / 44100);
+			real[i] = samples[i];
+			imag[i] = 0;
+		}
+
+		cont.graphics.beginFill(0,0);
+		cont.graphics.lineStyle(2, 0xff0000);
+		
+		var amp = 10;
+		cont.graphics.moveTo(0, samples[0] + (stage.stageHeight - 40));
+		var oldx = 0;
+		var oldy = samples[0] + 255;
+		for (var i = 0; i <= dt; i++) {
+			var x = i * stage.stageWidth / dt;
+			var y = samples[i] * amp + 255;
+			var cx = oldx + (x - oldx) / 4;
+			var cy = oldy + (y - oldy) / 4;
+			cont.graphics.curveTo(cx, cy, x, y);
+			oldx = x;
+			oldy = y;
+		}
+		cont.graphics.endFill();
+
+		var fft = new nsmath.FFT(dt); 
+		fft.fft(real, imag);
+		cont.graphics.context.font = "9px Helvetica";
+		cont.graphics.lineStyle(0, 0);
+		var flg = true;
+		for (i = 0; i <= dt / 2; i++) {
+			var r = real[i];
+			var j = imag[i];
+			var amp = sqrt(r * r + j * j);
+			console.log(Math.floor((44100 / dt * i)) + " Hz : " + (amp + 0.0001));
+			x = i * stage.stageWidth / dt * 2;
+			y = amp;
+		}
+		
+		stage.draw();
+
+	})
+});
+
+</script>
+<body>
+</body>
+</html>
+

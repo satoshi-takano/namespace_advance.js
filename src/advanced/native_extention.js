@@ -26,48 +26,53 @@ THE SOFTWARE.
 * @fileOverview JavaScript の組み込み型を拡張します.
 */
 
-// Number's extention
-Number.prototype.times = function(closure, scope) {
-	for (var i = 0; i < this; i++) {
-		closure.call(scope || arguments.callee.caller, i);
-	}
-};
-Number.prototype.upto = function(max, closure, scope) {
-	for (var i = this + 0; i <= max; i++) {
-		closure.call(scope || arguments.callee.caller, i)
-	}
-}
-Number.prototype.downto = function(min, closure, scope) {
-	for (var i = this + 0; min <= i; i--) {
-		closure.call(scope || arguments.callee.caller, i);
-	}
-}
-Number.prototype.step = function(limit, step, closure, scope) {
-	for (var i = this + 0; i <= limit; i += step) {
-		closure.call(scope || arguments.callee.caller, i);
-	}
-}
+new Namespace("advanced.native_extention").require(["advanced.core"], function() {
+	this.use(function() {
 
-Number.prototype.after = function(closure, scope) {
-	setTimeout(function () {
-		closure.call(scope || arguments.callee.caller);
-	}, this + 0);
-}
+		Number.prototype.times = function(closure, scope) {
+			for (var i = 0; i < this; i++) {
+				closure.call(scope || arguments.callee.caller, i);
+			}
+		};
+		Number.prototype.upto = function(max, closure, scope) {
+			for (var i = this + 0; i <= max; i++) {
+				closure.call(scope || arguments.callee.caller, i)
+			}
+		}
+		Number.prototype.downto = function(min, closure, scope) {
+			for (var i = this + 0; min <= i; i--) {
+				closure.call(scope || arguments.callee.caller, i);
+			}
+		}
+		Number.prototype.step = function(limit, step, closure, scope) {
+			for (var i = this + 0; i <= limit; i += step) {
+				closure.call(scope || arguments.callee.caller, i);
+			}
+		}
 
-Number.prototype.frames = function(closure, scope) {
-	var i = 0;
-	var step = this + 0;
-	var interval = 1 / (new Namespace("foundation").System.FPS);
-	var tid = setInterval(function() {
-		if (closure.call(scope || arguments.callee.caller, i) == false) clearInterval(tid);
-		i++;
-		if (i == step) clearInterval(tid);
-	}, interval);
-}
+		Number.prototype.after = function(closure, scope) {
+			setTimeout(function () {
+				closure.call(scope || arguments.callee.caller);
+			}, this + 0);
+		}
 
-// Array's extention
-Array.prototype.each = function(closure, scope) {
-	for (var i = 0, l = this.length; i < l; i++) {
-		closure.call(scope || arguments.callee.caller, this[i]);
-	}
-}
+		Number.prototype.frames = function(closure, scope) {
+			var i = 0;
+			var step = this + 0;
+			var interval = 1 / (new Namespace("advanced.core").System.FPS);
+			var tid = setInterval(function() {
+				if (closure.call(scope || arguments.callee.caller, i) == false) clearInterval(tid);
+				i++;
+				if (i == step) clearInterval(tid);
+			}, interval);
+		}
+
+		// Array's extention
+		Array.prototype.each = function(closure, scope) {
+			for (var i = 0, l = this.length; i < l; i++) {
+				closure.call(scope || arguments.callee.caller, this[i]);
+			}
+		}
+
+	})
+})

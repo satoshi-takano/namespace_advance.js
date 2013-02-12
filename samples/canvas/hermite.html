@@ -1,0 +1,80 @@
+<html>
+<script type="text/javascript" charset="utf-8">
+	debug = true;
+</script>
+<script type="text/javascript" src="../../namespace.js/src/namespace.js"></script>
+
+<canvas id="canvas2d" width='500' height='500'>
+</canvas>
+<script type="text/javascript">
+
+Namespace.jsPath = "../../src";
+
+new Namespace("foundation").Main.getInstance().main(function (argument) {
+	new Namespace("example").require(["advanced.canvas"], function() {
+
+		var ns = new Namespace("advanced.canvas")
+		var stage = new ns.Stage(document.getElementById("canvas2d"))
+		
+		var cont = new ns.DisplayObjectContainer();
+		stage.addChild(cont);
+		cont.graphics.beginFill(0);
+		cont.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+		
+		var p1 = {};
+		p1.x = 10; p1.y = stage.stageHeight / 2;
+		var p2 = {};
+		p2.x = 100; p2.y = p1.y + 50;
+		var p3 = {};
+		p3.x = 200; p3.y = p1.y - 50;
+		
+		var v1 = {};
+		v1.x = 0; v1.y = p1.y + 25;
+		var v2 = {};
+		v2.x = 0; v2.y = 200;
+		var v3 = {};
+		v3.x = 0; v3.y = 300;
+		
+		cont.graphics.beginFill(0x00ff00);
+		cont.graphics.drawCircle(p1.x, p1.y, 3);
+		cont.graphics.drawCircle(p2.x, p2.y, 3);
+		cont.graphics.drawCircle(p3.x, p3.y, 3);
+		
+		cont.graphics.beginFill(0xff0000);
+		for (var i = 0; i <= p2.x - p1.x; i++) {
+			var r = (i / (p2.x - p1.x));
+			var p = hermite(p1, v1, p2, v2, r);
+			cont.graphics.drawCircle(p1.x + i, p[1], 1);
+		}
+		for (var i = 0; i <= p3.x - p2.x; i++) {
+			var r = (i / (p3.x - p2.x));
+			var p = hermite(p2, v2, p3, v3, r);
+			console.log((p3.x - p2.x), i);
+			cont.graphics.drawCircle(p2.x + i, p[1], 1);
+		}
+		
+		function hermite(p1, v1, p2, v2, r) {
+			var x, y;
+			var xp3 = r * r * r;
+			var xp2 = r * r;
+			
+			x = (2 * p1.x + v1.x - 2 * p2.x + v2.x) * xp3
+				+ (-3 * p1.x - 2 * v1.x + 3 * p2.x - v2.x) * xp2
+				+ v1.x * r + p1.x;
+			y = (2 * p1.y + v1.y - 2 * p2.y + v2.y) * xp3
+				+ (-3 * p1.y - 2 * v1.y + 3 * p2.y - v2.y) * xp2
+				+ v1.y * r + p1.y;
+			return [x, y];
+		}
+		
+
+		stage.draw();
+
+	})
+});
+
+</script>
+<body>
+</body>
+</html>
+

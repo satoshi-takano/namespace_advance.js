@@ -1,0 +1,56 @@
+<html>
+<script type="text/javascript" charset="utf-8">
+	debug = true;
+</script>
+<script type="text/javascript" src="../../namespace.js/src/namespace.js"></script>
+
+<script type="text/javascript">
+
+new Namespace("foundation").Main.getInstance().main(function (argument) {
+	Namespace.jsPath = "../../src";
+
+	new Namespace("example").require(["advanced.core"], function() {
+		this.use(function() {
+			/**
+			* @archetype Recorder
+			* 
+			**/
+			proto(function Recorder() {
+				// To initialize when the new Recorder(params) called.
+				init(function() {
+					this.include(new (new Namespace("advanced.core")).Recordable());
+				})
+
+				// op_0 {replace the description here}.
+				def(function op_0(message) {
+					console.log("op_0 " + message);
+					this.rec();
+				})
+
+				// op_1 {replace the description here}.
+				def(function op_1(message) {
+					console.log("op_1 " + message);
+					this.rec();
+				})
+
+				// op_2 {replace the description here}.
+				def(function op_2(message) {
+					console.log("op_2 " + message);
+				})
+			})
+
+		})
+
+		var rec = new example.Recorder();
+		rec.op_0("abc");
+		rec.op_1("def");
+		rec.op_2("ghi");
+		rec.playback();
+
+	})
+})
+
+</script>
+<body>
+</body>
+</html>

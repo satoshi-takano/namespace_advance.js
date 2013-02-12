@@ -1,0 +1,25 @@
+<html>
+<script type="text/javascript" charset="utf-8">
+	debug = true;
+</script>
+
+<script type="text/javascript" src="../../namespace.js/src/namespace.js"></script>
+
+<script type="text/javascript">
+
+Namespace.jsPath = "../../src";
+new Namespace("foundation").Main.getInstance().main(function (argument) {
+	new Namespace("example").require(["advanced.native_extention"], function() {
+		1000..after(function (argument) {
+			console.log("1000 msec");
+		})
+		60..frames(function (i) {
+			console.log(i);
+		})
+	})
+});
+
+</script>
+<body>
+</body>
+</html>

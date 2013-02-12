@@ -1,0 +1,3 @@
+[submodule "namespace.js"]
+	path = namespace.js
+	url = https://github.com/satoshi-takano/namespace.js
