@@ -21,13 +21,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ===================================================== */
-new Namespace("advanced.application").require(["advanced.events"], function() {
+
+/**
+* @file Define set of prototypes related to the application.
+* @version 0.6.0
+*/
+
+/** 
+* @namespace advanced.application
+*/
+new Namespace("advanced.application").require(["advanced.events", "advanced.platform"], function() {
 	this.use(function() {
 		console.log('imported ', this.nsName)
 		
 		var ns = this;
 
 		 /** 
+		 * The Application manages the pointing device's position.
 		 * @class Application
 		 * @augments EventDispatcher
 		 */
@@ -38,16 +48,26 @@ new Namespace("advanced.application").require(["advanced.events"], function() {
 			init(function() {
 				var self = this;
 				/** 
-				* 表示領域内でのマウスポインタの x 位置
-				* @memberOf Application.prototype
+				* The pointing device's x position on the window.
+				* @member {number} mouseX
+				* @memberOf Application#
+				* @default 0
 				*/
 				this.mouseX = 0;
+				
 				/** 
-				* 表示領域内でのマウスポインタの y 位置
-				* @memberOf Application.prototype 
+				* The pointing device's y position on the window.
+				* @member {number} mouseY
+				* @memberOf Application#
+				* @default 0
 				*/
 				this.mouseY = 0;
-				/** @memberOf Application.prototype */
+				
+				/** 
+				* The pointing device's x position on the window.
+				* @member {UserAgent} userAgent
+				* @memberOf Application#
+				*/
 				this.userAgent = new (new Namespace("advanced.platform")).UserAgent();
 
 				var nscore = (new Namespace("foundation"));

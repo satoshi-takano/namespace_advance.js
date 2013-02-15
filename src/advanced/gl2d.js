@@ -23,7 +23,8 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
-* @fileOverview 
+* @private
+* @deprecated
 */ 
 
 new Namespace("advanced.gl2d").use(function() {

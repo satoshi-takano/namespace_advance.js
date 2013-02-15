@@ -23,29 +23,33 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
- * @fileOverview 幾何学に関するオブジェクトが定義されています.
+ * @file Set of prototypes that related to geometry.
+ * @version 0.6.0
  */
- 
+
+/**
+* @namespace advanced.geom
+**/
 new Namespace("advanced.geom").use(function() {
 	var ns = this;
 	console.log('imported ', this.nsName)
 	
 	 /** 
-	 * @class 点を表します.
+	 * Pair of x and y.
+	 * @class Point
+	 * @param {number} x
+	 * @param {number} y
 	 */
 	proto(function Point() {
-		/**
-		* @memberOf Point
-		* @param x {Number} x 座標
-		* @param y {Number} y 座標　
-		*/
 		init(function(x, y) {
 			this.x = x;
 			this.y = y;
 		});
 		
 		/** 
-		* このPointを引数のPoint分移動します.
+		* add other points
+		* @method add
+		* @memberOf Point#
 		* @param p {Point} 
 		*/
 		def(function add(p) {
@@ -53,16 +57,22 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/** 
-		* Point オブジェクトのクローンを返します.
-		* @return {Point} clone
+		* Returns the clone of Point.
+		* @method clone
+		* @memberOf Point#
+		* @returns {Point} 
 		*/
 		def(function clone() {
 			return new ns.Point(this.x, this.y);
 		});
 		
-		/**
-		* ２点の差をスカラー値で返します.
-		* @return {Number}
+		/** 
+		* Returns the scalar value that represents distance between the two specified points.
+		* @method distance
+		* @memberOf Point#
+		* @param p1 {Point}
+		* @param p2 {Point} 
+		* @returns {number} distance between the two points.
 		*/
 		def(function distance(p1, p2) {
 			var dx = p1.x - p2.x;
@@ -71,17 +81,22 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/** 
-		* ２点が等しいかどうか評価します.
-		* @return {Boolean}
+		* Returns whether coordinates of this point equals to the coordinates of another specified point or not.
+		* @method equals
+		* @memberOf Point#
+		* @param p {Point}
+		* @returns {boolean} 
 		*/
 		def(function equals(p) {
 			return this.x == p.x && this.y == p.y;
 		});
 		
-		/**
-		* Pointの x, y 座標それぞれにオフセット分加算します.
-		* @param dx {Number}
-		* @param dy {Number}
+		/** 
+		* add offset to this point.
+		* @method offset
+		* @memberOf Point#
+		* @param dx {number} offset x
+		* @param dy {number} offset y 
 		*/
 		def(function offset(dx, dy) {
 			this.x += dx;
@@ -89,29 +104,33 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/** 
-		* 引数に渡された Point 分を差し引いた新しい Point オブジェクトを返します.<br/>
-		* 現在の Point オブジェクトの値は変更されません.
-		* @param p {Point}
+		* Subtracts the coordinates of another point from the coordinates of this point to create a new point.
+		* @method sbutract
+		* @memberOf Point#
+		* @param p {Point} The point to be subtracted.
+		* @returns {Point} The new point.
 		*/
 		def(function subtract(p) {
 			return new ns.Point(this.x - p.x, this.y - p.y);
 		});
 		
-		/**
-		* 原点を (0, 0) とした場合のこの Point オブジェクトの原点からの距離を返します.
-		* @return {Number}
+		/** 
+		* Returns the length of the line segment from (0,0) to this point.
+		* @method getLength
+		* @memberOf Point#
+		* @returns {number} length.
 		*/
 		def(function getLength() {
 			return Math.sqrt(this.x*this.x + this.y*this.y);
 		});
 		
-		/**
-		* ２点間を比 f (0 ~ 1) で線形補間します.
-		* @param p1 {Point} 
-		* @param p2 {Point}
-		* @parma f {Number}
-		* @return {Point} p1, p2 の割合 f に位置する新しい Point オブジェクト
+		/** 
+		* Determines a point between two specified points.
+		* @method interpolate
 		* @memberOf Point
+		* @param {Point} p1 The first point.
+		* @param {Point} p2 The second point.
+		* @returns {Point} The new point.
 		*/
 		$$.def(function interpolate(p1, p2, f) {
 			var dx = p2.x - p1.x;
@@ -122,8 +141,12 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/** 
-		* 極座標から直交座標に変換します.
+		* Converts a pair of polar coordinates to a Cartesian point coordinate.
+		* @method polar
 		* @memberOf Point
+		* @param {number} length The length coordinate of the polar pair.
+		* @param {number} radian The angle, in radians, of the polar pair.
+		* @returns {Point} The Cartesian point.
 		*/
 		$$.def(function polar(length, radian) {
 			return new ns.Point(length * Math.cos(radian), length * Math.sin(radian));
@@ -132,72 +155,102 @@ new Namespace("advanced.geom").use(function() {
 	
 	
 	 /** 
-	 * @class 矩形を表します.
+	 * The Rectangle represents the geometric rectangle.
+	 * @class Rectangle
+	 * @param {number} x X coordinate of rectangle.
+	 * @param {number} y Y coordinate of rectangle.
+	 * @param {number} w Width of rectangle.
+	 * @param {number} h Height of rectangle.
 	 */
 	 proto(function Rectangle() {
-		 /**
-		 * @param x {Number} x 座標
-		 * @param y {Number} y 座標
-		 * @param w {Number} 幅
-		 * @param h {Number} 高さ
-		 * @memberOf Rectangle
-		 */
 	 	init(function (x, y, w, h) {
+	 		/** 
+	 		* X coordinate of rectangle.
+	 		* @member x
+	 		* @memberOf Rectangle#
+	 		**/
 	 		this.x = x;
+	 		/** 
+	 		* Y coordinate of rectangle.
+	 		* @member y
+	 		* @memberOf Rectangle#
+	 		**/
 	 		this.y = y;
+	 		/** 
+	 		* Width of rectangle.
+	 		* @member width
+	 		* @memberOf Rectangle#
+	 		**/
 	 		this.width = w;
+	 		/** 
+	 		* Height of rectangle.
+	 		* @member height
+	 		* @memberOf Rectangle#
+	 		**/
 	 		this.height = h;
 	 	});
 		
 		/**
-		* Rectangleオブジェクトのクローンを返します.
-		* @return {Rectangle} 
+		* Returns the clone of this Rectangle.
+		* @method clone
+		* @memberOf Rectangle#
+		* @returns {Rectangle} 
 		*/
 		def(function clone() {
 			return new ns.Rectangle(this.x, this.y, this.width, this.height);
 		});
 		
-		/** 
-		* 指定されたポイントがこの Rectangle オブジェクトで定義される矩形領域内にあるかどうかを判別します。
-		* @param x {Number} x 座標
- 		* @param y {Number} y 座標
- 		* @return {Boolean}  このオブジェクトに指定されたオブジェクトが含まれる場合は true を返します.
+		/**
+		* Returns whether the specified point is contained within the rectangular region defined by this Rectangle.
+		* @method clone
+		* @memberOf Rectangle#
+		* @param {number} x The x coordinate.
+		* @param {number} y The y coordinate.
+		* @returns {boolean}
 		*/
 		def(function contains(x, y) {
 			return (this.x < x && this.x + this.width > x) && (this.y < y && this.y + this.height > y);
 		});
 		
 		/** 
-		* 指定されたポイントがこの Rectangle オブジェクトで定義される矩形領域内にあるかどうかを判別します。
-		* @param p {Point} Point
- 		* @return {Boolean}  このオブジェクトに指定されたオブジェクトが含まれる場合は true を返します.
+		* Returns whether the specified point is contained within the rectangular region defined by this Rectangle.
+		* @method containsPoint
+		* @memberOf Rectangle#
+		* @param p {Point} 
+ 		* @returns {boolean}
 		*/
 		def(function containsPoint(p) {
 			return this.contains(p.x, p.y);
 		});
 		
 		/** 
-		* 指定された矩形領域がこの Rectangle オブジェクトで定義される矩形領域内にあるかどうかを判別します。
+		* Returns whether the specified rectangle is contained within the rectangular region defined by this Rectangle.
+		* @method containsPoint
+		* @memberOf Rectangle#
 		* @param rect {Rectangle} 
- 		* @return {Boolean}  このオブジェクトに指定されたオブジェクトが含まれる場合は true を返します.
+ 		* @returns {boolean}
 		*/
 		def(function containsRect(rect) {
 			return this.contains(rect.x, rect.y) && this.contains(rect.x + rect.width, rect.y + rect.height);
 		});
 		
 		/**
-		* 引数に与えられた Rectangle オブジェクトと等しいかどうか判別します.
+		* Returns whether the specified rectangle equals to another specified rectangle.
+		* @method equals
+		* @memberOf Rectangle#
 		* @param rect {Rectangle} 
-		* @return {Boolean} 等しい場合には true を返します.
+		* @returns {boolean} 
 		*/
 		def(function equals(rect) {
 			return (this.x == rect.x && this.y == rect.y && this.width == rect.width && this.height == rect.height);
 		});
 		
 		/** 
-		* 幅、高さを拡張します.
-		* @param dx {Number} offset x
-		* @param dy {Number} offset y
+		* Inflate this rectangle
+		* @method inflate
+		* @memberOf Rectangle#
+		* @param dx {Number} The offset x
+		* @param dy {Number} The offset y
 		*/
 		def(function inflate(dx, dy) {
 			this.width += dx;
@@ -205,8 +258,10 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/**
-		* 幅、高さを拡張します.
-		* @param p {Point} offsets
+		* Inflate this rectangle
+		* @method inflatePoint
+		* @memberOf Rectangle#
+		* @param p {Point} The offsets point.
 		*/
 		def(function inflatePoint(p) {
 			this.width += p.x;
@@ -214,8 +269,10 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/**
-		* 引数に与えられた Rectangle オブジェクトと交差する領域を新しい Rectangle オブジェクトとして返します.
-		* @return {Rectangle}
+		* Returns the rectangle that represents this rectangle intersected the another rectangle.  (英語自身なし..)
+		* @method intersection
+		* @memberOf Rectangle#
+		* @returns {Rectangle} The intersected region
 		*/
 		def(function intersection(rect) {
 			var r = new ns.Rectangle(0, 0, 0, 0);
@@ -240,9 +297,10 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/**
-		* 引数に与えられた Rectangle オブジェクトと交差する領域があるかどうか判別します.
-		* @param {Rectangle} 
-		* @return 交差する領域がある場合に true を返します.
+		* Returns whether this rectangle intersected the another rectangle.
+		* @method intersect
+		* @memberOf Rectangle#
+		* @returns {boolean}
 		*/
 		def(function intersect(rect) {
 			if (this.intersection)
@@ -252,9 +310,11 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/**
-		* 矩形を移動します.
-		* @param dx {Number} offset x
-		* @param dy {Number} offset y
+		* Move this rectangle.
+		* @method offset
+		* @memberOF Rectangle#
+		* @param {number} dx The offset x
+		* @param {number} dy The offset y
 		*/
 		def(function offset(dx, dy) {
 			this.x += dx;
@@ -262,8 +322,10 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/**
-		* 矩形を移動します.
-		* @param dx {Point} offsets
+		* Move this rectangle.
+		* @method offset
+		* @memberOF Rectangle#
+		* @param {Point} The offset point
 		*/
 		def(function offsetPoint() {
 			this.x += p.x;
@@ -271,8 +333,11 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/**
-		* ２つの矩形領域を合成します.
-		* @param rect {Rectangle} 
+		* Union this rectangle and another rectangle.
+		* @method union
+		* @memberOF Rectangle#
+		* @param {number} The offset x
+		* @param {number} dy The offset y
 		*/
 		def(function union(rect) {
 			var intersection = this.intersection(rect);
@@ -285,40 +350,50 @@ new Namespace("advanced.geom").use(function() {
 		});
 		
 		/**
-		* 底辺の y 座標を返します.
-		* @return {Number}
+		* Return the bottom coordinate of this rectangle.
+		* @method getBottom
+		* @memberOf Rectangle#
+		* @returns {number} 
 		*/
 		def(function getBottom() {
 			return this.y + this.height;
 		});
 		
-		/** 
-		* 右下隅の座標を返します.
-		* @return {Point}
+		/**
+		* Return the bottom right coordinate point of this rectangle.
+		* @method getBottomRight
+		* @memberOf Rectangle#
+		* @returns {Point} 
 		*/
 		def(function getBottomRight() {
 			return new ns.Point(this.getRight(), this.getBottom());
 		});
 		
 		/**
-		* 右辺の x 座標を返します.
-		* @return {Number}
+		* Return the right coordinate of this rectangle.
+		* @method getRight
+		* @memberOf Rectangle#
+		* @returns {number} 
 		*/
 		def(function getRight() {
 			return this.x + this.width;
 		});
 		
 		/**
-		* サイズを返します.
-		* @return {Point}
+		* Return the size of this rectangle.
+		* @method getSize
+		* @memberOf Rectangle#
+		* @returns {Point} This point's x represent the width of this rectangle, y represent height of the this rectangle.
 		*/
 		def(function getSize() {
 			return new ns.Point(this.width, this.height);
 		});
 		
 		/**
-		* 左上隅の座標を返します.
-		* @return {Point}
+		* Return the top left coordinate point of this rectangle.
+		* @method getTopLeft
+		* @memberOf Rectangle#
+		* @returns {Point} 
 		*/
 		def(function getTopLeft() {
 			return new ns.Point(this.x, this.y);
@@ -326,7 +401,14 @@ new Namespace("advanced.geom").use(function() {
 	 });
 	 
 	 /** 
-	 * @class 3 * 3 行列
+	 * 3 x 3 Matrix
+	 * @class Matrix
+	 * @param {number} [a=1]
+	 * @param {number} [b=0]
+	 * @param {number} [c=0]
+	 * @param {number} [d=1]
+	 * @param {number} [tx=0]
+	 * @param {number} [ty=0]
 	 */
 	 proto(function Matrix() {
 	 	init(function (a, b, c, d, tx, ty) {
@@ -345,16 +427,19 @@ new Namespace("advanced.geom").use(function() {
 	 	});
 	 	
 	 	/**
-	 	* クローンを返します.
-	 	* @return {Matrix}
+	 	* Return the clone of this matrix.
+	 	* @method clone 
+	 	* @memberOf Matrix#
+	 	* @returns {Matrix} The new Matrix.
 	 	*/
 	 	def(function clone() {
 		 	return new ns.Matrix(this.a, this.b, this.c, this.d, this.tx, this.ty);
 	 	});
 	 	
 	 	/**
-	 	* 乗算します.
-	 	* @param m {Matrix}
+	 	* Multiply this matrix to the another matrix.
+	 	* @method concat
+	 	* @memberOf Matrix#
 	 	*/
 	 	def(function concat(m) {
 	 		var a = this.a, b = this.b, c = this.c, d = this.d, tx = this.tx, ty = this.ty;	
@@ -367,16 +452,20 @@ new Namespace("advanced.geom").use(function() {
 	 	});
 	 	
 	 	/**
-	 	* 単位行列にします
+	 	* Set to the identity matrix.
+	 	* @method identity
+	 	* @memberOf Matrix#
 	 	*/
 	 	def(function identity() {
 	 		this.a = this.d = 1;
 			this.b = this.c = this.tx = this.ty = 0;
 	 	});
 	 	
-	 	/** 
-	 	* 回転させます.
-	 	* @param radian {Number} 
+	 	/**
+	 	* Rotate this matrix.
+	 	* @method rotate
+	 	* @memberOf Matrix#
+		* @param {number} radian
 	 	*/
 	 	def(function rotate(radian) {
 	 		var rot = new ns.Matrix(0, 0, 0, 0, 0, 0);
@@ -390,8 +479,10 @@ new Namespace("advanced.geom").use(function() {
 	 	});
 	 	
 	 	/**
-	 	* 伸縮します.
-	 	* @param scl {Number}
+	 	* Scale this matrix.
+	 	* @method scale
+	 	* @memberOf Matrix#
+		* @param {number} scl
 	 	*/
 	 	def(function scale(scl) {
 	 		var s = new ns.Matrix(scl, 0, 0, scl, 0, 0);
@@ -399,9 +490,9 @@ new Namespace("advanced.geom").use(function() {
 	 	});
 	 	
 	 	/**
-	 	* 平行移動します.
-	 	* @param dx {Number}
-	 	* @param dy {Number}
+	 	* Translate this matrix.
+	 	* @method translate
+	 	* @memberOf Matrix#
 	 	*/
 	 	def(function translate(dx, dy) {
 	 		this.tx += dx;

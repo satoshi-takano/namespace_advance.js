@@ -23,9 +23,13 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
- * @fileOverview イベントに関するオブジェクトが定義されています.
+ * @file Set of prototypes related to the custom event.
+ * @version 0.6.0
  */
 
+/**
+* @namespace advanced.events
+**/
 new Namespace("advanced.events").require(["advanced.platform"], function() {
 	this.use(function() {
 		console.log('imported ', this.nsName)
@@ -44,22 +48,22 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 
 
 		/** 
-		* @class イベントを発行するための機能を定義しています.
+		* Event dispatcher.
+		* @class EventDispatcher
+		* @param {object} target 
 		*/
 		proto(function EventDispatcher() {
-			/** 
-			* @memberOf EventDispatcher 
-			* @param 
-			*/
 			init(function (target) {
 				this.observers = {};
 				this.target = target;
 			});
 
 			/**
-			* イベントリスナを追加します.
-			* @param type {String} イベントタイプ.
-			* @param callback {Function} イベント発生時に評価する関数.
+			* Add an event listener.
+			* @method addEventListener
+			* @memberOf EventDispatcher#
+			* @param {string} type Event type.
+			* @param {function} callback Function that called when fired the event.
 			*/
 			def(function addEventListener(type, callback) {
 				if (type == undefined) {
@@ -83,17 +87,22 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 			});
 
 			/** 
-			* addEventListener のエイリアス. 
-			* @deprecated 将来的に廃止される可能性があります.
+			* Synonym of addEventListener.
+			* @method ae
+			* @memberOf EventDispatcher#
+			* @param {string} type Event type.
+			* @param {function} callback Function that called when fired the event.
 			*/
 			def(function ae(type, callback) {
 				this.addEventListener(type, callback);
 			});
 
 			/**
-			* イベントリスナを削除します.
-			* @param type {String} イベントタイプ.
-			* @param callback {Function} 登録済み関数.
+			* Remove an event listener.
+			* @method removeEventListener
+			* @memberOf EventDispatcher#
+			* @param {string} type Event type.
+			* @param {function} callback Function that added by addEventListener.
 			*/
 			def(function removeEventListener(type, callback) {
 				var list = this.observers[type];
@@ -108,6 +117,12 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 				}
 			});
 
+			/**
+			* Returns whether the EventDispatcher has listener related to the event type.
+			* @method hasEventListener
+			* @memberOf EventDispatcher#
+			* @returns {Boolean}
+			**/
 			def(function hasEventListener(type) {
 				var list = this.observers[type];
 				if (!list || list.length == 0) return false;
@@ -115,9 +130,12 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 			})
 
 
-			/** 
-			* removeEventListener のエイリアス. 
-			* @deprecated 将来的に廃止される可能性があります.
+			/**
+			* Synonym of addEventListener.
+			* @method re
+			* @memberOf EventDispatcher#
+			* @param {string} type Event type.
+			* @param {function} callback Function that added by addEventListener.
 			*/
 			def(function re(type, performer) {
 				this.removeEventListener(type, performer);
@@ -136,14 +154,22 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 
 
 		/** 
-		* @class DOMに関するイベントを定義しています.
+		* Prototype that related to the DOM event.
+		* @class DOMEvent
 		*/
 		proto(function DOMEvent() {
 			var isIE = userAgent.isIE();
 			if (isIE) {
-				/** @memberOf DOMEvent */
+				/** 
+				* @constant {string} INIT
+				* @memberOf DOMEvent 
+				**/
 				$$.INIT = "onload";
-				/** @memberOf DOMEvent */
+
+				/** 
+				* @constant {string} LOAD
+				* @memberOf DOMEvent 
+				**/
 				$$.LOAD = "onload";
 			} else {
 				$$.INIT = "load";
@@ -153,24 +179,46 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 
 
 		/** 
-		* @class DOMのマウス操作に関するイベントを定義しています.
+		* Prototype that related to the DOM mouse event.
+		* @class DOMMouseEvent
 		*/
 		proto(function DOMMouseEvent() {
 			var isIE = userAgent.isIE();
 			if (isIE) {
-				/** @memberOf DOMMouseEvent */
+				/** 
+				* @constant {string} CLICK
+				* @memberOf DOMMouseEvent 
+				**/
 				$$.CLICK = "onclick";
-				/** @memberOf DOMEvent */
+				/** 
+				* @constant {string} MOUSE_DOWN
+				* @memberOf DOMMouseEvent 
+				**/
 				$$.MOUSE_DOWN = "onmousedown";
-				/** @memberOf DOMEvent */
+				/** 
+				* @constant {string} MOUSE_MOVE
+				* @memberOf DOMMouseEvent 
+				**/
 				$$.MOUSE_MOVE = "onmousemove";
-				/** @memberOf DOMEvent */
+				/** 
+				* @constant {string} MOUSE_OUT
+				* @memberOf DOMMouseEvent 
+				**/
 				$$.MOUSE_OUT = "onmouseout";
-				/** @memberOf DOMEvent */
+				/** 
+				* @constant {string} MOUSE_OVER
+				* @memberOf DOMMouseEvent 
+				**/
 				$$.MOUSE_OVER = "onmouseover";
-				/** @memberOf DOMEvent */
+				/** 
+				* @constant {string} MOUSE_UP
+				* @memberOf DOMMouseEvent 
+				**/
 				$$.MOUSE_UP = "onmouseup";
-				/** @memberOf DOMEvent */
+				/** 
+				* @constant {string} MOUSE_WHEEL
+				* @memberOf DOMMouseEvent 
+				**/
 				$$.MOSUE_WHEEL = "onmousewheel";
 			} else {
 				$$.CLICK ="click";
@@ -184,6 +232,7 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 		});
 
 		/**
+		* Root prototype that related to custom event.
 		* @class Event
 		**/
 		proto(function Event() {
@@ -195,39 +244,51 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 		})
 
 		/**
-		* @class TouchEvent
+		* Prototype that releated the touch event.
+		* @class TouchEvents
+		* @augments Event
 		**/
 		proto(function TouchEvent() {
 			ex(ns.Event)
 
-			/** @memberOf TouchEvent */
+			/** 
+			* @constant {string} TOUCH_START
+			* @memberOf TouchEvent 
+			**/
 			$$.TOUCH_START = "touchstart";
-			/** @memberOf TouchEvent */
+			/** 
+			* @constant {string} TOUCH_MOVE
+			* @memberOf TouchEvent 
+			**/
 			$$.TOUCH_MOVE = "touchmove";
-			/** @memberOf TouchEvent */
+			/** 
+			* @constant {string} TOUCH_ENT
+			* @memberOf TouchEvent 
+			**/
 			$$.TOUCH_END = "touchend";
 		})
 
 
 		/** 
+		* Prototype looks like the Event class of ActionScript3.0.
 		* @class FLEvent
+		* @augments Event
+		* @param {string} type event type.
+		* @param {object} caller
+		* @param {Event} [origin] JavaScript native event.
 		*/
 		proto(function FLEvent() {
 			ex(ns.Event)
 
-			/**
-			* @memberOf FLEvent
-			* @param type {String} イベントタイプ
-			* @param caller {Object} イベント発行元オブジェクト
-			* @param origin {Event} JavaScript 実行環境ネイティブの Event オブジェクト
-			*/
 			init(function (type, caller, origin) {
 				this.$super(type, caller, origin)
 				this.doBubbling = true;
 			});
 
 			/**
-			* デフォルトの処理実行をキャンセルします.
+			* Cancel the default processing.
+			* @method preventDefault
+			* @memberOf FLEvent
 			*/
 			def(function preventDefault() {
 				if (this.origin.preventDefault)
@@ -237,7 +298,9 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 			});
 
 			/**
-			* イベントの伝搬を停止します.
+			* Stop the propagation of event.
+			* @method stopPropagation
+			* @memberOf FLEvent
 			*/
 			def(function stopPropagation() {
 				this.doBubbling = false;
@@ -247,45 +310,93 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 					this.origin.cancelBubbles = true;
 			});
 
-			/** @memberOf FLEvent */
+			/** 
+			* @constant {string} APP_LAUNCH
+			* @memberOf FLEvent
+			**/
 			$$.APP_LAUNCH = "appLaunch";
-			/** @memberOf FLEvent */
+			/** 
+			* @constant {string} COMPLETE
+			* @memberOf FLEvent
+			**/
 			$$.COMPLETE = "complete";
 		});
 
 
 		/** 
-		* @class 機能拡張したマウスイベントを定義します.
+		* Prototype looks like the MouseEvent class of ActionScript3.0.
+		* @class FLMouseEvent
 		* @augments FLEvent
+		* @param {string} type event type.
+		* @param {object} caller
+		* @param {Event} [origin] JavaScript native event.
 		*/
 		proto(function FLMouseEvent() {
 			ex(ns.FLEvent);
 
 			init(function (type, caller, origin) {
 				this.$super(type, caller, origin);
+				/** 
+				* @member {number} mosueX
+				* @memberOf FLMouseEvent#
+				**/
 				this.mouseX = 0;
+				/** 
+				* @member {number} mosueY
+				* @memberOf FLMouseEvent#
+				**/
 				this.mouseY = 0;
 			})
 
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} CLICK
+			* @memberOf FLMouseEvent
+			**/
 			$$.CLICK = "click";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} DOUBLE_CLICK
+			* @memberOf FLMouseEvent
+			**/
 			$$.DOUBLE_CLICK = "doubleclick";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} MOUSE_DOWN
+			* @memberOf FLMouseEvent
+			**/
 			$$.MOUSE_DOWN = "mousedown";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} MOUSE_MOVE
+			* @memberOf FLMouseEvent
+			**/
 			$$.MOUSE_MOVE = "mousemove";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} MOUSE_OUT
+			* @memberOf FLMouseEvent
+			**/
 			$$.MOUSE_OUT = "mouseout";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} MOUSE_OVER
+			* @memberOf FLMouseEvent
+			**/
 			$$.MOUSE_OVER = "mouseover";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} MOUSE_UP
+			* @memberOf FLMouseEvent
+			**/
 			$$.MOUSE_UP = "mouseup";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} MOUSE_WHEEL
+			* @memberOf FLMouseEvent
+			**/
 			$$.MOUSE_WHEEL = "mousewheel";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} ROLL_OUT
+			* @memberOf FLMouseEvent
+			**/
 			$$.ROLL_OUT = "rollout";
-			/** @memberOf FLMouseEvent */
+			/** 
+			* @constant {string} ROLL_OVER
+			* @memberOf FLMouseEvent
+			**/
 			$$.ROLL_OVER = "rollover";
 		});
 		

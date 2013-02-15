@@ -23,7 +23,12 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
-* @fileOverview ネットワークに関係するオブジェクトが定義されています.
+* @file Define set of prototypes related to the networking.
+* @version 0.6.0
+*/
+
+/** 
+* @namespace advanced.net
 */
 new Namespace("advanced.net").require(["advanced.events"], function() {
 	this.use(function() {
@@ -32,22 +37,66 @@ new Namespace("advanced.net").require(["advanced.events"], function() {
 		var ns = this;
 
 		/** 
+		* The URL object represents the URL.
 		* @class URL
+		* @param {string} url The URL that represented in string.
 		*/
 		proto(function URL() {
-			/**
-			* 文字列からURLオブジェクトを作成します.
-			* @param url {String}
-			* @memberOf URL
-			*/
 			init(function(url) {
+				/** 
+				* The URL that represented in string.
+				* @member {string} url
+				* @memberOf URL#
+				*/
 				this.url = url;
+				/** 
+				* Scheme of this URL.
+				* @member {string} scheme
+				* @memberOf URL#
+				* @default ""
+				*/
 				this.scheme = 
+				/** 
+				* Port of this URL.
+				* @member {string} port
+				* @memberOf URL#
+				* @default ""
+				*/
 				this.port = 
+				/** 
+				* User of this URL.
+				* @member {string} user
+				* @memberOf URL#
+				* @default ""
+				*/
 				this.user = 
+				/** 
+				* Pass of this URL.
+				* @member {string} pass
+				* @memberOf URL#
+				* @default ""
+				*/
 				this.pass = 
+				/** 
+				* Path of this URL.
+				* @member {string} path
+				* @memberOf URL#
+				* @default ""
+				*/
 				this.path = 
+				/** 
+				* Query of this URL.
+				* @member {string} query
+				* @memberOf URL#
+				* @default ""
+				*/
 				this.query = 
+				/** 
+				* Fragment of this URL.
+				* @member {string} fragment
+				* @memberOf URL#
+				* @default ""
+				*/
 				this.fragment = "";
 				this.generate();
 			});
@@ -89,25 +138,48 @@ new Namespace("advanced.net").require(["advanced.events"], function() {
 		});
 
 		/** 
-		* @class URL request
+		* The URLRequest object represents request.
+		* @class URLRequest
+		* @param {String} urlString
 		*/
 		proto(function URLRequest() {
-			/**
-			* @param urlString {String}
-			* @memberOf URLRequest
-			*/
 			init(function (urlString) {
+				/** 
+				* URL.
+				* @member {string} url
+				* @memberOf URLRequest#
+				*/
 				this.url = urlString;
+				/** 
+				* The HTTP method.
+				* @member {string} httpMethod
+				* @memberOf URLRequest#
+				* @default "GET"
+				*/
 				this.httpMethod = "GET";
+				/** 
+				* The HTTP header.
+				* @member {object} httpHeader
+				* @memberOf URLRequest#
+				* @default {}
+				*/
 				this.httpHeader = {};
+				/** 
+				* The HTTP body.
+				* @member {string} httpBody
+				* @memberOf URLRequest#
+				* @default null
+				*/
 				this.httpBody = null;
+
 				this.httpHeader.contentType = "application/x-www-form-urlencoded;charset=UTF-8";
 			});
 		});
 
 
 		/** 
-		* @class 非同期でデータを取得します.
+		* 
+		* @class URLLoader
 		* @augments EventDispatcher
 		*/
 		proto(function URLLoader() {
@@ -115,11 +187,14 @@ new Namespace("advanced.net").require(["advanced.events"], function() {
 
 			ex(nse.EventDispatcher);
 
-			/**
-			* @memberOf URLLoader
-			*/
 			init(function () {
 				this.currentXHR = null;
+				/**
+				* The fetched data.
+				* @member {object} data
+				* @memberOf URLLoader#
+				* @default null
+				**/
 				this.data = null;
 
 				var self =  this;
@@ -132,8 +207,10 @@ new Namespace("advanced.net").require(["advanced.events"], function() {
 			});
 
 			/**
-			* 通信を開始します.
-			* @param req {URLRequest}
+			* Start HTTP connecting asynchronous.
+			* @method load
+			* @memberOf URLLoader#
+			* @param req {URLRequest} The HTTP request.
 			*/
 			def(function load(req) {
 				var xhr = this.currentXHR = this.generateXHR();

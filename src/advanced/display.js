@@ -23,8 +23,9 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
-* @fileOverview DOM の View に関係するオブジェクトが定義されています.
-*/
+* @private 
+* @deprecated
+**/
 
 new Namespace("advanced.display").use(function() {
 	console.log('imported ', this.nsName)
@@ -55,7 +56,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* x 座標を返します.
-		* @return {Number}
+		* @returns {Number}
 		*/
 		def(function getX() {
 			return this.domElement.style.left.replace("px", "") || 0;
@@ -70,7 +71,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* y 座標を返します.
-		* @return {Number}
+		* @returns {Number}
 		*/
 		def(function getY() {
 			return this.domElement.style.top.replace("px", "") || 0;
@@ -85,7 +86,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* 幅を返します.
-		* @return {Number}
+		* @returns {Number}
 		*/
 		def(function getWidth() {
 			return this.domElement.offsetWidth;
@@ -100,7 +101,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* 高さを返します.
-		* @return {Number}
+		* @returns {Number}
 		*/
 		def(function getHeight() {
 			return this.domElement.offsetHeight;
@@ -115,7 +116,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* mouse x 座標を返します.
-		* @return {Number}
+		* @returns {Number}
 		*/
 		def(function getMouseX() {
 			return app.mouseX - this.getGlobalX();
@@ -123,7 +124,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* mouse y 座標を返します.
-		* @return {Number}
+		* @returns {Number}
 		*/
 		def(function getMouseY() {
 			return app.mouseX.mouseY - this.getGlobalY();	
@@ -131,7 +132,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* 表示領域左上隅からの x 座標を返します.
-		* @return {Number}
+		* @returns {Number}
 		*/
 		def(function getGlobalX() {
 			var tmpX = 0;
@@ -146,7 +147,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* 表示領域左上隅からの y 座標を返します.
-		* @return {Number}
+		* @returns {Number}
 		*/
 		def(function getGlobalY() {
 			var tmpY = 0;
@@ -161,7 +162,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* このオブジェクトの矩形領域を返します.
-		* @return {Rectangle}
+		* @returns {Rectangle}
 		*/
 		def(function getBounds(targetCoordinateSpace) {
 			var targetXAtGlobal = targetCoordinateSpace.getGlobalX();
@@ -178,7 +179,7 @@ new Namespace("advanced.display").use(function() {
 		/**
 		* 引数に与えられたグローバル座標の、このDisplayObjectでの座標にして返します.
 		* @param globalP {Point}
-		* @return {Point}
+		* @returns {Point}
 		*/
 		def(function globalToLocal(globalP) {
 			return new nsg.Point(this.x + globalP.x, this.y + globalP.y);
@@ -195,9 +196,6 @@ new Namespace("advanced.display").use(function() {
 			this.paint();
 		});
 		
-		/**
-		* 
-		*/
 		def(function removeFromSuperview() {
 			this.domElement.parentNode.removeChild(this.de);
 		});
@@ -221,7 +219,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* マウスポインタがこの InteractiveObject オブジェクト上に重なった時, ハンドカーソルに変更するかどうか判別します.
-		* @return {Boolean}
+		* @returns {Boolean}
 		*/
 		def(function getUseHandCursor() {
 			return this.domElement.style.cursor == "pointer";
@@ -229,7 +227,7 @@ new Namespace("advanced.display").use(function() {
 		
 		/**
 		* マウスポインタがこの InteractiveObject オブジェクト上に重なった時, ハンドカーソルに変更するかどうか指定します.
-		* @return {Boolean}
+		* @returns {Boolean}
 		*/
 		def(function setUseHandCursor(val) {
 			if (val) {
@@ -258,16 +256,6 @@ new Namespace("advanced.display").use(function() {
 						isOvered = false;
 						self.dispatchEvent(new nse.FLMouseEvent(nse.FLMouseEvent.ROLL_OUT, self, evt));
 					}
-					// 1フレまつ
-					/*
-					new Wait(1, function() {
-						if (!rect.contains(Application.mouseX, Application.mouseY)) {
-							if (isOvered) {
-								isOvered = false;
-								self.dispatchEvent(new nse.FLMouseEvent(nse.FLMouseEvent.ROLL_OUT, self, evt));
-							}
-						}
-					})*/
 				}
 			});
 			g.listen(this.domElement, nse.DOMMouseEvent.MOUSE_OVER, function(evt){
@@ -296,12 +284,6 @@ new Namespace("advanced.display").use(function() {
 				self.dispatchEvent(up);
 			});
 		});
-		/*
-		def(function paint() {
-			var style = self.domElement.style;
-			var ua = Application.userAgent;
-			if (ua.isIE()) style.filter = "alpha(opacity=" + self.alpha * 100 + ")";
-			else style.opacity = self.alpha.toString();
-		});*/
+
 	});
 });

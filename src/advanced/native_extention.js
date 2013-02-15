@@ -23,9 +23,13 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
-* @fileOverview JavaScript の組み込み型を拡張します.
+* @file Define set of prototypes related to the extention of native JavaScript objects.
+* @version 0.6.0
 */
 
+/** 
+* @namespace advanced.native_extentio
+*/
 new Namespace("advanced.native_extention").require(["advanced.core"], function() {
 	this.use(function() {
 

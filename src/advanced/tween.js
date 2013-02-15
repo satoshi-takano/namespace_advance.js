@@ -23,25 +23,32 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
-* @fileOverview Tweenに関するオブジェクトが定義されています.
+* @file Define set of prototypes related to the value interpolation and animation.
+* @version 0.6.0
 */
  
+/**
+* @namgspace advanced.tween
+**/
 new Namespace("advanced.tween").use(function() {
 	console.log('imported ', this.nsName)
 	
 	var ns = this;
 	
 	/** 
-	* @class easing 関数を使用して補間した値を配列に保持します.
+	* Value interpolator.
+	* @class Interpolator
+	* @param to {number} begening value.
+	* @parma from {number} endding value.
+	* @param {function} interpolate function.
 	*/
 	proto(function Interpolator() {
-		/**
-		* @param to {Number} 終点
-		* @parma from {Number} 始点
-		* @param easing {} イージング関数オブジェクト
-		* @memberOf Interpolator
-		*/
 		init(function(to, from, step, easing) {
+			/**
+			* The interpolated values.
+			* @member {array} values
+			* @memberOf Interpolator#
+			**/
 			this.values = [];
 			var t = 0;
 			var c = to - from;
@@ -54,13 +61,11 @@ new Namespace("advanced.tween").use(function() {
 	
 	
 	/** 	
-	* @class オブジェクトのパラメータを easing 補間するための高レベル API 
+	* Animator
+	* @class Animator
+	* @param {Number} delay The delay time, in seconds.
 	*/
 	proto(function Animator() {
-		/** 
-		* @memberOf Animator
-		* @param delay {Number} 遅延時間 (msec unit)
-		*/
 		init(function (delay) {
 			this.delay = delay;
 			this.next = null;
@@ -68,13 +73,15 @@ new Namespace("advanced.tween").use(function() {
 		});
 		
 		/**
-		* オブジェクトのパラメータを補間します.
-		* @param target {Object} 
-		* @param style {String} css style
-		* @param to {Number} 
-		* @param step {Number} number of step
-		* @param easing {Object} easing function 
-		* @param delay {Number} 遅延時間 (msec unit)
+		* Start the animation.
+		* @method tween
+		* @memberOf Animator#
+		* @param {object} target.
+		* @param {string} css style
+		* @param {number} to
+		* @param {number} number of step
+		* @param {function} interpolate function 
+		* @param {number} delay The delay time, in seconds.
 		*/ 
 		def(function tween(target, style, to, step, easing, delay) {
 			var self = this;
@@ -104,10 +111,20 @@ new Namespace("advanced.tween").use(function() {
 			return this;
 		});
 		
+		/**
+		* Set the callback function that will be called when updating of target's value.
+		* @method udpate
+		* @memberOf Animator#
+		**/
 		def(function update(func) {
 			this.upFunc = func;
 		})
 		
+		/** 
+		* Set the callback function that will be called when completion of the animation.
+		* @method complete
+		* @memberOf Animator#
+		**/
 		def(function complete(func) {
 			this.cbFunc = func;
 		})
@@ -117,8 +134,8 @@ new Namespace("advanced.tween").use(function() {
 	
 	
 	/**
-	* @class Bounce interpolation
-	* 
+	* Bounce interpolation.
+	* @class Bounce
 	**/
 	singleton(function Bounce() {
 		init(function() {
@@ -170,7 +187,8 @@ new Namespace("advanced.tween").use(function() {
 	})
 	
 	/**
-	* @class Circulate interpolation
+	* Circulate interpolation
+	* @class Circulate
 	**/
 	singleton(function Circ() {
 		// To initialize when the new Circ(params) called.
@@ -216,8 +234,8 @@ new Namespace("advanced.tween").use(function() {
 	})
 	
 	/**
-	* @class Cubic interpolation
-	* 
+	* Cubic interpolation
+	* @class Cubic
 	**/
 	singleton(function Cubic() {
 		// To initialize when the new Cubic(params) called.
@@ -262,7 +280,8 @@ new Namespace("advanced.tween").use(function() {
 	})
 	
 	/**
-	* @class Elastic interpolation
+	* Elastic interpolation
+	* @class Elastic
 	**/
 	singleton(function Elastic() {
 		// To initialize when the new Elastic(params) called.
@@ -351,7 +370,8 @@ new Namespace("advanced.tween").use(function() {
 	})
 	
 	/**
-	* @class Expo interpolation
+	* Expo interpolation.
+	* @class Expo
 	* 
 	**/
 	singleton(function Expo() {
@@ -549,8 +569,8 @@ new Namespace("advanced.tween").use(function() {
 	})
 	
 	/**
-	* @class Sine interpolation
-	* 
+	* Sine interpolation
+	* @class Sine
 	**/
 	singleton(function Sine() {
 		// To initialize when the new Sine(params) called.

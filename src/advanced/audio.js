@@ -119,7 +119,7 @@ new Namespace("advanced.audio").use(function() {
 		def(function setInputPortNode(node) {
 			var num = node._nativeNode.numberOfInputs;
 			for (var i = 0; i < num; i++) {
-				var port = new audio.AudioPort(node, this);
+				var port = new audioNamespace.AudioPort(node, this);
 				port.busNumber = i;
 				this.inputPorts.push(port);
 			}
@@ -128,7 +128,7 @@ new Namespace("advanced.audio").use(function() {
 		def(function setOutputPortNode(node) {
 			var num = node._nativeNode.numberOfOutputs;
 			for (var i = 0; i < num; i++) {
-				var port = new audio.AudioPort(node, this);
+				var port = new audioNamespace.AudioPort(node, this);
 				port.busNumber = i;
 				this.outputPorts.push(port);
 			}
@@ -558,7 +558,7 @@ new Namespace("advanced.audio").use(function() {
 	* @class AudioDelayNode
 	**/
 	proto(function AudioDelay() {
-		ex(audio.AudioNode)
+		ex(audioNamespace.AudioNode)
 		
 		init(function(context, delayTime) {
 			this.$super(context);
@@ -575,7 +575,7 @@ new Namespace("advanced.audio").use(function() {
 	* @class AudioFilter
 	**/
 	proto(function AudioFilter() {
-		ex(audio.AudioEffect)
+		ex(audioNamespace.AudioEffect)
 		
 		$$.LOW_PASS = 0;
 		$$.HIGH_PASS = 1;
@@ -619,7 +619,7 @@ new Namespace("advanced.audio").use(function() {
 	* @class AudioDelayNode
 	**/
 	proto(function AudioReverb() {
-		ex(audio.AudioEffect)
+		ex(audioNamespace.AudioEffect)
 		
 		init(function(context) {
 			var node = context._nativeContext.createConvolver();

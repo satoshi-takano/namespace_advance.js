@@ -23,9 +23,13 @@ THE SOFTWARE.
 ===================================================== */
 
 /**
- * @fileOverview 全体で使用する目的の基礎的なオブジェクトが定義されています.
+ * @file Set of prototypes that related to geometry.
+ * @version 0.6.0
  */
- 
+
+/**
+* @namespace advanced.core
+**/
 new Namespace("advanced.core").use(function() {
 	console.log('imported ', this.nsName)
 	var ns = this;
@@ -45,12 +49,12 @@ new Namespace("advanced.core").use(function() {
 	 		this.userData = userData;
 	 	});
 	 	
-	 	/** @return {String} 通知名を返します. */
+	 	/** @returns {String} 通知名を返します. */
 	 	def(function getName() {
 	 		return this.name;
 	 	});
 	 	
-	 	/** @return {Object} コンストラクタに渡されたUserDataを返します. */
+	 	/** @returns {Object} コンストラクタに渡されたUserDataを返します. */
 	 	def(function getUserData() {
 	 		return this.userData;
 	 	})
@@ -131,13 +135,13 @@ new Namespace("advanced.core").use(function() {
 	 		this.created = new Date();
 	 	});
 	 	
-	 	/** @return {String} オブジェクトの文字列表現 */
+	 	/** @returns {String} オブジェクトの文字列表現 */
 	 	def(function toString() {
 	 		var str = "* Timestamp : " + this.stamp() + " msec";
 			return str;
 	 	});
 	 	
-	 	/** @return {Number} オブジェクトが作成されてからの経過時間をミリ秒単位で返します. */
+	 	/** @returns {Number} オブジェクトが作成されてからの経過時間をミリ秒単位で返します. */
 	 	def(function stamp() {
 	 		return (new Date().getTime() - this.created.getTime());
 	 	});
@@ -216,7 +220,7 @@ new Namespace("advanced.core").use(function() {
 		/**
 		* 引数に渡された Range オブジェクトが、自身の値の範囲内に収まる場合に true を返します.
 		* @param {Range} 評価対象の Range オブジェクト
-		* @return {Boolean}
+		* @returns {Boolean}
 		*/
 		def(function contains(range) {
 			return (this.min <= range.min && range.max <= this.max);
@@ -229,13 +233,13 @@ new Namespace("advanced.core").use(function() {
 		* 150 が返されます.
 		* @param value {Number} この範囲内での１点の値.
 		* @param range {Range} 置き換える範囲
-		* @return
+		* @returns {Range}
 		*/
 		def(function remap(value, range) {
 			return range.min + (range.length()) * this.ratio(value);
 		})
 		
-		/** @return {Number} 範囲の大きさを返します. */
+		/** @returns {Number} 範囲の大きさを返します. */
 		def(function length() {
 			return this.max - this.min;
 		})
@@ -243,7 +247,7 @@ new Namespace("advanced.core").use(function() {
 		/** 
 		* 引数に渡された値の、この範囲内での割合を返します.
 		* @param val {Number} 評価する値.
-		* @return {Number} 
+		* @returns {Number} 
 		*/
 		def(function ratio (val) {
 			return (val - this.min) / this.length();
@@ -295,7 +299,7 @@ new Namespace("advanced.core").use(function() {
 		
 		/** 
 		* スタックの最後尾にある Operation オブジェクトを削除します.
-		* @return {Operation} 削除した Operation オブジェクト.
+		* @returns {Operation} 削除した Operation オブジェクト.
 		*/
 		def(function pop() {
 			return this.operations.pop();
