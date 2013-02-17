@@ -68,6 +68,17 @@ new Namespace("jp.example").use(function() {
 			console.log("This is " + this.$class.name + ". Inspect of the SubsubClass");
 			return this.$super() + "\npropE = " + this.propE;
 		});
+
+		def(function printStacktrace() {
+			this.method1()
+		})
+		def(function method1() {
+			this.method2()
+		})
+		def(function method2() {
+			var bt = new foundation.Backtrace(arguments.callee);
+			bt.dump();
+		})
 	});
 	
 	// define a SingletonClass.
@@ -88,7 +99,7 @@ new Namespace("foundation").Main.getInstance().main(function (argument) {
 		"property C",
 		"property D",
 		"property E");
-	subsubClass.inspect();
+	subsubClass.printStacktrace();
 
 	var singletonA = jp.example.SingletonClass.getInstance();
 	var singletonB = jp.example.SingletonClass.getInstance();
