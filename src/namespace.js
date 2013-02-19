@@ -491,48 +491,6 @@ new Namespace("foundation").use(function () {
 				target.detachEvent(type, func);
 		})		
 	});
-
-	/**
-	* The Proc object represents the procedure.
-	* @class Proc
-	* @param {function} callee
-	**/
-	proto(function Proc() {
-		init(function(callee) {
-			this.callee = callee;
-			this.name = callee.name || "lamda";
-			if (callee.owner) this.owner = callee.owner.name;
-			else this.owner = null;
-		})
-	})
-
-	/**
-	* Backtrace
-	* @class Backtrace
-	**/
-	proto(function Backtrace() {
-		init(function(callee) {
-			this.stack = [];
-			this.stack.push(new foundation.Proc(callee));
-			while (callee) {
-				if (callee.caller)
-					this.stack.push(new foundation.Proc(callee.caller));
-				callee = callee.caller;
-			}
-		})
-
-		/**
-		* Output a stack trace to the console.
-		* @method dump
-		* @memberOf Backtrace
-		**/
-		def(function dump() {
-			console.log(" - ", this.stack[0])
-			for (var i = 1, l = this.stack.length; i < l; i++) {
-				console.log("	from : ", this.stack[i])
-			}
-		})
-	})
 	
 	/**
 	* Main is managing an  entry point.
