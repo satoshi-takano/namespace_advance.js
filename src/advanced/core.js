@@ -56,10 +56,10 @@ new Namespace("advanced.core").use(function() {
 	proto(function Stacktrace() {
 		init(function(callee) {
 			this.stack = [];
-			this.stack.push(new foundation.Proc(callee));
-			while (callee) {
+			this.stack.push(new advanced.core.Proc(callee));
+			while (callee.name) {
 				if (callee.caller)
-					this.stack.push(new foundation.Proc(callee.caller));
+					this.stack.push(new advanced.core.Proc(callee.caller));
 				callee = callee.caller;
 			}
 		})
@@ -97,7 +97,7 @@ new Namespace("advanced.core").use(function() {
 		**/
 	 	def(function getName() {
 	 		return this.name;
-	 	});
+	 	}); 
 	 	
 	 	/**
 		* Returns the user data of this notification.
@@ -197,7 +197,6 @@ new Namespace("advanced.core").use(function() {
 			return str;
 	 	});
 	 	
-	 	/** @returns {Number} オブジェクトが作成されてからの経過時間をミリ秒単位で返します. */
 		/**
 		* Determines the elapsed time from the construction.
 		* @method stamp
