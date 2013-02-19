@@ -1,4 +1,4 @@
-AdvancedNamespace
+namespace_advance.js
 ======================
 [namespace.js](https://github.com/satoshi-takano/namespace.js "namespace.js") をprototype定義の基礎として実装した、Canvas, WebAudio などに関連する拡張ライブラリ群です。  
 
