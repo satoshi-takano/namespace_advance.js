@@ -1,4 +1,31 @@
-/* =====================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: math.js</title>
+    
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+    
+    <h1 class="page-title">Source: math.js</h1>
+    
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/* =====================================================
 Copyright (c) 2012 Satoshi Takano
 
 The MIT License
@@ -52,7 +79,7 @@ new Namespace("advanced.math").use(function () {
 		* @return {number}
 		*/
 		$$.factorial = function(n) {
-			if (1 < n) return n * ns.Math.factorial(n - 1) 
+			if (1 &lt; n) return n * ns.Math.factorial(n - 1) 
 			else return 1;
 		}
 		
@@ -135,17 +162,17 @@ new Namespace("advanced.math").use(function () {
 				var dt = this.N;
 				var calcR = [];
 				var calcI = [];
-				for (var i = 0; i < dt; i++) {
+				for (var i = 0; i &lt; dt; i++) {
 					calcR[i] = 0;
 					calcI[i] = 0;
 					var fn = i / dt;
 					var pi2ft = 2 * M.PI * fn;
-					for (var t = 0; t < dt; t++) {
+					for (var t = 0; t &lt; dt; t++) {
 						calcR[i] += x[t] * M.cos(pi2ft * t);
 						calcI[i] -= x[t] * M.sin(pi2ft * t);
 					}
 				}
-				for (i = 0; i < dt; i++) {
+				for (i = 0; i &lt; dt; i++) {
 					x[i] = calcR[i];
 					y[i] = calcI[i];
 				}
@@ -182,27 +209,27 @@ new Namespace("advanced.math").use(function () {
 				var i, j, k, ik, h, d, k2, n4, inverse,
 				t, s, c, dx, dy;
 				
-				if (n < 0) {
+				if (n &lt; 0) {
 					n = -n; 
 					inverse = 1;
 				} else inverse = 0;
 				
 				n4 = n >> 2;
 				
-				for (i = 0; i < n; i++) {
+				for (i = 0; i &lt; n; i++) {
 					j = bitrev[i];
-					if (i < j) {
+					if (i &lt; j) {
 						t = x[i]; x[i] = x[j]; x[j] = t;
 						t = y[i]; y[i] = y[j]; y[j] = t;
 					}
 				}
-				for (k = 1; k < n; k = k2) {
+				for (k = 1; k &lt; n; k = k2) {
 					h = 0; k2 = k + k; d = n / k2;
-					for (j = 0; j < k; j++) {
+					for (j = 0; j &lt; k; j++) {
 						c = sintbl[h + n4];
 						if (inverse) s = -sintbl[h];
 						else s = sintbl[h];
-						for (i = j; i < n; i += k2) {
+						for (i = j; i &lt; n; i += k2) {
 							ik = i + k;
 							dx = s * y[ik] + c * x[ik];
 							dy = c * y[ik] - s * x[ik];
@@ -218,9 +245,9 @@ new Namespace("advanced.math").use(function () {
 			function betrev(N, table) {
 				var i = 0, j = 0, k = 0;
 				table[0] = 0;
-				while (++i < N) {
+				while (++i &lt; N) {
 					k = N >> 1;
-					while (k <= j) { j -= k; k >>= 1; }
+					while (k &lt;= j) { j -= k; k >>= 1; }
 					j += k;
 					table[i] = j;
 				}
@@ -237,7 +264,7 @@ new Namespace("advanced.math").use(function () {
 				t = 2 * dc;
 				c = table[n4] = 1;
 				s = table[0] = 0;
-				for (i = 1; i < n8; i++) {
+				for (i = 1; i &lt; n8; i++) {
 					c -= dc;
 					dc += t * c;
 					s += ds;
@@ -246,9 +273,30 @@ new Namespace("advanced.math").use(function () {
 					table[n4 - i] = c;
 				}
 				if (n8 != 0) table[n8] = M.sqrt(0.5);
-				for (i = 0; i < n4; i++) table[n2 - i] = table[i];
-				for (i = 0; i < n2 + n4; i++) table[i + n2] = -table[i];
+				for (i = 0; i &lt; n4; i++) table[n2 - i] = table[i];
+				for (i = 0; i &lt; n2 + n4; i++) table[i + n2] = -table[i];
 			}
 		})
 	})
-})
+})</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Animator.html">Animator</a></li><li><a href="Application.html">Application</a></li><li><a href="AudioBufferProcessor.html">AudioBufferProcessor</a></li><li><a href="AudioContext.html">AudioContext</a></li><li><a href="AudioDelay.html">AudioDelay</a></li><li><a href="AudioEffect.html">AudioEffect</a></li><li><a href="AudioFile.html">AudioFile</a></li><li><a href="AudioFilePlayer.html">AudioFilePlayer</a></li><li><a href="AudioFilter.html">AudioFilter</a></li><li><a href="AudioNode.html">AudioNode</a></li><li><a href="AudioPort.html">AudioPort</a></li><li><a href="AudioProcessingNode.html">AudioProcessingNode</a></li><li><a href="AudioReverb.html">AudioReverb</a></li><li><a href="AudioSource.html">AudioSource</a></li><li><a href="Backtrace.html">Backtrace</a></li><li><a href="BitmapData.html">BitmapData</a></li><li><a href="Bounce.html">Bounce</a></li><li><a href="CapStyle.html">CapStyle</a></li><li><a href="Circulate.html">Circulate</a></li><li><a href="Color.html">Color</a></li><li><a href="Cubic.html">Cubic</a></li><li><a href="DFT.html">DFT</a></li><li><a href="DisplayLink.html">DisplayLink</a></li><li><a href="DisplayObject.html">DisplayObject</a></li><li><a href="DisplayObjectContainer.html">DisplayObjectContainer</a></li><li><a href="DOMEvent.html">DOMEvent</a></li><li><a href="DOMMouseEvent.html">DOMMouseEvent</a></li><li><a href="Elastic.html">Elastic</a></li><li><a href="Event.html">Event</a></li><li><a href="EventDispatcher.html">EventDispatcher</a></li><li><a href="Expo.html">Expo</a></li><li><a href="FFT.html">FFT</a></li><li><a href="FLEvent.html">FLEvent</a></li><li><a href="FLMouseEvent.html">FLMouseEvent</a></li><li><a href="GainNode.html">GainNode</a></li><li><a href="Graphics.html">Graphics</a></li><li><a href="Identifier.html">Identifier</a></li><li><a href="Image.html">Image</a></li><li><a href="ImageManager.html">ImageManager</a></li><li><a href="Interpolator.html">Interpolator</a></li><li><a href="JointStyle.html">JointStyle</a></li><li><a href="Math.html">Math</a></li><li><a href="Matrix.html">Matrix</a></li><li><a href="Microphone.html">Microphone</a></li><li><a href="Notification.html">Notification</a></li><li><a href="NotificationCenter.html">NotificationCenter</a></li><li><a href="Operation.html">Operation</a></li><li><a href="OperationQueue.html">OperationQueue</a></li><li><a href="Panner.html">Panner</a></li><li><a href="Point.html">Point</a></li><li><a href="Qaud.html">Qaud</a></li><li><a href="Quart.html">Quart</a></li><li><a href="Quintic.html">Quintic</a></li><li><a href="Range.html">Range</a></li><li><a href="Recordable.html">Recordable</a></li><li><a href="Rectangle.html">Rectangle</a></li><li><a href="Sine.html">Sine</a></li><li><a href="Stage.html">Stage</a></li><li><a href="Text.html">Text</a></li><li><a href="Timestamp.html">Timestamp</a></li><li><a href="TouchEvents.html">TouchEvents</a></li><li><a href="URL.html">URL</a></li><li><a href="URLLoader.html">URLLoader</a></li><li><a href="URLRequest.html">URLRequest</a></li><li><a href="UserAgent.html">UserAgent</a></li><li><a href="Wait.html">Wait</a></li><li><a href="WhiteNoise.html">WhiteNoise</a></li></ul><h3>Namespaces</h3><ul><li><a href="advanced.application.html">application</a></li><li><a href="advanced.audio.html">audio</a></li><li><a href="advanced.canavs.html">canavs</a></li><li><a href="advanced.core.html">core</a></li><li><a href="advanced.events.html">events</a></li><li><a href="advanced.geom.html">geom</a></li><li><a href="advanced.math.html">math</a></li><li><a href="advanced.native_extentio.html">native_extentio</a></li><li><a href="advanced.net.html">net</a></li><li><a href="advanced.platform.html">platform</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.2.0-dev</a> on Tue Feb 19 2013 15:54:18 GMT+0900 (JST)
+</footer>
+
+<script> prettyPrint(); </script>
+</body>
+</html>
