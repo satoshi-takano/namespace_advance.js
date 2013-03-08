@@ -503,7 +503,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 			* @memberOf DisplayObject#
 			**/
 			def(function removeFromStage() {
-				child._g.context = null;
+				this._g.context = null;
 			})
 
 			/**
@@ -568,24 +568,15 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 				var stg = this._stg;
 				var c = stg.context;
 
-				var sx = this.scaleX;
-				var sy = this.scaleY;
-				var rsx = 1 / sx;
-				var rsy = 1 / sy;
-				var x = this._mx;
-				var y = this._my;
-				var rot = this.rotation * Math.PI / 180;
-
 				c.clearRect(0, 0, stg.stageWidth, stg.stageHeight);
-				this.applyTransform(c, rot, sx, sy, x, y);
-				this._g.playback();
-				var hasPixel = c.getImageData(px, py, 1, 1).data[3];;
+                // this._g.playback();
+                this.draw();
+				var hasPixel = c.getImageData(px, py, 1, 1).data[3];
 				if (hasPixel) results.push(this);
 				else if (this._mouseOvered) this._mouseOutFlag = true;
 				this.getObjectsUnderPointsNest(px, py, results);
-
-				this.restoreTransform(c, -rot, rsx, rsy, -x, -y)
 			})
+            
 			/** @deprecated **/
 			def(function getObjectsUnderPointsNest(px, py, results) {
 
@@ -797,6 +788,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 			def(function removeChild(child) {
 				var l = this.numChildren;
 				for (var i = 0; i < l; i++) {
+                    var c = this.children[i];
 					if (c == child) {
 						this.children.splice(i, 1);
 						child._stg = null;
@@ -1034,7 +1026,10 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 
 				util.listen(this.canvas, nsevent.DOMMouseEvent.CLICK, function(e) {
 					oup.splice(0, oup.length);
-					self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
+                    var pos = $(self.canvas).offset();
+                    var _x = e.pageX - pos.left;
+                    var _y = e.pageY - pos.top;
+					self.getObjectsUnderPoints(_x, _y, oup);
 					for (var i = oup.length - 1; 0 <= i; i--) {
 						var o = oup[i];
 						if (o.hasEventListener(E.CLICK)) {
@@ -1111,7 +1106,13 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 
 				util.listen(this.canvas, E.TOUCH_START, function(e) {
 					oup.splice(0, oup.length);
-					self.getObjectsUnderPoints(e.pageX, e.pageY, oup);
+                    var pos = $(self.canvas).offset();
+                    var touch = e.changedTouches[0];
+                    var _x = touch.pageX - pos.left;
+                    var _y = touch.pageY - pos.top;
+                    console.log(touch)
+					self.getObjectsUnderPoints(_x, _y, oup);
+
 					for (var i = oup.length - 1; 0 <= i; i--) {
 						var o = oup[i];
 						if (o.hasEventListener(E.TOUCH_START)) {
@@ -1124,8 +1125,11 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 
 				util.listen(this.canvas, E.TOUCH_END, function(e) {
 					oup.splice(0, oup.length);
-					var touch = e.changedTouches[0];
-					self.getObjectsUnderPoints(touch.pageX, touch.pageY, oup);
+                    var pos = $(self.canvas).offset();
+                    var touch = e.changedTouches[0];
+                    var _x = touch.pageX - pos.left;
+                    var _y = touch.pageY - pos.top;
+					self.getObjectsUnderPoints(_x, _y, oup);
 					for (var i = oup.length - 1; 0 <= i; i--) {
 						var o = oup[i];
 						if (o.hasEventListener(E.TOUCH_END)) {
