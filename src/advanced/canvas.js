@@ -909,6 +909,33 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 					this.enableTouchEvents();
 				else
 					this.enableMouseEvents();
+                    
+                this._enabled = true;
+                this._enableTouchStart = true;
+
+				this._canvasCSSScaledRatio = 1;
+			})
+
+            def(function enable() {
+                this._enabled = true;
+            })
+            
+            def(function disable() {
+                this._enabled = false;
+            })
+            
+            getter("enableTouchStart", function() {
+                return this._enableTouchStart;
+            })
+            setter("enableTouchStart", function(b) {
+                this._enableTouchStart = b;
+            })
+
+			getter("canvasCSSScaledRatio", function() {
+				return this._canvasCSSScaledRatio;
+			})
+			setter("canvasCSSScaledRatio", function(s) {
+				this._canvasCSSScaledRatio = s;
 			})
 
 			def(function addChild(child) {
@@ -923,6 +950,8 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 			})
 
 			def(function draw() {
+                if (this._enabled == false) return;
+                
 				this.context.clearRect(0, 0, this.stageWidth, this.stageHeight);
 				var l = this.numChildren;
 				for (var i = 0; i < l; i++) {
@@ -1025,11 +1054,18 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 				var E = nsevent.FLMouseEvent;
 
 				util.listen(this.canvas, nsevent.DOMMouseEvent.CLICK, function(e) {
+                    if (self._enabled == false) return;
+                   
 					oup.splice(0, oup.length);
                     var pos = $(self.canvas).offset();
                     var _x = e.pageX - pos.left;
                     var _y = e.pageY - pos.top;
+
+					var scl = self._canvasCSSScaledRatio;
+					self.context.scale(scl, scl);
 					self.getObjectsUnderPoints(_x, _y, oup);
+					scl = 1/scl;
+					self.context.scale(scl, scl);
 					for (var i = oup.length - 1; 0 <= i; i--) {
 						var o = oup[i];
 						if (o.hasEventListener(E.CLICK)) {
@@ -1041,10 +1077,18 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 				})
 
 				util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_DOWN, function(e) {
+                    if (self._enabled == false || self._enableTouchStart == false) return;
+                    
 					oup.splice(0, oup.length);
 					var mouseX = e.clientX;
 					var mouseY = e.clientY;
+
+					var scl = self._canvasCSSScaledRatio;
+					self.context.scale(scl, scl);
 					self.getObjectsUnderPoints(mouseX, mouseY, oup);
+					scl = 1/scl;
+					self.context.scale(scl, scl);
+
 					for (var i = 0, len = oup.length; i < len; i++) {
 						var o = oup[i];
 						if (o.hasEventListener(E.MOUSE_DOWN)) {
@@ -1079,8 +1123,16 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 				})
 
 				util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_UP, function(e) {
+                    if (self._enabled == false) return;
+                    
 					oup.splice(0, oup.length);
+
+					var scl = self._canvasCSSScaledRatio;
+					self.context.scale(scl, scl);
 					self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
+					scl = 1/scl;
+					self.context.scale(scl, scl);
+					
 					for (var i = 0, len = oup.length; i < len; i++) {
 						var o = oup[i];
 						if (o.hasEventListener(E.MOUSE_UP)) {
@@ -1105,14 +1157,20 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 				var E = nsevent.TouchEvent;
 
 				util.listen(this.canvas, E.TOUCH_START, function(e) {
+                    if (self._enabled == false || self._enableTouchStart == false) return;
+                    
 					oup.splice(0, oup.length);
                     var pos = $(self.canvas).offset();
                     var touch = e.changedTouches[0];
                     var _x = touch.pageX - pos.left;
                     var _y = touch.pageY - pos.top;
-                    console.log(touch)
-					self.getObjectsUnderPoints(_x, _y, oup);
 
+					var scl = self._canvasCSSScaledRatio;
+					self.context.scale(scl, scl);
+					self.getObjectsUnderPoints(_x, _y, oup);
+					scl = 1/scl;
+					self.context.scale(scl, scl);
+					
 					for (var i = oup.length - 1; 0 <= i; i--) {
 						var o = oup[i];
 						if (o.hasEventListener(E.TOUCH_START)) {
@@ -1124,12 +1182,21 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 				})
 
 				util.listen(this.canvas, E.TOUCH_END, function(e) {
+                    if (self._enabled == false) return;
+                    
 					oup.splice(0, oup.length);
                     var pos = $(self.canvas).offset();
                     var touch = e.changedTouches[0];
                     var _x = touch.pageX - pos.left;
                     var _y = touch.pageY - pos.top;
+
+					var scl = self._canvasCSSScaledRatio;
+					self.context.scale(scl, scl);
 					self.getObjectsUnderPoints(_x, _y, oup);
+					scl = 1/scl;
+					
+					self.context.scale(scl, scl);
+
 					for (var i = oup.length - 1; 0 <= i; i--) {
 						var o = oup[i];
 						if (o.hasEventListener(E.TOUCH_END)) {
@@ -1294,14 +1361,13 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 		* The ImageManager manages loading  and caching of the images.
 		* @class ImageManager
 		**/
-		singleton(function ImageManager() {
+		proto(function ImageLoader() {
 			ex(nsevent.EventDispatcher);
 
-			init(function() {
+			init(function(cache) {
 				this.$super();
 
-				this.cache = {};
-				this._currentToLoadCount = 0;
+				this.cache = cache || {};
 				this._currentLoadedCount = 0;
 			})
 
@@ -1311,37 +1377,41 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 			**/
 			def(function load(resourcePaths) {
 				if (this.nowLoading) {
-					console.warn("ImageManager \"load\" has currently working")
+					console.warn("ImageLoader \"load\" has currently working")
 					return;
 				}
 
 				var l = resourcePaths.length;
 				this._nowLoading = true;
 				this._currentToLoadCount = l;
-				this._currentLoadedCount = 0;
+                this._currentLoadedCount = 0;
 
 				for (var i = 0; i < l; i++) {
 					var img = new Image();
 					img.src = img._name = resourcePaths[i];
-					img.onload = this.onLoadAImage;
+					img.onload = loaded;
 				}
+                var _this = this;
+                function loaded(e) {
+                    _this.onLoadAImage(e);
+                }
 			})
 			
 			/** @private **/
 			def(function onLoadAImage(e) {
-				var _this = ns.ImageManager.getInstance();
+				var _this = this;
 				var img = e.currentTarget;
 				img.onload = null;
-				//var name = /:\/\/.*?(\/.*)/g.exec(img.src)[1];
+                
 				var name = img._name;
 				_this._currentLoadedCount++;
-
+                
 				_this.cache[name] = img;
 				if (_this._currentLoadedCount == _this._currentToLoadCount) {
 					_this._nowLoading = false;
-					_this.dispatchEvent(new nsevent.FLEvent(nsevent.FLEvent.COMPLETE));
 					_this._currentToLoadCount = 0;
-					_this._currentLoadedCount = 0;
+                    _this._currentLoadedCount = 0;
+					_this.dispatchEvent(new nsevent.FLEvent(nsevent.FLEvent.COMPLETE));
 				}
 
 			})
@@ -1362,6 +1432,50 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 			**/
 			def(function del(name) {
 				delete this.cache[name];
+			})
+		})
+        
+		/**
+		* The ImageManager manages loading  and caching of the images.
+		* @class ImageManager
+		**/
+		singleton(function ImageManager() {
+			ex(nsevent.EventDispatcher);
+
+			init(function() {
+				this.$super();
+
+				this.loader = new ns.ImageLoader();
+			})
+
+			/**
+			* Loads the image asynchronous. When it has finished loading, the ImageManger will dispatches a FLEvent.COMPLETE event.
+			* @param {string} resourcePath The path of the image.
+			**/
+			def(function load(resourcePaths) {
+				this.loader.load(resourcePaths);
+                var _this = this;
+                this.loader.addEventListener(nsevent.FLEvent.COMPLETE, function() {
+                    _this.dispatchEvent(new nsevent.FLEvent(nsevent.FLEvent.COMPLETE));
+                })
+			})
+			
+			/**
+			* Returns the Image object by path of image.
+			* @method getImageByName
+			* @memberOf ImageManger#
+			**/
+			def(function getImageByName(name) {
+				return this.loader.cache[name];
+			})
+			
+			/**
+			* Delete the Image object by path of image.
+			* @method del
+			* @memberOf ImageManager#
+			**/
+			def(function del(name) {
+				delete this.loader.cache[name];
 			})
 		})
 		
