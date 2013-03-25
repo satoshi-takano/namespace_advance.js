@@ -466,23 +466,31 @@ new Namespace("advanced.core").use(function() {
 			this.opq.clear();
 		})
 	})
-	
+    
+    
 	/**
-	* The DisplayLink object (singleton).
+	* The DisplayLink object
 	* @class DisplayLink
 	**/
-	singleton(function DisplayLink() {
-		init(function() {
+	proto(function DisplayLink() {
+		init(function(fps) {
+            if (fps == undefined) fps = 60;
 			var targets = this._targets = [];
 			var renderFunc = this._renderFunc = requestAnimationFrame();
-			
+			var offset = 1000 / fps;
+            var pre = new Date().getTime();
+            
 			function render() {
-				var l = targets.length;
-				for (var i = 0; i < l; i++) {
-					var t = targets[i];
-					t.renderFunc.call(t.target);
-				}
-				renderFunc(render);
+                var now = new Date().getTime();
+                if (offset < now - pre) {
+    				var l = targets.length;
+    				for (var i = 0; i < l; i++) {
+    					var t = targets[i];
+    					t.renderFunc.call(t.target);
+    				}
+                    pre = now;
+                }
+                renderFunc(render);
 			}
 			render();
 		})
