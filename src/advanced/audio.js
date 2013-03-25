@@ -431,7 +431,7 @@ new Namespace("advanced.audio").use(function() {
 		
 		init(function(context) {
 			this.$super(context);
-			this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 1, 1);
+			this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 2, 2);
 			
 			// this.setInputPortNode(this);
 			// 			this.setOutputPortNode(this);
@@ -569,15 +569,14 @@ new Namespace("advanced.audio").use(function() {
 		
 		init(function(context) {
 			this.$super(context);
-			this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 1, 1);
+			this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 2, 2);
 			this._nativeNode.onaudioprocess = process;
 			if (window.__webaudioDSPNodes__ == undefined) window.__webaudioDSPNodes__ = [];
 			
 			var raw = this._nativeNode;
 			raw._this = this;
 			
-			// Float32Array
-			this._samples = null;
+			this._samples = [];
 			
 			this._duration = 0;
 			this._totalFrames = 0;
@@ -613,20 +612,24 @@ new Namespace("advanced.audio").use(function() {
 				this._nativeNode.disconnect();
 				return;
 			}
-			
-			var outSamples = processingEvent.outputBuffer.getChannelData(0);
 
+			var outSamples = processingEvent.outputBuffer.getChannelData(0);
 			var length = outSamples.length;
 			var c = this._currentFrame;
-			
 			if (this.loopEnabled) {
 				var i = this._loopInFrame;
 				var o = this._loopOutFrame;
 				if (o < c) c = i + (c - o);
 				else if (c < i) c = o - (i - c);
 			}
+			outSamples.set(this._samples[0].subarray(c, c + length));
 
-		 	outSamples.set(this._samples.subarray(c, c + length));
+			var numChannels = this._samples.length;
+			for (var channel = 1; channel < numChannels; channel++) {
+				outSamples = processingEvent.outputBuffer.getChannelData(channel);
+		 		outSamples.set(this._samples[channel].subarray(c, c + length));
+			}
+			
 		 	c += length;
 		
 			var total = this._totalFrames;
@@ -634,6 +637,20 @@ new Namespace("advanced.audio").use(function() {
 				this.stop();
 			}
 			this._currentFrame = c;
+		})
+
+		def(function setBufferWithRange(buf, startSample, endSample) {
+			this.buffer = null;			
+			this._samples = [];
+			var numChannels = buf.numberOfChannels;
+			for (var i = 0; i < numChannels; i++) {
+				var samps = buf.getChannelData(i);
+				samps = samps.subarray(startSample, endSample)
+				this._samples.push(samps);
+			}
+			this._totalFrames = this._samples[0].length;
+			this._currentFrame = 0;
+			this._duration = this._totalFrames / buf.sampleRate;
 		})
 		
 		/**
@@ -643,7 +660,18 @@ new Namespace("advanced.audio").use(function() {
 		**/
 		setter("buffer", function(buf) {
 			this.$super(buf);
-			this._samples = buf.getChannelData(0);
+			if (buf == null) {
+				this._samples = null;
+				this._totalFrames = this._currentFrame = this._duration = 0;
+				return;
+			}
+
+			this._samples = [];
+			var numChannels = buf.numberOfChannels;
+			for (var i = 0; i < numChannels; i++) {
+				var samps = buf.getChannelData(i);
+				this._samples.push(samps);
+			}
 			this._totalFrames = buf.length;
 			this._currentFrame = 0;
 			this._duration = buf.duration;
