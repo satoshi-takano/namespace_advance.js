@@ -1,4 +1,4 @@
-namespace.js
+namespace.js [![Build Status](https://api.travis-ci.org/satoshi-takano/namespace.js.png)](https://api.travis-ci.org/satoshi-takano/namespace.js)
 ======================
 JavaScriptオブジェクトのprototype定義をシンプルに構造化するための軽量ライブラリです。
 RubyなどのクラスベースOOP言語に慣れ親しんだプログラマにとって、書きやすく読みやすい記述方法の提案を目的としています。
