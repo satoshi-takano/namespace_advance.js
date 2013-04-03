@@ -1,4 +1,4 @@
-//var assert = require("assert");
+var assert = require("assert");
 
 describe('new Namespace', function(){
     it('Check uniqueness of the Namespace', function(){
