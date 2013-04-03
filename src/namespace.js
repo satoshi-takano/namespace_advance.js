@@ -27,7 +27,8 @@ THE SOFTWARE.
 * @version 0.7.0
 */
 
-var global = window;
+if (global == undefined)
+	global = this;
 
 /**
 * @class 
@@ -248,18 +249,7 @@ Namespace.prototype = new (function() {
 		var name = functionPrototype.getMethodName(namedFunc);
 
 		if (tmpSelf[name] != undefined) console.warn("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
-		if (!global.debug) {
-			tmpSelf[name] = function() {
-				var internal = arguments[0];
-				var callInitialize = internal == undefined ? true : internal.__callInitialize__ ;
-				if (callInitialize == undefined) callInitialize = true;
-				if (callInitialize && this.initialize) {
-					this.initialize.apply(this, arguments);
-				}
-			};
-		}
-		else {
-			tmpSelf[name] = eval("(function " + name + " () {\
+		tmpSelf[name] = eval("(function " + name + " () {\
 				var internal = arguments[0];\
 				var callInitialize = internal == undefined ? true : internal.__callInitialize__ ;\
 				if (callInitialize == undefined) callInitialize = true;\
@@ -267,8 +257,7 @@ Namespace.prototype = new (function() {
 					this.initialize.apply(this, arguments);\
 				}\
 			})");
-			if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
-		}
+		if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
 		
 		var proto = tmpSelf[name];
 		proto.def = functionPrototype.defInObj;
@@ -321,19 +310,8 @@ Namespace.prototype = new (function() {
 		}
 		var name = functionPrototype.getMethodName(namedFunc);
 		if (tmpSelf[name] != undefined) console.warn("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
-		
-		if (!global.debug) {
-			tmpSelf[name] = function() {
-				var internal = arguments[0];
-				var callInitialize = internal == undefined ? true : internal.__callInitialize__ ;
-				if (callInitialize == undefined) callInitialize = true;
-				if (callInitialize && this.initialize) {
-					this.initialize.apply(this, arguments);
-				}
-			};
-		}
-		else {
-			tmpSelf[name] = eval("(function " + name + " () {\
+
+		tmpSelf[name] = eval("(function " + name + " () {\
 				var internal = arguments[0];\
 				var callInitialize = internal == undefined ? true : internal.__callInitialize__ ;\
 				if (callInitialize == undefined) callInitialize = true;\
@@ -341,8 +319,7 @@ Namespace.prototype = new (function() {
 					this.initialize.apply(this, arguments);\
 				}\
 			})");
-			if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
-		}
+		if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
 
 		var proto = tmpSelf[name];
 		proto.getInstance = functionPrototype.getInstance;

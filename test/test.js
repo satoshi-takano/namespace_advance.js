@@ -1,9 +1,11 @@
-var assert = require("assert");
+if (this['window'] !== this) {
+	var assert = require("assert");
+}
 
 describe('new Namespace', function(){
     it('Check uniqueness of the Namespace', function(){
 		assert.equal(new Namespace("test"), new Namespace("test"));
-		assert.equal(new Namespace("test"), window.test);
+		assert.equal(new Namespace("test"), global.test);
     })
 })
 
@@ -67,7 +69,8 @@ describe('Extends', function() {
 	})
 })
 
-describe('Asynchronous requireing other Namespace', function() {
+if (this['window'] === this) {
+	describe('Asynchronous requireing other Namespace', function() {
 	Namespace.jsPath = "."
 	
 	it('Load an other namespace',function(done){
@@ -79,3 +82,5 @@ describe('Asynchronous requireing other Namespace', function() {
 	})
 
 })
+}
+
