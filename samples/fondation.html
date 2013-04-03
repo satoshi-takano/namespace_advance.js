@@ -81,19 +81,18 @@ new Namespace("jp.example").use(function() {
 	});
 });
 
-new Namespace("foundation").Main.getInstance().main(function (argument) {
-	var subsubClass = new jp.example.SubsubClass(
-		"property A",
-		"property B",
-		"property C",
-		"property D",
-		"property E");
-	subsubClass.inspect();
 
-	var singletonA = jp.example.SingletonClass.getInstance();
-	var singletonB = jp.example.SingletonClass.getInstance();
-	console.log("singletonA === singletonB", singletonA === singletonB);
-});
+var subsubClass = new jp.example.SubsubClass(
+"property A",
+"property B",
+"property C",
+"property D",
+"property E");
+subsubClass.inspect();
+
+var singletonA = jp.example.SingletonClass.getInstance();
+var singletonB = jp.example.SingletonClass.getInstance();
+console.log("singletonA === singletonB", singletonA === singletonB);
 
 </script>
 <body>

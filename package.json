@@ -1,0 +1,15 @@
+{
+	"name": "namespace.js",
+	"version": "0.7.0",
+	"description": "namespace.js provides scaffoldings of prototype definition in JavaScript.",
+	"repository" : "git@github.com:satoshi-takano/namespace.js.git",
+	"scripts": {
+		"test": "mocha"
+	},
+	"devDependencies": {
+		"mocha": "*"
+	},
+	"author": "Satoshi Takano",
+	"license": "MIT",
+	"readmeFilename": "README.md",
+}

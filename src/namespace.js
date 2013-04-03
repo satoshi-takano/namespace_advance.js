@@ -24,22 +24,10 @@ THE SOFTWARE.
 
 /**
 * @fileOverview Namespace.js
-* @version 0.6.0
+* @version 0.7.0
 */
 
 var global = window;
-/*if (!global.debug || !global.console) {
-	console = {};
-	console.log = 
-	console.error = 
-	console.assert =
-	console.count = 
-	console.debug = 
-	console.info = 
-	console.trace = 
-	console.warn = 
-	function(){};
-}*/
 
 /**
 * @class 
@@ -461,67 +449,3 @@ Namespace.prototype.require = function(packages, callback) {
 		document.body.appendChild(script);
 	}
 }
-
-/** 
-* @namespace
-* @name foundation
-*/
-new Namespace("foundation").use(function () {
-	var ns = this;
-	
-	/** 
-	 * @private
-	 */
-	proto(function Utilitie() {
-		def(function listen(target, type, func) {
-			if (target.addEventListener)
-				target.addEventListener(type, function (e) {
-					func.call(this, e);
-				}, false);
-			else if (target.attachEvent)
-				target.attachEvent(type, function (e) {
-					func.call(this, e);
-				});
-		});
-		
-		def(function unlisten(target, type, func) {
-			if (target.removeEventListener)
-				target.removeEventListener(type, func);
-			else if (target.attachEvent)
-				target.detachEvent(type, func);
-		})		
-	});
-	
-	/**
-	* Main is managing an  entry point.
-	* @example
- 	* // This is a typical use of the Main.
- 	* foundation.Main.getInstance().main(function() {
-	*	// insert codes.
- 	* })
-	* @class Main
-	**/
-	singleton(function Main() {
-		init(function() {
-				var self = this;
-				var util = new ns.Utilitie();
-				var isIE = navigator.userAgent.toLowerCase().indexOf("msie") != -1;
-				
-				util.listen(global, isIE ? "onload" : "load", function () {
-						util.unlisten(global, isIE ? "onload" : "load", arguments.callee);
-						if (self.runner) self.runner.call(global);
-				});
-		})
-		
-		/**
-		* Callback function that have passed through the main will called when window loaded.
-		* @method bootstrap
-		* @param {function} runner
-		* @memberof Main#
-		*/
-		def(function main(runner) {
-			this.runner = runner;
-		})
-	})
-	
-});

@@ -1,65 +1,81 @@
-window.onload = function() {
+//var assert = require("assert");
 
+describe('new Namespace', function(){
+    it('Check uniqueness of the Namespace', function(){
+		assert.equal(new Namespace("test"), new Namespace("test"));
+		assert.equal(new Namespace("test"), window.test);
+    })
+})
+
+describe("Prototype definition", function() {
+	new Namespace("test.prototypedef").use(function() {
+		proto(function Test() {
+			init(function(name) {
+				this.name = name;
+			})
+			def(function returnTrue() {return true;})
+			def(function returnFalse() {return false;})
+
+			$$.def(function classMethod() {
+				return "This is class method of test.prototypedef.Test";
+			})
+			$$.classVar = "I'm defined"
+		})
+	})
+
+	it("new test.prototypedef.Test('test instance').name is equal to 'test instance'", function() {
+		assert.equal(new test.prototypedef.Test('Test instance').name, 'Test instance');
+	})
+	it("Test#returnTrue() returns true", function() {
+		assert.equal(new test.prototypedef.Test('Test instance').returnTrue(), true)
+	})
+	it("Test#returnFalse() returns false", function() {
+		assert.equal(new test.prototypedef.Test('Test instance').returnFalse(), false)
+	})
+	it("test.prototypedef.Test.classMethod() says " + test.prototypedef.Test.classMethod(), function() {
+		assert.equal(test.prototypedef.Test.classMethod(), "This is class method of test.prototypedef.Test")
+	})
+	it("test.prototypedef.Test.classVar says " + test.prototypedef.Test.classVar, function() {
+		assert.equal(test.prototypedef.Test.classVar, "I'm defined")
+	})
+})
+
+
+describe('Extends', function() {
+	new Namespace("test.extends").use(function() {
+		proto(function ExTest() {
+			ex(test.prototypedef.Test)
+
+			init(function(name) {
+				this.$super(name);
+			})
+
+			def(function returnTrue() {
+				return this.$super();
+			})
+		})
+	})
+
+	it("new test.extends.ExTest('ExTest instance').name is equal to 'ExTest instance'", function() {
+		assert.equal(new test.extends.ExTest('ExTest instance').name, 'ExTest instance');
+	})
+	it("ExTest#returnTrue() returns true", function() {
+		assert.equal(new test.extends.ExTest('Test instance').returnTrue(), true);
+	})
+	it("ExTest#returnFalse() returns false", function() {
+		assert.equal(new test.extends.ExTest('Test instance').returnFalse(), false);
+	})
+})
+
+describe('Asynchronous requireing other Namespace', function() {
+	Namespace.jsPath = "."
 	
-
-	test('euqation', 2, function() {
-		strictEqual(new Namespace("_test.namespace.js"), new Namespace("_test.namespace.js"), 'new Namespace("_test.namespace.js") is equal to new Namespace("namespace.test")')
-		strictEqual(new Namespace("_test.namespace.js"), window._test.namespace.js, 'new Namespace("_test.namespace.js") is equal to window._test.namespace.js')
- 	});
-
-	test('prototype definition', function() {
-		new Namespace("_test.namespace.js").use(function() {
-			proto(function Test() {
-				init(function(name) {
-					this.name = name;
-				})
-				def(function returnTrue() {return true;})
-				def(function returnFalse() {return false;})
-
-				$$.def(function classMethod() {
-					return "This is class method of _test.namespace.js.Test";
-				})
-				$$.classVar = "I'm defined"
-			})
+	it('Load an other namespace',function(done){
+		new Namespace("test.asyncrequire").require(["other_namespace"], function(){
+			assert.equal(new Namespace("other_namespace").OtherTest, other_namespace.OtherTest);
+			assert.equal(new Namespace("class1.class2.other_namespace").OtherTest, class1.class2.other_namespace.OtherTest);
+			done();
 		})
-
-
-		ok(new Namespace("_test.namespace.js").Test != undefined, "_test.namespace.js.Test is defined");
-		equal(new _test.namespace.js.Test('Test instance').name, 'Test instance', "new _test.namespace.js.Test('test instance').name is equal to 'test instance'");
-		strictEqual(new _test.namespace.js.Test('Test instance').returnTrue(), true, "Test#returnTrue() returns true");
-		strictEqual(new _test.namespace.js.Test('Test instance').returnFalse(), false, "Test#returnFalse() returns false");
-		equal(_test.namespace.js.Test.classMethod(), "This is class method of _test.namespace.js.Test", "_test.namespace.js.Test.classMethod() says " + _test.namespace.js.Test.classMethod());
-		equal(_test.namespace.js.Test.classVar, "I'm defined", "_test.namespace.js.Test.classVar says " + _test.namespace.js.Test.classVar);
 	})
 
-	test('extends', function() {
-		new Namespace("_test.namespace.js").use(function() {
-			proto(function ExTest() {
-				ex(_test.namespace.js.Test)
-
-				init(function(name) {
-					this.$super(name);
-				})
-
-				def(function returnTrue() {
-					return this.$super();
-				})
-			})
-		})
-
-		equal(new _test.namespace.js.ExTest('ExTest instance').name, 'ExTest instance', "new _test.namespace.js.ExTest('ExTest instance').name is equal to 'ExTest instance'");
-		strictEqual(new _test.namespace.js.ExTest('Test instance').returnTrue(), true, "ExTest#returnTrue() returns true");
-		strictEqual(new _test.namespace.js.ExTest('Test instance').returnFalse(), false, "ExTest#returnFalse() returns false");
-	})
-
-	test("asynchronous requireing other Namespace", function() {
-		Namespace.jsPath = "."
-		new Namespace("_test.namespace.js").require(["other_namespace"], function(){
-			start();
-			ok(new Namespace("other_namespace").OtherTest != undefined, 'new Namespace("other_namespace").OtherTest is defined');
-			ok(new Namespace("class1.class2.other_namespace").OtherTest != undefined, 'new Namespace("class1.class2.other_namespace").OtherTest is defined');
-			ok(new Namespace("class1.class2.other_namespace").UndefOtherTest == undefined, 'new Namespace("class1.class2.other_namespace").UndefOtherTest is undefined');
-		})
-		stop();
-	})
-}
+})
