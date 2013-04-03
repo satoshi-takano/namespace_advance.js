@@ -10,6 +10,7 @@ body {
 }
 </style>
 
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 <script type="text/javascript" src="../../namespace.js/src/namespace.js"></script>
 <canvas id="canvas2d" width='500' height='500'>
 </canvas>
@@ -19,7 +20,7 @@ body {
 
 Namespace.jsPath = "../../src";
 // bootstrap
-new Namespace("foundation").Main.getInstance().main(function (argument) {
+$(function() {
 	new Namespace("hoge").require(["advanced.audio", "advanced.canvas", "advanced.net"], function() {
 		console.log('end')
 
@@ -114,7 +115,7 @@ new Namespace("foundation").Main.getInstance().main(function (argument) {
 		var context = new audio.AudioContext();
 		var processor = new audio.AudioBufferProcessor(context);
 		var effect = new audio.AudioReverb(context);
-		var filter = new audio.AudioFilter(context, new advanced.net.URL(location.href).query.filterType);
+		var filter = new audio.AudioFilter(context, 1);
 		console.log(filter.frequency, filter.detune, filter.Q, filter.gain)
 		filter.Q.value = 10;
 		filter.frequency.value = 4000;
@@ -170,7 +171,7 @@ new Namespace("foundation").Main.getInstance().main(function (argument) {
 			}
 		})
 
-		var dlink = core.DisplayLink.getInstance();
+		var dlink = new advanced.core.DisplayLink(30);
 		// rendering
 		dlink.addTarget(this, function() {
 			cursor.x = stage.stageWidth * (processor.currentTime / processor.duration);

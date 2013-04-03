@@ -1,14 +1,12 @@
 <html>
-<script type="text/javascript" charset="utf-8">
-	debug = true;
-</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 <script type="text/javascript" src="../../namespace.js/src/namespace.js"></script>
 
 <canvas id="canvas2d" width='450' height='450'>
 </canvas>
 <script type="text/javascript">
 Namespace.jsPath = "../../src";
-new Namespace("foundation").Main.getInstance().main(function (argument) {
+$(function() {
 	new Namespace("example").require(["advanced.canvas", "advanced.math"], function() {
 
 		var ns = new Namespace("advanced.canvas")

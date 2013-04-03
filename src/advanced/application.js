@@ -70,8 +70,7 @@ new Namespace("advanced.application").require(["advanced.events", "advanced.plat
 				*/
 				this.userAgent = new (new Namespace("advanced.platform")).UserAgent();
 
-				var nscore = (new Namespace("foundation"));
-				var util = new nscore.Utilitie();
+				var util = new (new Namespace("advanced.core")).Utilitie();
 				var isIE = this.userAgent.isIE();
 				var app = this;
 				this.canTrackMouse = false;

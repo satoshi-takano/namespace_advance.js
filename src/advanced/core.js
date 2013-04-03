@@ -535,6 +535,29 @@ new Namespace("advanced.core").use(function() {
 		
 	})
 	
+	/** 
+	 * @private
+	 */
+	proto(function Utilitie() {
+		def(function listen(target, type, func) {
+			if (target.addEventListener)
+				target.addEventListener(type, function (e) {
+					func.call(this, e);
+				}, false);
+			else if (target.attachEvent)
+				target.attachEvent(type, function (e) {
+					func.call(this, e);
+				});
+		});
+
+		def(function unlisten(target, type, func) {
+			if (target.removeEventListener)
+				target.removeEventListener(type, func);
+			else if (target.attachEvent)
+				target.detachEvent(type, func);
+		})		
+	});
+	
 	function requestAnimationFrame(renderFunc) {
 		return window.requestAnimationFrame		||
 				window.webkitRequestAnimationFrame	||

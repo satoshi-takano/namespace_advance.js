@@ -1048,7 +1048,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 			* @memberOf Stage#
 			**/
 			def(function enableMouseEvents() {
-				var util = new (new Namespace("foundation")).Utilitie();
+				var util = new (new Namespace("advanced.core")).Utilitie();
 				var self = this;
 				var oup = self._objectsUnderPointer;
 				var E = nsevent.FLMouseEvent;
@@ -1151,7 +1151,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 			* @memberOf Stage#
 			**/
 			def(function enableTouchEvents() {
-				var util = new (new Namespace("foundation")).Utilitie();
+				var util = new (new Namespace("advanced.core")).Utilitie();
 				var self = this;
 				var oup = self._objectsUnderPointer;
 				var E = nsevent.TouchEvent;

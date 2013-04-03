@@ -1,12 +1,10 @@
 <html>
-<script type="text/javascript" charset="utf-8">
-	debug = true;
-</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
 <script type="text/javascript" src="../../namespace.js/src/namespace.js"></script>
 
 <script type="text/javascript">
 
-new Namespace("foundation").Main.getInstance().main(function (argument) {
+$(function() {
 	Namespace.jsPath = "../../src";
 
 	new Namespace("example").require(["advanced.core"], function() {
