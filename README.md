@@ -86,9 +86,9 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 	proto(function MyPrototype() {
 		// attrReader はインスタンスの _read プロパティに対しての getter メソッドを作ります
 		attrReader(["read"])
-		// attrReader はインスタンスの _read プロパティに対しての setter メソッドを作ります
+		// attrReader はインスタンスの _write プロパティに対しての setter メソッドを作ります
 		attrWriter(["write"])
-		attrReader はインスタンスの _read プロパティに対しての getter, setter メソッドを作ります
+		attrReader はインスタンスの _readWrite プロパティに対しての getter, setter メソッドを作ります
 		attrAccessor(["readWrite"])
 		
 		init(function () {
