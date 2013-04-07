@@ -27,8 +27,8 @@ THE SOFTWARE.
 * @version 0.7.0
 */
 
-if (global == undefined)
-	global = this;
+if (this['global'] == undefined)
+	this['global'] = this;
 
 /**
 * @class 
@@ -173,6 +173,28 @@ Namespace.prototype = new (function() {
 			}
 		}
 
+        this.attrReader = function(attributes) {
+            for (var i = 0, l = attributes.length; i < l; i++) {
+                var p = attributes[i];
+                this.getter(p, function() {return this["_" + p];})
+            }
+        }
+
+        this.attrWriter = function(attributes) {
+            for (var i = 0, l = attributes.length; i < l; i++) {
+                var p = attributes[i];
+                this.setter(p, function(val) {this["_" + p] = val;})
+            }
+        }
+
+        this.attrAccessor = function(attributes) {
+            for (var i = 0, l = attributes.length; i < l; i++) {
+                var p = attributes[i];
+                this.getter(p, function() {return this["_" + p];})
+                this.setter(p, function(val) {this["_" + p] = val;})
+            }
+        }
+        
 		/**
 		* Define the setter
 		* warning: You can call this function only when you're in Namespace#proto context.<br/>
@@ -272,6 +294,9 @@ Namespace.prototype = new (function() {
 		var oldMeth = global.def;
 		var oldGetter = global.getter;
 		var oldSetter = global.setter;
+        var oldReader = global.attrReader;
+        var oldWriter = global.attrWriter;
+        var oldAccessor = global.attrAccessor;
 		functionPrototype.substance = proto;
 		
 		// set temporary global methods
@@ -281,6 +306,9 @@ Namespace.prototype = new (function() {
 		global.def = namedFunc.def = functionPrototype.def;
 		global.getter = functionPrototype.getter;
 		global.setter = functionPrototype.setter;
+        global.attrReader = functionPrototype.attrReader;
+        global.attrWriter = functionPrototype.attrWriter;
+        global.attrAccessor = functionPrototype.attrAccessor;        
 		
 		// build the class
 		namedFunc.call();
@@ -292,6 +320,9 @@ Namespace.prototype = new (function() {
 		global.def = oldMeth;
 		global.getter = oldGetter;
 		global.setter = oldSetter;
+        global.attrReader = oldReader;
+        global.attrWriter = oldWriter;
+        global.attrAccessor = oldAccessor;
 		
 		proto.prototype.proto = proto;
 	};
@@ -328,33 +359,43 @@ Namespace.prototype = new (function() {
 		proto.prototype.name = name;
 		proto.prototype.$class = proto;
 
-		// set temporary global method
-		var old$ = global.$;
+        // fake dynamic scope
 		var old$$ = global.$$;
 		var oldInit = global.init;
 		var oldEx = global.ex;
 		var oldMeth = global.def;
 		var oldGetter = global.getter;
 		var oldSetter = global.setter;
+        var oldReader = global.attrReader;
+        var oldWriter = global.attrWriter;
+        var oldAccessor = global.attrAccessor;
 		functionPrototype.substance = proto;
 		
-		global.$ = namedFunc;
+		// set temporary global methods
 		global.$$ = proto;
 		global.init = namedFunc.init = functionPrototype.init;
 		global.ex = namedFunc.ex = functionPrototype.ex;
 		global.def = namedFunc.def = functionPrototype.def;
 		global.getter = functionPrototype.getter;
 		global.setter = functionPrototype.setter;
-		namedFunc.call(namedFunc);
+        global.attrReader = functionPrototype.attrReader;
+        global.attrWriter = functionPrototype.attrWriter;
+        global.attrAccessor = functionPrototype.attrAccessor;        
+		
+		// build the class
+		namedFunc.call();
 
-		global.$ = old$; 
+		// restore global methods
 		global.$$ = old$$;
 		global.init = oldInit;
 		global.ex = oldEx;
 		global.def = oldMeth;
 		global.getter = oldGetter;
 		global.setter = oldSetter;
-		
+        global.attrReader = oldReader;
+        global.attrWriter = oldWriter;
+        global.attrAccessor = oldAccessor;
+
 		proto.prototype.proto = proto;
 	};
 })();

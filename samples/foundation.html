@@ -1,7 +1,4 @@
 <html>
-<script type="text/javascript" charset="utf-8">
-	debug = true;
-</script>
 <script type="text/javascript" src="../src/namespace.js"></script>
 
 <script type="text/javascript">
@@ -58,8 +55,16 @@ new Namespace("jp.example").use(function() {
 	proto(function SubsubClass() {
 		// The SubsubClass extends the SubClass.
 		ex(jp.example.SubClass);
+        
+        attrReader(["r"])
+        attrWriter(["w"])
+        attrAccessor(["rw"])
 		
 		init(function (p0, p1, p2, p3, p4) {
+            this._r = "This property is read only";
+            this._w = "This property is write only";
+            this._rw = "This property is raad write";
+            
 			this.$super(p0, p1, p2, p3)
 			this.propE = p4;
 		});
@@ -90,9 +95,20 @@ var subsubClass = new jp.example.SubsubClass(
 "property E");
 subsubClass.inspect();
 
+console.log(subsubClass.propA);
+
 var singletonA = jp.example.SingletonClass.getInstance();
 var singletonB = jp.example.SingletonClass.getInstance();
 console.log("singletonA === singletonB", singletonA === singletonB);
+
+
+console.log(subsubClass.r);
+subsubClass.r = 'set value to subsubClass.r';
+console.log(subsubClass.r);
+console.log("subsubClass.w =", subsubClass.w);
+console.log(subsubClass.rw)
+subsubClass.rw = "set value to subsubClass.rw";
+console.log(subsubClass.rw)
 
 </script>
 <body>
