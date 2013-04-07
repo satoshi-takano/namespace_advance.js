@@ -1,9 +1,9 @@
 namespace.js [![Build Status](https://travis-ci.org/satoshi-takano/namespace.js.png?branch=master)](https://travis-ci.org/satoshi-takano/namespace.js)
 ======================
-JavaScriptオブジェクトのprototype定義をシンプルに構造化するための軽量ライブラリです。
-RubyなどのクラスベースOOP言語に慣れ親しんだプログラマにとって、書きやすく読みやすい記述方法の提案を目的としています。
+JavaScriptオブジェクトのprototype定義をシンプルでかっこよく書くためのライブラリです。
+RubyなどのクラスベースOOP言語に慣れ親しんだプログラマにとって、書きやすく読みやすい記述方法でprototypeを定義できます。
 
-###導入のメリットと制約###
+###Description###
 
 `new Namespace("jp.example")`で得たNamespaceインスタンスに対し、下記で説明するNamespaceのメソッド群を使用して１つまたは複数のprototypeを定義します。  
 namespace.jsでのprototype定義は、すべてNamespaceオブジェクトのメソッドを通して行われます。  
@@ -19,7 +19,7 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 それでは、namespace.jsを利用した実際のprototype定義方法を下記に例を示していきます。
 
 
-### prototype定義の例 ###
+### Usage ###
 	// プロトタイプの定義はすべて Namaspaceオブジェクトの
 	// use メソッドに渡されるクロージャ内で行います。
 	// ここでは jp.example というNamespaceを新しく作り、そこにprototypeを定義してみます。
@@ -89,7 +89,7 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 namespace.jsを読み込んだ時点で、foundation というNamespaceインスタンスが存在します。  
 このNamespaceには、Mainというsingletonなprototypeが定義されており、Main#mainメソッドがエントリーポイントになります。
 
-### 依存するNamespaceの読み込み例 ###
+### Dependency Resolution ###
 ここでは、Canvasを利用したグラフィック描画に関しての機能を提供するライブラリの実装を仮定して、
 /js/advanced/graphics/canvas.js に、`new Namespace("advanced.graphics.canvas")`インスタンスの実装をし、クライアントからの利用方法を説明します。
 せっかくなので、このライブラリの中ではさらに /js/advanced/geometry.js に定義された advanced.geometry というNamespaceに依存していることを仮定し、依存関係を再帰的に解決することも示します。  
@@ -146,7 +146,7 @@ namespace.jsを読み込んだ時点で、foundation というNamespaceインス
 
 
 
-ライセンス
+Licence
 ----------
 Copyright &copy; 2013 Satoshi Takano  
 Distributed under the [MIT License][mit].  
