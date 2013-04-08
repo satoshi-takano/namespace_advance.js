@@ -65,16 +65,16 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 			return this.$super() + "\npropC = " + this.propC + "\npropD = " + this.propD;
 		});
 
-		// $$ オブジェクトに対しての def は、プロトタイプへの static なメソッド定義です。
+		// $$ オブジェクトに対しての def は、プロトタイプへのメソッド定義です。
 		$$.def(function classMethodA() {
 			return "classMethodA";
 		});
-		// 同じく、プロトタイプへの static な変数定義です。
+		// 同じく、プロトタイプへの変数定義です。
 		$$.classVarA = "class variable";
 	});
 
 ### Defines singleton prototype ###
-	// singleton メソッドは、ランタイムで１つしかインスタンス化できないプロトタイプを定義します。
+	// singleton メソッドは、ランタイムで１つしかインスタンス化しないプロトタイプを定義します。
 	// Singleton.getInstance() でインスタンスを得ます。
 	singleton(function Singleton() {
 		init(function () {
@@ -111,6 +111,7 @@ namespace.jsを読み込んだ時点で、foundation というNamespaceインス
 このNamespaceには、Mainというsingletonなprototypeが定義されており、Main#mainメソッドがエントリーポイントになります。
 
 ## Dependency Resolution ##
+namespace.js はモジュール開発をサポートする強力な依存ファイル解決機能を備えています。
 ここでは、Canvasを利用したグラフィック描画に関しての機能を提供するライブラリの実装を仮定して、
 /js/advanced/graphics/canvas.js に、`new Namespace("advanced.graphics.canvas")`インスタンスの実装をし、クライアントからの利用方法を説明します。
 せっかくなので、このライブラリの中ではさらに /js/advanced/geometry.js に定義された advanced.geometry というNamespaceに依存していることを仮定し、依存関係を再帰的に解決することも示します。  
