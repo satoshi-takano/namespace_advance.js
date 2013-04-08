@@ -173,25 +173,34 @@ Namespace.prototype = new (function() {
 			}
 		}
 
-        this.attrReader = function(attributes) {
+        this.attrReader = function() {
+            var attributes = arguments;
             for (var i = 0, l = attributes.length; i < l; i++) {
                 var p = attributes[i];
-                this.getter(p, function() {return this["_" + p];})
+                (function (attr) {
+                    this.getter(attr, function() {return this["_" + attr];})
+                })(p)
             }
         }
 
-        this.attrWriter = function(attributes) {
+        this.attrWriter = function() {
+            var attributes = arguments;            
             for (var i = 0, l = attributes.length; i < l; i++) {
                 var p = attributes[i];
-                this.setter(p, function(val) {this["_" + p] = val;})
+                (function (attr) {
+                    this.setter(attr, function(val) {this["_" + attr] = val;})
+                })(p)
             }
         }
 
-        this.attrAccessor = function(attributes) {
+        this.attrAccessor = function() {
+            var attributes = arguments;            
             for (var i = 0, l = attributes.length; i < l; i++) {
                 var p = attributes[i];
-                this.getter(p, function() {return this["_" + p];})
-                this.setter(p, function(val) {this["_" + p] = val;})
+                (function (attr) {
+                    this.getter(attr, function() {return this["_" + attr];})
+                    this.setter(attr, function(val) {this["_" + attr] = val;})
+                })(p)
             }
         }
         

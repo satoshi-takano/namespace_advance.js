@@ -26,21 +26,24 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 	// ここでは jp.example というNamespaceを新しく作り、そこにprototypeを定義してみます。
     new Namespace("jp.example").use(function() {
     
-    // Namespaceに定義された proto メソッドで 新たにprototype を定義します。
-    // Namespace#use に渡した関数スコープの中では、一時的に Namespace#proto がグローバルオブジェクトにコピーされるため this.proto() ではなく単に proto() と書くことができます。
-	proto(function Super() {
-		// init に渡した無名関数（名前付きでも問題はありませんが、その名前は無視されます）
-		// はコンストラクタの役割を果たし、インスタンス化される際に自動的に実行されます。
-		init(function(p0, p1) {
-			this.propA = p0;
-			this.propB = p1;
-		});
+        // Namespaceに定義された proto メソッドで 新たにprototype を定義します。
+        // Namespace#use に渡した関数スコープの中では、一時的に Namespace#proto がグローバルオブジェクトにコピーされるため this.proto() ではなく単に proto() と書くことができます。
+    	proto(function Super() {
+    		// init に渡した無名関数（名前付きでも問題はありませんが、その名前は無視されます）
+    		// はコンストラクタの役割を果たし、インスタンス化される際に自動的に実行されます。
+    		init(function(p0, p1) {
+    			this.propA = p0;
+    			this.propB = p1;
+    		});
 
-		// def メソッドに名前付き関数を渡してメソッドを定義します。
-		def(function inspect() {
-			return "propA = " + this.propA + "\npropB = " + this.propB;
-		});
-	});
+    		// def メソッドに名前付き関数を渡してメソッドを定義します。
+    		def(function inspect() {
+    			return "propA = " + this.propA + "\npropB = " + this.propB;
+    		});
+    	});
+    }
+    
+    var sp = new jp.example.Super(); // => #<Super>
 
 ### Extends a prototype ###
 	// 上で定義した Super を継承した Sub を定義します。
@@ -85,11 +88,11 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 ### Settings accesibility of the attributes ###
 	proto(function MyPrototype() {
 		// attrReader はインスタンスの _read プロパティに対しての getter メソッドを作ります
-		attrReader(["read"])
+		attrReader("read")
 		// attrReader はインスタンスの _write プロパティに対しての setter メソッドを作ります
-		attrWriter(["write"])
+		attrWriter("write")
 		attrReader はインスタンスの _readWrite プロパティに対しての getter, setter メソッドを作ります
-		attrAccessor(["readWrite"])
+		attrAccessor("readWrite")
 		
 		init(function () {
 			this._read = "This is a read only attribute";
@@ -99,6 +102,18 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 			alert("Singleton was generated");
 		});
 	});
+    
+    var obj = new MyPrototype();
+    obj.read; // => "This is a read only attribute"
+    obj.read = "Set new value to obj.read";
+    obj.read; // => "This is a read only attribute"
+
+    obj.write // => undefined
+    obj.write = "write";
+    obj.write // => undefined
+    
+    obj.readWrite = "Set new value to obj.readWrite";
+    obj.readWrite // => "Set new value to obj.readWrite"
 
 `new Namespace(name)`の呼び出しによって同名のNamespaceが複数インスタンス化されることはありません。
 つまり`new Namespace("jp.example") === new Namespace("jp.example")`は常に真になります。  
