@@ -272,7 +272,27 @@ Namespace.prototype = new (function() {
 	* @param {function} namedFunc Named function.
 	*/
 	this.proto = function(namedFunc) {
-		var tmpSelf = self;
+        setPrototype.call(this, namedFunc);
+	};
+	
+	/**
+	* Define the singleton prototype.</br>
+	* Prototype that defined using singleton function will be able to create using Prototype#getInstance.
+	* @method singleton
+	* @memberOf Namespace#
+	* @param {function} namedFunc Named function.
+    * @deprecated
+	*/
+	this.singleton = function(namedFunc) {
+        setPrototype.call(this, namedFunc, true);
+        var tmpSelf = self;
+        var name = functionPrototype.getMethodName(namedFunc);        
+        var proto = tmpSelf[name];
+        proto.getInstance = functionPrototype.getInstance;
+	};
+
+    function setPrototype(namedFunc) {
+        var tmpSelf = self;
 		if (this instanceof Namespace) {
 			tmpSelf = this;
 		}
@@ -289,13 +309,13 @@ Namespace.prototype = new (function() {
 				}\
 			})");
 		if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
-		
+
 		var proto = tmpSelf[name];
 		proto.def = functionPrototype.defInObj;
 		proto.prototype.include = functionPrototype.include;
 		proto.prototype.name = name;
 		proto.prototype.$class = proto;
-		
+
 		// fake dynamic scope
 		var old$$ = global.$$;
 		var oldInit = global.init;
@@ -307,7 +327,7 @@ Namespace.prototype = new (function() {
         var oldWriter = global.attrWriter;
         var oldAccessor = global.attrAccessor;
 		functionPrototype.substance = proto;
-		
+
 		// set temporary global methods
 		global.$$ = proto;
 		global.init = namedFunc.init = functionPrototype.init;
@@ -318,79 +338,7 @@ Namespace.prototype = new (function() {
         global.attrReader = functionPrototype.attrReader;
         global.attrWriter = functionPrototype.attrWriter;
         global.attrAccessor = functionPrototype.attrAccessor;        
-		
-		// build the class
-		namedFunc.call();
 
-		// restore global methods
-		global.$$ = old$$;
-		global.init = oldInit;
-		global.ex = oldEx;
-		global.def = oldMeth;
-		global.getter = oldGetter;
-		global.setter = oldSetter;
-        global.attrReader = oldReader;
-        global.attrWriter = oldWriter;
-        global.attrAccessor = oldAccessor;
-		
-		proto.prototype.proto = proto;
-	};
-	
-	/**
-	* Define the singleton prototype.</br>
-	* Prototype that defined using singleton function will be able to create using Prototype#getInstance.
-	* @method singleton
-	* @memberOf Namespace#
-	* @param {function} namedFunc Named function.
-	*/
-	this.singleton = function(namedFunc) {
-		var tmpSelf = self;
-		if (this instanceof Namespace) {
-			tmpSelf = this;
-		}
-		var name = functionPrototype.getMethodName(namedFunc);
-		if (tmpSelf[name] != undefined) console.warn("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
-
-		tmpSelf[name] = eval("(function " + name + " () {\
-				var internal = arguments[0];\
-				var callInitialize = internal == undefined ? true : internal.__callInitialize__ ;\
-				if (callInitialize == undefined) callInitialize = true;\
-				if (callInitialize && this.initialize) {\
-					this.initialize.apply(this, arguments);\
-				}\
-			})");
-		if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
-
-		var proto = tmpSelf[name];
-		proto.getInstance = functionPrototype.getInstance;
-		proto.def = functionPrototype.defInObj;
-		proto.prototype.include = functionPrototype.include;
-		proto.prototype.name = name;
-		proto.prototype.$class = proto;
-
-        // fake dynamic scope
-		var old$$ = global.$$;
-		var oldInit = global.init;
-		var oldEx = global.ex;
-		var oldMeth = global.def;
-		var oldGetter = global.getter;
-		var oldSetter = global.setter;
-        var oldReader = global.attrReader;
-        var oldWriter = global.attrWriter;
-        var oldAccessor = global.attrAccessor;
-		functionPrototype.substance = proto;
-		
-		// set temporary global methods
-		global.$$ = proto;
-		global.init = namedFunc.init = functionPrototype.init;
-		global.ex = namedFunc.ex = functionPrototype.ex;
-		global.def = namedFunc.def = functionPrototype.def;
-		global.getter = functionPrototype.getter;
-		global.setter = functionPrototype.setter;
-        global.attrReader = functionPrototype.attrReader;
-        global.attrWriter = functionPrototype.attrWriter;
-        global.attrAccessor = functionPrototype.attrAccessor;        
-		
 		// build the class
 		namedFunc.call();
 
@@ -406,7 +354,7 @@ Namespace.prototype = new (function() {
         global.attrAccessor = oldAccessor;
 
 		proto.prototype.proto = proto;
-	};
+    }
 })();
 
 /**
