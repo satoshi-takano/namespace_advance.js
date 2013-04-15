@@ -15,6 +15,11 @@ describe("Prototype definition", function() {
 			init(function(name) {
 				this.name = name;
 			})
+
+            def(function thisIsFirstDefinedMethod() {
+                return "This is first defined method";
+            })
+            
 			def(function returnTrue() {return true;})
 			def(function returnFalse() {return false;})
 
@@ -40,6 +45,23 @@ describe("Prototype definition", function() {
 	it("test.prototypedef.Test.classVar says " + test.prototypedef.Test.classVar, function() {
 		assert.equal(test.prototypedef.Test.classVar, "I'm defined")
 	})
+
+
+    var preReDefinedTest = test.prototypedef.Test;
+    var preReDefinedTestInstance = new preReDefinedTest();
+    
+    new Namespace("test.prototypedef").use(function() {
+		proto(function Test() {
+			def(function thisIsSecondDefinedMethod() {
+                return "This is second defined method";
+            })
+		})
+	})
+    
+    it("modify the prototype that is already defined", function() {
+        assert.equal(test.prototypedef.Test, preReDefinedTest);
+        assert.equal(preReDefinedTestInstance.thisIsSecondDefinedMethod(), "This is second defined method");
+    })
 })
 
 

@@ -299,8 +299,8 @@ Namespace.prototype = new (function() {
         // get the name of function
         var name = functionPrototype.getMethodName(namedFunc);
 
-        if (tmpSelf[name] != undefined) console.warn("Warning: " + tmpSelf.nsName + "'s " + name + " was overwritten.");
-        tmpSelf[name] = eval("(function " + name + " () {\
+        if (tmpSelf[name] == undefined) {
+            tmpSelf[name] = eval("(function " + name + " () {\
                              var internal = arguments[0];\
                              var callInitialize = internal == undefined ? true : internal.__callInitialize__ ;\
                              if (callInitialize == undefined) callInitialize = true;\
@@ -308,7 +308,7 @@ Namespace.prototype = new (function() {
                              this.initialize.apply(this, arguments);\
                             }\
                             })");
-        if (tmpSelf[name] == undefined) tmpSelf[name] = new Function();
+        } 
 
         var proto = tmpSelf[name];
         proto.def = functionPrototype.defInObj;
