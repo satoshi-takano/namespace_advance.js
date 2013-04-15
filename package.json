@@ -1,0 +1,17 @@
+{
+	"name": "namespace.advanced.js",
+	"version": "0.7.0",
+	"repository" : "git@github.com:satoshi-takano/namespace_advanced.js.git",
+	"directories": {
+		"test": "test"
+	},
+	"scripts": {
+		"test": "mocha --ignore-leaks"
+	},
+	"devDependencies": {
+		"mocha": "*"
+	},
+	"author": "Satoshi Takano",
+	"license": "MIT",
+	"readmeFilename": "README.md"
+}
