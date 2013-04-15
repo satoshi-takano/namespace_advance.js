@@ -365,6 +365,18 @@ Namespace.prototype = new (function() {
  * @param {function} callback Function called when loaded all dependent .js files.
  **/
 Namespace.prototype.require = function(packages, callback) {
+    
+    if (global['window'] == undefined) { // node
+        var mods = [];
+        for (var i = 0, l = packages.length; i < l; i++) {
+            var path = packages[i].replace(/\./g, "/") + ".js";
+            mods.push(require(path));
+        }
+        
+        callback.call(this, mods);
+        return;
+    }
+    
     var _this = this;
     // 依存しているファイルの数.
     this._numToReadPackages = packages.length;
