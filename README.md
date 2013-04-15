@@ -75,15 +75,6 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 		// 同じく、プロトタイプへの変数定義です。
 		$$.classVarA = "class variable";
 	});
-
-### Defines singleton prototype ###
-	// singleton メソッドは、ランタイムで１つしかインスタンス化しないプロトタイプを定義します。
-	// Singleton.getInstance() でインスタンスを得ます。
-	singleton(function Singleton() {
-		init(function () {
-			alert("Singleton was generated");
-		});
-	});
 	
 ### Settings accesibility of the attributes ###
 	proto(function MyPrototype() {
@@ -114,6 +105,20 @@ jp.example.my_prototypesというNamespaceを利用する場合、
     
     obj.readWrite = "Set new value to obj.readWrite";
     obj.readWrite // => "Set new value to obj.readWrite"
+   
+
+### Defines singleton prototype ###
+	// singleton メソッドは、ランタイムで１つしかインスタンス化しないプロトタイプを定義します。
+	// ただし、 new を使用すればインスタンスを複数作れてしまい、
+	// この prototype のインスタンスが１つしか作られないことを保証するものではありません。
+	// あくまで、singleton パターンを適用している、ということを明示的に示す目的で使用してください。
+	// 将来的に削除する可能性が高いです。
+	// singleton メソッドを使用して定義した prototype のインスタンスは Singleton.getInstance() でインスタンスを得ます。
+	singleton(function Singleton() {
+		init(function () {
+			alert("Singleton was generated");
+		});
+	});
 
 `new Namespace(name)`の呼び出しによって同名のNamespaceが複数インスタンス化されることはありません。
 つまり`new Namespace("jp.example") === new Namespace("jp.example")`は常に真になります。  
