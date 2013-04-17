@@ -178,7 +178,7 @@ new Namespace("advanced.core").use(function() {
 			for (var i = 0; i < l; i++)
 			{
 				var obj = list[i];
-				obj.func.call(obj.target, notification.object);
+				obj.func.call(obj.target, notification);
 			}
 		}
 	 })
