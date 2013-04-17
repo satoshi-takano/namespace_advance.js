@@ -6,7 +6,8 @@
 		"test": "test"
 	},
 	"scripts": {
-		"test": "NODE_PATH=\"./src/\";mocha test/*.js -r ./namespace.js/src/namespace.js --ignore-leaks"
+        "start":"export NODE_PATH=\"./src/\"",
+		"test": "mocha test/*.js -r ./namespace.js/src/namespace.js --ignore-leaks"
 	},
 	"devDependencies": {
 		"mocha": "*"
