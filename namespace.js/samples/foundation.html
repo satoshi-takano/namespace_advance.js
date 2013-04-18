@@ -1,0 +1,120 @@
+<html>
+<script type="text/javascript" src="../src/namespace.js"></script>
+
+<script type="text/javascript">
+
+// create a namespace jp.example, and use it.
+new Namespace("jp.example").use(function() {
+	// define SuperClass.
+	proto(function SuperClass() {
+		// define constructor of the SuperClass.
+		// this method is called when instance of SuperClass is created,
+		// e.g new jp.example.SuperClass(param0, param1)
+		init(function(p0, p1) {
+			this.propA = p0;
+			this.propB = p1;
+		});
+		
+		// define a method to the SuperClass.
+		def(function inspect() {
+			console.log("This is " + this.$class.name + ". Inspect of the SuperClass");
+			return "propA = " + this.propA + "\npropB = " + this.propB;
+		});
+	});
+	
+	// define SubClass.
+	proto(function SubClass() {
+		// The SubClass extends the SuperClass
+		ex(jp.example.SuperClass);
+		
+		// define constructor of the SubClass.
+		init(function(p0, p1, p2, p3) {
+			// propagate to the SuperClass
+			this.$super(p0, p1);
+
+			this.propC = p2;
+			this.propD = p3;
+		});
+		
+		// override the inspect method
+		def(function inspect() {
+			console.log("This is " + this.$class.name + ". Inspect of the SubClass");
+			return this.$super() + "\npropC = " + this.propC + "\npropD = " + this.propD;
+		});
+		
+		// define a class method.
+		$$.def(function classMethodA() {
+			return "classMethodA";
+		});
+
+		// define a class variable
+		$$.classVarA = "class variable";
+	});
+	
+	// define SubsubClass
+	proto(function SubsubClass() {
+		// The SubsubClass extends the SubClass.
+		ex(jp.example.SubClass);
+        
+        attrReader("read", "read2")
+        attrWriter("write")
+        attrAccessor("readWrite")
+		
+		init(function (p0, p1, p2, p3, p4) {
+            this._read = "This property is read only";
+            this._read2 = "This property is read only (2)";
+            this._write = "This property is write only";
+            this._readWrite = "This property is raad write";
+            
+			this.$super(p0, p1, p2, p3)
+			this.propE = p4;
+		});
+		
+		def(function inspect() {
+			console.log("This is " + this.$class.name + ". Inspect of the SubsubClass");
+			return this.$super() + "\npropE = " + this.propE;
+		});
+	});
+	
+	// define a SingletonClass.
+	singleton(function SingletonClass() {
+		// define constructor of the SingletonClass.
+		// this method is called when instance of SuperClass is created,
+		// e.g jp.example.SingletonClass.getInstance();
+		init(function () {
+			console.log("SingletonClass was generated");
+		});
+	});
+});
+
+console.log(new jp.example.SuperClass())
+var subsubClass = new jp.example.SubsubClass(
+"property A",
+"property B",
+"property C",
+"property D",
+"property E");
+subsubClass.inspect();
+
+console.log(subsubClass.propA);
+
+var singletonA = jp.example.SingletonClass.getInstance();
+var singletonB = jp.example.SingletonClass.getInstance();
+console.log("singletonA === singletonB", singletonA === singletonB);
+
+
+console.log(subsubClass.read);
+subsubClass.read = 'set value to subsubClass.r';
+console.log(subsubClass.read);
+console.log(subsubClass.read2);
+
+subsubClass.write = "set value to subsubClass.write";
+console.log("subsubClass.write =", subsubClass.write);
+console.log(subsubClass.write)
+subsubClass.readWrite = "set value to subsubClass.rw";
+console.log(subsubClass.readWrite)
+
+</script>
+<body>
+</body>
+</html>
