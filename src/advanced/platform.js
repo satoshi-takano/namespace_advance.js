@@ -31,126 +31,126 @@ THE SOFTWARE.
 * @namespace advanced.platform
 */
 new Namespace("advanced.platform").use(function() {
-	console.log('imported ', this.nsName)
-	
-	var ns = this;
-	
-		/** 
-		* Managing the user agent.
-		* @class UserAgent
-		**/
-		proto(function UserAgent() {
-			init(function() {
-				this.ua = navigator.userAgent.toLowerCase();
-			});
-			/** 
-			* Determine whether user's environment is Internet Explorer.
-			* @method isIE
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isIE() {
-				return this.ua.indexOf("msie") != -1;
-			});
-			/** 
-			* Determine whether user's environment is Internet Explorer 6.
-			* @method isIE6
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isIE6() {
-				return this.ua.indexOf("msie 6") != -1;
-			});
-			/** 
-			* Determine whether user's environment is Internet Explorer 7.
-			* @method isIE7
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isIE7() {
-				return this.ua.indexOf("msie 7") != -1;
-			});
-			/** 
-			* Determine whether user's environment is Internet Explorer 8.
-			* @method isIE8
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isIE8() {
-				return this.ua.indexOf("msie 8") != -1;
-			});
-			/** 
-			* Determine whether user's environment is FireFox.
-			* @method isFireFox
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isFireFox() {
-				return this.ua.indexOf("firefox") != -1;
-			});
-			/** 
-			* Determine whether user's environment is Safari.
-			* @method isSafari
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isSaferi() {
-				return this.ua.indexOf("safari") == -1 || this.isChrome() ? false : true;
-			});
-			/** 
-			* Determine whether user's environment is Chrome.
-			* @method isChrome
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isChrome() {
-				return this.ua.indexOf("chrome") != -1;
-			});
-			/** 
-			* Determine whether user's environment is mobile device.
-			* @method isMobile
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isMobile() {
-				return (this.isiPhone() || this.isiPodTouch() || this.isAndroid());
-			});
-			/** 
-			* Determine whether user's environment is iPhone.
-			* @method isiPhone
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isiPhone() {
-				return this.ua.indexOf("iphone") != -1;
-			});
-			/** 
-			* Determine whether user's environment is iPad.
-			* @method isiPad
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isiPad() {
-				return this.ua.indexOf("ipad") != -1;
-			});
-			/** 
-			* Determine whether user's environment is iPodTouch.
-			* @method isiPodTouch
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isiPodTouch() {
-				return this.ua.indexOf("ipod") != -1;
-			});
-			/** 
-			* Determine whether user's environment is Android.
-			* @method isAndroid
-			* @memberOf UserAgent#
-			* @returns {boolean}
-			**/
-			def(function isAndroid() {
-				return this.ua.indexOf("android") != -1;
-			});
-		});
+    console.log('imported ', this.nsName)
+    
+    var ns = this;
+    
+        /** 
+        * Managing the user agent.
+        * @class UserAgent
+        **/
+        proto(function UserAgent() {
+            init(function() {
+                this.ua = navigator.userAgent.toLowerCase();
+            });
+            /** 
+            * Determine whether user's environment is Internet Explorer.
+            * @method isIE
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isIE() {
+                return this.ua.indexOf("msie") != -1;
+            });
+            /** 
+            * Determine whether user's environment is Internet Explorer 6.
+            * @method isIE6
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isIE6() {
+                return this.ua.indexOf("msie 6") != -1;
+            });
+            /** 
+            * Determine whether user's environment is Internet Explorer 7.
+            * @method isIE7
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isIE7() {
+                return this.ua.indexOf("msie 7") != -1;
+            });
+            /** 
+            * Determine whether user's environment is Internet Explorer 8.
+            * @method isIE8
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isIE8() {
+                return this.ua.indexOf("msie 8") != -1;
+            });
+            /** 
+            * Determine whether user's environment is FireFox.
+            * @method isFireFox
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isFireFox() {
+                return this.ua.indexOf("firefox") != -1;
+            });
+            /** 
+            * Determine whether user's environment is Safari.
+            * @method isSafari
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isSaferi() {
+                return this.ua.indexOf("safari") == -1 || this.isChrome() ? false : true;
+            });
+            /** 
+            * Determine whether user's environment is Chrome.
+            * @method isChrome
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isChrome() {
+                return this.ua.indexOf("chrome") != -1;
+            });
+            /** 
+            * Determine whether user's environment is mobile device.
+            * @method isMobile
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isMobile() {
+                return (this.isiPhone() || this.isiPodTouch() || this.isAndroid());
+            });
+            /** 
+            * Determine whether user's environment is iPhone.
+            * @method isiPhone
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isiPhone() {
+                return this.ua.indexOf("iphone") != -1;
+            });
+            /** 
+            * Determine whether user's environment is iPad.
+            * @method isiPad
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isiPad() {
+                return this.ua.indexOf("ipad") != -1;
+            });
+            /** 
+            * Determine whether user's environment is iPodTouch.
+            * @method isiPodTouch
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isiPodTouch() {
+                return this.ua.indexOf("ipod") != -1;
+            });
+            /** 
+            * Determine whether user's environment is Android.
+            * @method isAndroid
+            * @memberOf UserAgent#
+            * @returns {boolean}
+            **/
+            def(function isAndroid() {
+                return this.ua.indexOf("android") != -1;
+            });
+        });
 
 });

@@ -31,63 +31,63 @@ THE SOFTWARE.
 * @namespace advanced.application
 */
 new Namespace("advanced.application").require(["advanced.events", "advanced.platform"], function() {
-	this.use(function() {
-		console.log('imported ', this.nsName)
-		
-		var ns = this;
+    this.use(function() {
+        console.log('imported ', this.nsName)
+        
+        var ns = this;
 
-		 /** 
-		 * The Application manages the pointing device's position.
-		 * @class Application
-		 * @augments EventDispatcher
-		 */
-		singleton(function Application() {
-			var nse = new Namespace("advanced.events");
-			ex(nse.EventDispatcher);
+         /** 
+         * The Application manages the pointing device's position.
+         * @class Application
+         * @augments EventDispatcher
+         */
+        singleton(function Application() {
+            var nse = new Namespace("advanced.events");
+            ex(nse.EventDispatcher);
 
-			init(function() {
-				var self = this;
-				/** 
-				* The pointing device's x position on the window.
-				* @member {number} mouseX
-				* @memberOf Application#
-				* @default 0
-				*/
-				this.mouseX = 0;
-				
-				/** 
-				* The pointing device's y position on the window.
-				* @member {number} mouseY
-				* @memberOf Application#
-				* @default 0
-				*/
-				this.mouseY = 0;
-				
-				/** 
-				* The pointing device's x position on the window.
-				* @member {UserAgent} userAgent
-				* @memberOf Application#
-				*/
-				this.userAgent = new (new Namespace("advanced.platform")).UserAgent();
+            init(function() {
+                var self = this;
+                /** 
+                * The pointing device's x position on the window.
+                * @member {number} mouseX
+                * @memberOf Application#
+                * @default 0
+                */
+                this.mouseX = 0;
+                
+                /** 
+                * The pointing device's y position on the window.
+                * @member {number} mouseY
+                * @memberOf Application#
+                * @default 0
+                */
+                this.mouseY = 0;
+                
+                /** 
+                * The pointing device's x position on the window.
+                * @member {UserAgent} userAgent
+                * @memberOf Application#
+                */
+                this.userAgent = new (new Namespace("advanced.platform")).UserAgent();
 
-				var util = new (new Namespace("advanced.core")).Utilitie();
-				var isIE = this.userAgent.isIE();
-				var app = this;
-				this.canTrackMouse = false;
-				util.listen(document, isIE ? "onmousemove" : "mousemove", function(mouseMove) {
-					if (!isIE) {
-						app.mouseX = mouseMove.clientX;
-						app.mouseY = mouseMove.clientY;
-						if (document.body)	{ this.mouseY +=  document.body.scrollTop;}
-					} else {
-						app.mouseX = mouseMove.clientX;
-						app.mouseY = mouseMove.clientY + document.documentElement.scrollTop;
-					}
-					if (app.canTrackMouse == false) app.canTrackMouse = true;
-				});
+                var util = new (new Namespace("advanced.core")).Utilitie();
+                var isIE = this.userAgent.isIE();
+                var app = this;
+                this.canTrackMouse = false;
+                util.listen(document, isIE ? "onmousemove" : "mousemove", function(mouseMove) {
+                    if (!isIE) {
+                        app.mouseX = mouseMove.clientX;
+                        app.mouseY = mouseMove.clientY;
+                        if (document.body)    { this.mouseY +=  document.body.scrollTop;}
+                    } else {
+                        app.mouseX = mouseMove.clientX;
+                        app.mouseY = mouseMove.clientY + document.documentElement.scrollTop;
+                    }
+                    if (app.canTrackMouse == false) app.canTrackMouse = true;
+                });
 
-			});
-		});
-		
-	})
+            });
+        });
+        
+    })
 })
