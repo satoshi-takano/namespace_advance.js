@@ -60,7 +60,6 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 		});
 
 		// 親プロトタイプで定義されているメソッドをオーバーライドします。
-		// オーバーライドを機能はありません。
 		// this.$super() でオーバーライド元のメソッドを実行できます。
 		def(function inspect() {
 			console.log(this);
@@ -77,8 +76,7 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 	
 ### Settings accesibility of the attributes ###
 	proto(function MyPrototype() {
-　　　　	// 上記３つのアクセス制御メソッドはそれぞれ可変長引数を受け取ります。	
-　　　　	
+		// 上記３つのアクセス制御メソッドはそれぞれ可変長引数を受け取ります。	
 		// attrReader はインスタンスの _read プロパティに対しての getter メソッドを作ります
 		attrReader("read")
 		// attrReader はインスタンスの _write プロパティに対しての setter メソッドを作ります
