@@ -48,7 +48,7 @@ THE SOFTWARE.
 //         * @param {Object} DOM
 //         * @memberOf DisplayObject
 //         */
-//         init(function(domElement) {
+//         def(function initialize(domElement) {
 //             this.domElement = domElement;
 //             this.parent = null;
 //             this.alpha = 1;
@@ -212,7 +212,7 @@ THE SOFTWARE.
 //         /**
 //         * @memberOf InteractiveObject
 //         */
-//         init(function(domElement) {
+//         def(function initialize(domElement) {
 //             this.domElement = domElement;
 //             this.setEvents();
 //         });

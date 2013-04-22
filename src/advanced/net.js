@@ -42,7 +42,7 @@ new Namespace("advanced.net").require(["advanced.events"], function() {
         * @param {string} url The URL that represented in string.
         */
         proto(function URL() {
-            init(function(url) {
+            def(function initialize(url) {
                 /** 
                 * The URL that represented in string.
                 * @member {string} url
@@ -143,7 +143,7 @@ new Namespace("advanced.net").require(["advanced.events"], function() {
         * @param {String} urlString
         */
         proto(function URLRequest() {
-            init(function (urlString) {
+            def(function initialize (urlString) {
                 /** 
                 * URL.
                 * @member {string} url
@@ -187,7 +187,7 @@ new Namespace("advanced.net").require(["advanced.events"], function() {
 
             ex(nse.EventDispatcher);
 
-            init(function () {
+            def(function initialize () {
                 this.currentXHR = null;
                 /**
                 * The fetched data.

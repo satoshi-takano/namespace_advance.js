@@ -41,7 +41,7 @@ new Namespace("advanced.math").use(function () {
     * @class Math
     **/
     proto(function Math() {
-        init(function() {
+        def(function initialize() {
         })
         
         /**
@@ -122,7 +122,7 @@ new Namespace("advanced.math").use(function () {
         * @param {number} N The DFT size
         **/
         proto(function DFT() {
-            init(function(N) {
+            def(function initialize(N) {
                 this.N = N;
             })
             
@@ -159,7 +159,7 @@ new Namespace("advanced.math").use(function () {
         * @param {number} N The FFT size
         **/
         proto(function FFT() {
-            init(function(N) {
+            def(function initialize(N) {
                 this.N = N;
                 
                   this.bitrev = [];

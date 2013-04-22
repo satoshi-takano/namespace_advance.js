@@ -41,7 +41,7 @@ new Namespace("advanced.geom").use(function() {
      * @param {number} y
      */
     proto(function Point() {
-        init(function(x, y) {
+        def(function initialize(x, y) {
             this.x = x;
             this.y = y;
         });
@@ -163,7 +163,7 @@ new Namespace("advanced.geom").use(function() {
      * @param {number} h Height of rectangle.
      */
      proto(function Rectangle() {
-         init(function (x, y, w, h) {
+         def(function initialize (x, y, w, h) {
              /** 
              * X coordinate of rectangle.
              * @member x
@@ -411,7 +411,7 @@ new Namespace("advanced.geom").use(function() {
      * @param {number} [ty=0]
      */
      proto(function Matrix() {
-         init(function (a, b, c, d, tx, ty) {
+         def(function initialize (a, b, c, d, tx, ty) {
             if (a == undefined) a = 1, b = 0, c = 0, d = 1, tx = 0, ty = 0;
             else if (b == undefined) b = 0, c = 0, d = 1, tx = 0, ty = 0;
             else if (c == undefined) c = 0, d = 1, tx = 0, ty = 0;

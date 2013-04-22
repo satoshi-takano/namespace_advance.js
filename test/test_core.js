@@ -102,7 +102,7 @@ describe('Test of the Recordable', function() {
 
         new Namespace("testofthecore").use(function() {
             proto(function RecordableTest() {
-                init(function() {
+                def(function initialize() {
                     this.numCalled = 0;
                     
                     this.include(new advanced.core.Recordable());

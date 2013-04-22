@@ -55,7 +55,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         * @param {number} col16 The color value as hexadecimal.
         **/
         proto(function Color() {
-            init(function(col16) {
+            def(function initialize(col16) {
                 this.color = col16;
             })
 
@@ -103,7 +103,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         * @deprecated
         **/
         proto(function BitmapData() {
-            init(function(w, h) {
+            def(function initialize(w, h) {
                 this.w = w;
                 this.h = h;
 
@@ -134,7 +134,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         * @class CapStyle
         **/
         singleton(function CapStyle() {
-            init(function() {
+            def(function initialize() {
             })
             /** 
             * @constant {string} NONE
@@ -158,7 +158,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         * @class JointStyle
         **/
         singleton(function JointStyle() {
-            init(function(args) {
+            def(function initialize(args) {
             })
             /** 
             * @constant {string} BEVEL
@@ -186,7 +186,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         proto(function Graphics() {
             ex(nscore.Recordable)
 
-            init(function() {
+            def(function initialize() {
                 this.$super();
 
                 this.context = null;
@@ -469,7 +469,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         proto(function DisplayObject() {
             ex(nsevent.EventDispatcher);
             var ii = 0
-            init(function() {
+            def(function initialize() {
                 this.$super();
 
                 this._mx = 0, this._my = 0;
@@ -730,7 +730,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         proto(function DisplayObjectContainer() {
             ex(ns.DisplayObject)
 
-            init(function() {
+            def(function initialize() {
                 this.$super();
                 this.children = [];
                 this._stg = null;
@@ -883,7 +883,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         proto(function Stage() {
             ex(ns.DisplayObjectContainer);
 
-            init(function(canvas) {
+            def(function initialize(canvas) {
                 this.$super();
 
                 var context = canvas.getContext("2d");
@@ -1218,7 +1218,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         proto(function Text() {
             ex(ns.DisplayObject);
 
-            init(function() {
+            def(function initialize() {
                 this.$super();
                 this._text = "";
                 this._fontFamily = "_sans";
@@ -1342,7 +1342,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         proto(function Image() {
             ex(ns.DisplayObject)
             
-            init(function(imageElement) {
+            def(function initialize(imageElement) {
                 this.$super();
                 this._imageElement = imageElement;
                 this.graphics.drawImage(this._imageElement);
@@ -1364,7 +1364,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         proto(function ImageLoader() {
             ex(nsevent.EventDispatcher);
 
-            init(function(cache) {
+            def(function initialize(cache) {
                 this.$super();
 
                 this.cache = cache || {};
@@ -1442,7 +1442,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         singleton(function ImageManager() {
             ex(nsevent.EventDispatcher);
 
-            init(function() {
+            def(function initialize() {
                 this.$super();
 
                 this.loader = new ns.ImageLoader();

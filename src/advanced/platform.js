@@ -40,7 +40,7 @@ new Namespace("advanced.platform").use(function() {
         * @class UserAgent
         **/
         proto(function UserAgent() {
-            init(function() {
+            def(function initialize() {
                 this.ua = navigator.userAgent.toLowerCase();
             });
             /** 

@@ -30,7 +30,7 @@ new Namespace("advanced.ui").use(function() {
     proto(function Label() {
         ex(nsd.DisplayObject);
         
-        init(function(textElement) {
+        def(function initialize(textElement) {
             ns.Label.superClass.initialize.call(this, textElement);
             this.hasInnerHTML = true;
             if (textElement.innerHTML == undefined)

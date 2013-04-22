@@ -43,7 +43,7 @@ new Namespace("advanced.tween").use(function() {
     * @param {function} interpolate function.
     */
     proto(function Interpolator() {
-        init(function(to, from, step, easing) {
+        def(function initialize(to, from, step, easing) {
             /**
             * The interpolated values.
             * @member {array} values
@@ -66,7 +66,7 @@ new Namespace("advanced.tween").use(function() {
     * @param {Number} delay The delay time, in seconds.
     */
     proto(function Animator() {
-        init(function (delay) {
+        def(function initialize (delay) {
             this.delay = delay;
             this.next = null;
             this.fps = 60;
@@ -138,7 +138,7 @@ new Namespace("advanced.tween").use(function() {
     * @class Bounce
     **/
     singleton(function Bounce() {
-        init(function() {
+        def(function initialize() {
         })
 
         /** 
@@ -192,7 +192,7 @@ new Namespace("advanced.tween").use(function() {
     **/
     singleton(function Circ() {
         // To initialize when the new Circ(params) called.
-        init(function() {
+        def(function initialize() {
         })
         
         /** 
@@ -239,7 +239,7 @@ new Namespace("advanced.tween").use(function() {
     **/
     singleton(function Cubic() {
         // To initialize when the new Cubic(params) called.
-        init(function() {
+        def(function initialize() {
         })
         
         /** 
@@ -285,7 +285,7 @@ new Namespace("advanced.tween").use(function() {
     **/
     singleton(function Elastic() {
         // To initialize when the new Elastic(params) called.
-        init(function() {
+        def(function initialize() {
         })
         
         /** 
@@ -376,7 +376,7 @@ new Namespace("advanced.tween").use(function() {
     **/
     singleton(function Expo() {
         // To initialize when the new Expo(params) called.
-        init(function() {
+        def(function initialize() {
         })
         
         /** 
@@ -427,7 +427,7 @@ new Namespace("advanced.tween").use(function() {
     **/
     singleton(function Qaud() {
         // To initialize when the new Qaud(params) called.
-        init(function() {
+        def(function initialize() {
         })
         
         /** 
@@ -477,7 +477,7 @@ new Namespace("advanced.tween").use(function() {
     **/
     singleton(function Quart() {
         // To initialize when the new Quart(params) called.
-        init(function() {
+        def(function initialize() {
         })
         
         /** 
@@ -526,7 +526,7 @@ new Namespace("advanced.tween").use(function() {
     **/
     singleton(function Quintic() {
         // To initialize when the new Quintic(params) called.
-        init(function() {
+        def(function initialize() {
         })
         
         /** 
@@ -574,7 +574,7 @@ new Namespace("advanced.tween").use(function() {
     **/
     singleton(function Sine() {
         // To initialize when the new Sine(params) called.
-        init(function() {
+        def(function initialize() {
         })
         
         /** 

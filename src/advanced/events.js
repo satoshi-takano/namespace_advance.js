@@ -41,7 +41,7 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
 
         /* internal */
         nsi.proto(function EventTargetSet(listener) {
-            init(function (listener) {
+            def(function initialize (listener) {
                 this.listener = listener;
             })
         });
@@ -53,7 +53,7 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
         * @param {object} target 
         */
         proto(function EventDispatcher() {
-            init(function (target) {
+            def(function initialize (target) {
                 this.observers = {};
                 this.target = target;
             });
@@ -236,7 +236,7 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
         * @class Event
         **/
         proto(function Event() {
-            init(function(type, caller, origin) {
+            def(function initialize(type, caller, origin) {
                 this.type = type;
                 this.origin = origin;
                 this.currentTarget = caller;
@@ -280,7 +280,7 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
         proto(function FLEvent() {
             ex(ns.Event)
 
-            init(function (type, caller, origin) {
+            def(function initialize (type, caller, origin) {
                 this.$super(type, caller, origin)
                 this.doBubbling = true;
             });
@@ -334,7 +334,7 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
         proto(function FLMouseEvent() {
             ex(ns.FLEvent);
 
-            init(function (type, caller, origin) {
+            def(function initialize (type, caller, origin) {
                 this.$super(type, caller, origin);
                 /** 
                 * @member {number} mosueX

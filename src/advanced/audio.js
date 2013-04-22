@@ -43,7 +43,7 @@ new Namespace("advanced.audio").use(function() {
     * @param {AudioNode} delegateNode The node that observes changing of port's connection.
     **/
     proto(function AudioPort() {
-        init(function(node, delegateNode) {
+        def(function initialize(node, delegateNode) {
             this._node = node;
             this._delegateNode = delegateNode;
             this._toPorts = [];
@@ -153,7 +153,7 @@ new Namespace("advanced.audio").use(function() {
     * @param {AudioContext} context The AudioContext object.
     **/
     proto(function AudioNode() {
-        init(function(context) {
+        def(function initialize(context) {
             this.context = context;
             this.inputPorts = [];
             this.outputPorts = [];
@@ -255,7 +255,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioFile() {
         ex(audioNamespace.AudioNode)
         
-        init(function(context) {
+        def(function initialize(context) {
             this.$super(context);
             /** 
             * The audio buffer.
@@ -297,7 +297,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioContext() {
         ex(audioNamespace.AudioNode)
         
-        init(function() {
+        def(function initialize() {
             this._nativeContext = new webkitAudioContext();
             this._nativeNode = this._nativeContext.destination;
             this.$super(this);
@@ -316,7 +316,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function GainNode() {
         ex(audioNamespace.AudioNode)
         
-        init(function(context) {
+        def(function initialize(context) {
             this.$super(context);
 
             this._nativeNode = context._nativeContext.createGainNode();
@@ -344,7 +344,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioSource() {
         ex(audioNamespace.AudioNode)
         
-        init(function(context) {
+        def(function initialize(context) {
             this.$super(context);
             this.context = context;
             this.gainNode = new audioNamespace.GainNode(context);
@@ -401,7 +401,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioFilePlayer() {
         ex(audioNamespace.AudioSource)
         
-        init(function(context) {
+        def(function initialize(context) {
             this.$super(context);
         })
         
@@ -429,7 +429,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioSignalProcessingNode() {
         ex(audioNamespace.AudioNode)
         
-        init(function(context) {
+        def(function initialize(context) {
             this.$super(context);
             this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 2, 2);
             
@@ -461,7 +461,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function Microphone() {
         ex(audioNamespace.AudioSignalProcessingNode)
         
-        init(function(context, mediaStream) {
+        def(function initialize(context, mediaStream) {
             this.$super(context);
             
             this._nativeNode = context._nativeContext.createMediaStreamSource(mediaStream);
@@ -476,7 +476,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioRenderer() {
         ex(audioNamespace.AudioSignalProcessingNode)
         
-        init(function(context, mediaStream) {
+        def(function initialize(context, mediaStream) {
             this.$super(context);
             this.setInputPortNode(this);
             this.setOutputPortNode(this);
@@ -500,7 +500,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function Panner() {
         ex(audioNamespace.AudioNode)
         
-        init(function(context) {
+        def(function initialize(context) {
             this.$super(context);
             
             this._x = 0;
@@ -538,7 +538,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function WhiteNoise() {
         ex(audioNamespace.AudioSignalProcessingNode)
         
-        init(function(context) {
+        def(function initialize(context) {
             this.$super(context);
             
             this.panner = new audioNamespace.Panner(context);
@@ -567,7 +567,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioBufferProcessor() {
         ex(audioNamespace.AudioSource)
         
-        init(function(context) {
+        def(function initialize(context) {
             this.$super(context);
             this._nativeNode = context._nativeContext.createJavaScriptNode(1024, 2, 2);
             this._nativeNode.onaudioprocess = process;
@@ -741,7 +741,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioEffect() {
         ex(audioNamespace.AudioNode)
         
-        init(function(context, rawNode) {
+        def(function initialize(context, rawNode) {
             this.$super(context);
             this._nativeNode = rawNode;
             this._wet = 1;
@@ -794,7 +794,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioDelay() {
         ex(audioNamespace.AudioNode)
         
-        init(function(context, delayTime) {
+        def(function initialize(context, delayTime) {
             this.$super(context);
             
             var node = this._nativeNode = context._nativeContext.createDelay();
@@ -840,7 +840,7 @@ new Namespace("advanced.audio").use(function() {
         **/
         $$.HIGH_SHELF = 4;
         
-        init(function(context, filterType) {
+        def(function initialize(context, filterType) {
             this._nativeNode = context._nativeContext.createBiquadFilter();
             this._nativeNode.type = filterType;
             this.$super(context, this._nativeNode);
@@ -905,7 +905,7 @@ new Namespace("advanced.audio").use(function() {
     proto(function AudioReverb() {
         ex(audioNamespace.AudioEffect)
         
-        init(function(context) {
+        def(function initialize(context) {
             var node = context._nativeContext.createConvolver();
             this.$super(context, node);
         })

@@ -41,7 +41,7 @@ new Namespace("advanced.core").use(function() {
     * @param {function} callee
     **/
     proto(function Proc() {
-        init(function(callee) {
+        def(function initialize(callee) {
             this.callee = callee;
             this.name = callee.name || "lamda";
             if (callee.owner) this.owner = callee.owner.name;
@@ -54,7 +54,7 @@ new Namespace("advanced.core").use(function() {
     * @class Backtrace
     **/
     proto(function Stacktrace() {
-        init(function(callee) {
+        def(function initialize(callee) {
             this.stack = [];
             this.stack.push(new advanced.core.Proc(callee));
             while (callee.name) {
@@ -84,7 +84,7 @@ new Namespace("advanced.core").use(function() {
      * @param {object} userData The user data of this notification.
      */
      proto(function Notification() {
-         init(function(name, userData) {
+         def(function initialize(name, userData) {
              this.name = name;
              this.userData = userData;
          });
@@ -188,7 +188,7 @@ new Namespace("advanced.core").use(function() {
      * @class Timestamp
      */
      proto(function Timestamp() {
-         init(function() {
+         def(function initialize() {
              this.created = new Date();
          });
          
@@ -215,7 +215,7 @@ new Namespace("advanced.core").use(function() {
      */
      proto(function Identifier() {
          /** @memberOf Identifier */
-         init(function() {
+         def(function initialize() {
             /**
             * The ID.
             * @member {number} id
@@ -253,7 +253,7 @@ new Namespace("advanced.core").use(function() {
      * @param {function} callback The function that will be called when after waiting the delay time.
      */
      proto(function Wait() {
-         init(function(time, callback) {
+         def(function initialize(time, callback) {
              this.timer = setTimeout(function(){
                  callback.call();
              }, time);
@@ -277,7 +277,7 @@ new Namespace("advanced.core").use(function() {
     * @param {number} That maximum value in the range.
     */
     proto(function Range() {
-        init(function(min, max) {
+        def(function initialize(min, max) {
             /** 
             * The minimum value in the range.
             * @member {number} min
@@ -347,7 +347,7 @@ new Namespace("advanced.core").use(function() {
     * @param {array} args
     **/
     proto(function Operation() {
-        init(function(scope, func, args) {
+        def(function initialize(scope, func, args) {
             this.scope = scope;
             this.func = func;
             this.args = args;
@@ -370,7 +370,7 @@ new Namespace("advanced.core").use(function() {
     **/
     proto(function OperationQueue() {
         /** @memberOf OperationQueue */
-        init(function() {
+        def(function initialize() {
             this.operations = [];
         })
         
@@ -417,7 +417,7 @@ new Namespace("advanced.core").use(function() {
     * @class System
     **/
     singleton(function System() {
-        init(function(args) {
+        def(function initialize(args) {
             
         })
         
@@ -430,7 +430,7 @@ new Namespace("advanced.core").use(function() {
     * @class Recordable
     **/
     proto(function Recordable() {
-        init(function() {
+        def(function initialize() {
             this.opq = new ns.OperationQueue();
         })
         
@@ -473,7 +473,7 @@ new Namespace("advanced.core").use(function() {
     * @class DisplayLink
     **/
     proto(function DisplayLink() {
-        init(function(fps) {
+        def(function initialize(fps) {
             if (fps == undefined) fps = 60;
             var targets = this._targets = [];
             var renderFunc = this._renderFunc = requestAnimationFrame();

@@ -45,7 +45,7 @@ new Namespace("advanced.application").require(["advanced.events", "advanced.plat
             var nse = new Namespace("advanced.events");
             ex(nse.EventDispatcher);
 
-            init(function() {
+            def(function initialize() {
                 var self = this;
                 /** 
                 * The pointing device's x position on the window.
