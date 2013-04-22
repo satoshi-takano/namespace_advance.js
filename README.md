@@ -29,9 +29,8 @@ jp.example.my_prototypesというNamespaceを利用する場合、
         // Namespaceに定義された proto メソッドで 新たにprototype を定義します。
         // Namespace#use に渡した関数スコープの中では、一時的に Namespace#proto がグローバルオブジェクトにコピーされるため this.proto() ではなく単に proto() と書くことができます。
     	proto(function Super() {
-    		// init に渡した無名関数（名前付きでも問題はありませんが、その名前は無視されます）
-    		// はコンストラクタの役割を果たし、インスタンス化される際に自動的に実行されます。
-    		init(function(p0, p1) {
+    		// コンストラクタとして振る舞う initialize メソッドを定義します。
+    		def(function initialize(p0, p1) {
     			this.propA = p0;
     			this.propB = p1;
     		});
@@ -52,7 +51,7 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 		ex(jp.example.Super);
 
 		
-		init(function(p0, p1, p2, p3) {
+		def(function initialize(p0, p1, p2, p3) {
 			// $super メソッドで、Super のコンストラクタを呼び出します。
 			this.$super(p0, p1);
 
@@ -78,12 +77,15 @@ jp.example.my_prototypesというNamespaceを利用する場合、
 	
 ### Settings accesibility of the attributes ###
 	proto(function MyPrototype() {
+　　　　	// 上記３つのアクセス制御メソッドはそれぞれ可変長引数を受け取ります。	
+　　　　	
 		// attrReader はインスタンスの _read プロパティに対しての getter メソッドを作ります
 		attrReader("read")
 		// attrReader はインスタンスの _write プロパティに対しての setter メソッドを作ります
 		attrWriter("write")
-		attrReader はインスタンスの _readWrite プロパティに対しての getter, setter メソッドを作ります
+		// attrAccessor はインスタンスの _readWrite プロパティに対しての getter, setter メソッドを作ります
 		attrAccessor("readWrite")
+		
 		
 		init(function () {
 			this._read = "This is a read only attribute";
