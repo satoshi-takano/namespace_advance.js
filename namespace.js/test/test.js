@@ -12,7 +12,7 @@ describe('new Namespace', function(){
 describe("Prototype definition", function() {
 	new Namespace("test.prototypedef").use(function() {
 		proto(function Test() {
-			init(function(name) {
+			def(function initialize(name) {
 				this.name = name;
 			})
 
@@ -70,7 +70,7 @@ describe('Extends', function() {
 		proto(function ExTest() {
 			ex(test.prototypedef.Test)
 
-			init(function(name) {
+			def(function initialize(name) {
 				this.$super(name);
 			})
 

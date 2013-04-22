@@ -10,7 +10,7 @@ new Namespace("jp.example").use(function() {
 		// define constructor of the SuperClass.
 		// this method is called when instance of SuperClass is created,
 		// e.g new jp.example.SuperClass(param0, param1)
-		init(function(p0, p1) {
+		def(function initialize(p0, p1) {
 			this.propA = p0;
 			this.propB = p1;
 		});
@@ -28,7 +28,7 @@ new Namespace("jp.example").use(function() {
 		ex(jp.example.SuperClass);
 		
 		// define constructor of the SubClass.
-		init(function(p0, p1, p2, p3) {
+		def(function initialize(p0, p1, p2, p3) {
 			// propagate to the SuperClass
 			this.$super(p0, p1);
 
@@ -60,7 +60,7 @@ new Namespace("jp.example").use(function() {
         attrWriter("write")
         attrAccessor("readWrite")
 		
-		init(function (p0, p1, p2, p3, p4) {
+		def(function initialize(p0, p1, p2, p3, p4) {
             this._read = "This property is read only";
             this._read2 = "This property is read only (2)";
             this._write = "This property is write only";
@@ -81,7 +81,7 @@ new Namespace("jp.example").use(function() {
 		// define constructor of the SingletonClass.
 		// this method is called when instance of SuperClass is created,
 		// e.g jp.example.SingletonClass.getInstance();
-		init(function () {
+		def(function initialize() {
 			console.log("SingletonClass was generated");
 		});
 	});

@@ -107,17 +107,6 @@ Namespace.prototype = new (function() {
         }
 
         /**
-         * Define constructor.
-         * warning: You can call this function only when you're in Namespace#proto context.
-         * @method init
-         * @memberOf Namespace#
-         * @param {function} initialize A function called when the instance is created.
-         **/
-        this.init = function(initialize) {
-            self.substance.prototype.initialize = wrap("initialize", initialize);
-        };
-
-        /**
          * Extends the an argument. </br>
          * warning: You can call this function only when you're in Namespace#proto context.
          * @method ex
@@ -318,7 +307,6 @@ Namespace.prototype = new (function() {
 
         // fake dynamic scope
         var old$$ = global.$$;
-        var oldInit = global.init;
         var oldEx = global.ex;
         var oldMeth = global.def;
         var oldGetter = global.getter;
@@ -330,7 +318,6 @@ Namespace.prototype = new (function() {
 
         // set temporary global methods
         global.$$ = proto;
-        global.init = namedFunc.init = functionPrototype.init;
         global.ex = namedFunc.ex = functionPrototype.ex;
         global.def = namedFunc.def = functionPrototype.def;
         global.getter = functionPrototype.getter;
@@ -344,7 +331,6 @@ Namespace.prototype = new (function() {
 
         // restore global methods
         global.$$ = old$$;
-        global.init = oldInit;
         global.ex = oldEx;
         global.def = oldMeth;
         global.getter = oldGetter;
