@@ -107,8 +107,7 @@ Namespace.prototype = new (function() {
         }
 
         /**
-         * Extends the an argument. </br>
-         * warning: You can call this function only when you're in Namespace#proto context.
+         * Inherit the prototype in the argument
          * @method ex
          * @memberof Namespace#
          * @param {function} obj Pass the function that will called 'new' and used Object#prototype.
@@ -128,7 +127,6 @@ Namespace.prototype = new (function() {
 
         /**
          * Mix in.</br>
-         * warning: You can call this function only when you're in Namespace#proto context.
          * @method include
          * @memberOf Namespace#
          * @param {object} module Module.
@@ -144,8 +142,7 @@ Namespace.prototype = new (function() {
 
         /**
          * Define the getter.
-         * warning: You can call this function only when you're in Namespace#proto context.<br/>
-         *           If user's environment doesn't supports __defineGetter__ function, this function won't do anything.
+         * If user's environment doesn't supports __defineGetter__ function, this function won't do anything.
          * @method getter
          * @memberOf Namespace#
          * @param {string} name property name.
@@ -195,8 +192,7 @@ Namespace.prototype = new (function() {
 
         /**
          * Define the setter
-         * warning: You can call this function only when you're in Namespace#proto context.<br/>
-         *           If user's environment doesn't supports __defineSetter__ function, this function won't do anything.
+         * If user's environment doesn't supports __defineSetter__ function, this function won't do anything.
          * @method setter
          * @memberOf Namespace#
          * @param {string} name property name.
