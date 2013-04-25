@@ -31,6 +31,8 @@ THE SOFTWARE.
 * @namespace advanced.canavs
 */
 new Namespace("advanced.canvas").require(["advanced.core", "advanced.application", "advanced.geom", "advanced.events", "advanced.platform"], function() {
+    this.imported();
+    
     this.use(function() {
         console.log('imported ', this.nsName)
         

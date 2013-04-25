@@ -33,6 +33,7 @@ THE SOFTWARE.
 
 new Namespace("advanced.math").use(function () {
     console.log('imported ', this.nsName)
+    this.imported();
     
     var ns = this;
     var M = Math;

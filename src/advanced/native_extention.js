@@ -31,6 +31,8 @@ THE SOFTWARE.
 * @namespace advanced.native_extentio
 */
 new Namespace("advanced.native_extention").require(["advanced.core"], function() {
+    this.imported();
+    
     this.use(function() {
 
         Number.prototype.times = function(closure, scope) {

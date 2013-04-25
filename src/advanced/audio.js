@@ -33,6 +33,7 @@ THE SOFTWARE.
 
 new Namespace("advanced.audio").use(function() {
     console.log('imported ', this.nsName)
+    this.imported();
     
     var audioNamespace = this;
     

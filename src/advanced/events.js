@@ -31,6 +31,8 @@ THE SOFTWARE.
 * @namespace advanced.events
 **/
 new Namespace("advanced.events").require(["advanced.platform"], function() {
+    this.imported();
+    
     this.use(function() {
         console.log('imported ', this.nsName)
         

@@ -32,6 +32,7 @@ THE SOFTWARE.
 **/
 new Namespace("advanced.tween").use(function() {
     console.log('imported ', this.nsName)
+    this.imported();
     
     var ns = this;
     

@@ -23,6 +23,7 @@ THE SOFTWARE.
 ===================================================== */
 new Namespace("advanced.ui").use(function() {
     console.log('imported ', this.nsName)
+    this.imported();
     
     var ns = this;
     var nsd = new Namespace("advanced.display");

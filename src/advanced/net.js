@@ -33,6 +33,7 @@ THE SOFTWARE.
 new Namespace("advanced.net").require(["advanced.events"], function() {
     this.use(function() {
         console.log('imported ', this.nsName)
+        this.imported();
 
         var ns = this;
 

@@ -32,6 +32,7 @@ THE SOFTWARE.
 */
 new Namespace("advanced.platform").use(function() {
     console.log('imported ', this.nsName)
+    this.imported();
     
     var ns = this;
     
@@ -41,7 +42,10 @@ new Namespace("advanced.platform").use(function() {
         **/
         proto(function UserAgent() {
             def(function initialize() {
-                this.ua = navigator.userAgent.toLowerCase();
+                if (global['navigator'])
+                    this.ua = navigator.userAgent.toLowerCase();
+                else        
+                    this.ua = "";
             });
             /** 
             * Determine whether user's environment is Internet Explorer.
