@@ -248,6 +248,9 @@ Namespace.prototype = new (function() {
         global.proto = oldDef;
         global.singleton = oldSingleton;
     };
+    
+    
+    this.imported = function() {this._imported = true;}
 
     /**
      * Define the prototype.</br>
@@ -351,8 +354,11 @@ Namespace.prototype.require = function(packages, callback) {
     if (global['window'] == undefined) { // node
         var mods = [];
         for (var i = 0, l = packages.length; i < l; i++) {
-            var path = packages[i].replace(/\./g, "/") + ".js";
-            mods.push(require(path));
+            var ns = new Namespace(packages[i]);
+            if (!ns._imported) {
+                var path = packages[i].replace(/\./g, "/") + ".js";
+                mods.push(require(path));
+            }
         }
         
         callback.call(this, mods);
