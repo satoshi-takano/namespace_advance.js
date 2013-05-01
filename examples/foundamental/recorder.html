@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
 
-new Namespace("foundation").Main.getInstance().main(function (argument) {
+window.onload = function() {
 	Namespace.jsPath = "../../src";
 
 	new Namespace("example").require(["advanced.core"], function() {
@@ -17,7 +17,7 @@ new Namespace("foundation").Main.getInstance().main(function (argument) {
 			**/
 			proto(function Recorder() {
 				// To initialize when the new Recorder(params) called.
-				init(function() {
+				def(function initialize() {
 					this.include(new (new Namespace("advanced.core")).Recordable());
 				})
 
@@ -48,7 +48,7 @@ new Namespace("foundation").Main.getInstance().main(function (argument) {
 		rec.playback();
 
 	})
-})
+}
 
 </script>
 <body>

@@ -30,7 +30,7 @@ $(function() {
 			**/
 			proto(function WaveForm() {
 				ex((new Namespace("advanced.canvas")).DisplayObject);
-				init(function() {
+				def(function initialize() {
 					this.$super();
 					this.samples = null;
 					this._buffer = null;
