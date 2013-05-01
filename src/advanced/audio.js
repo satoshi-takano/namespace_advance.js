@@ -95,6 +95,9 @@ new Namespace("advanced.audio").use(function() {
         def(function disconnectTo(toPort) {
             this._node._nativeNode.disconnect(toPort.busNumber);
             cleanPorts(this, toPort);
+
+            this._delegateNode.onDisconnectOutput(toPort);
+            toPort._delegateNode.onDisconnectInput(this);
         })
         
         /**
@@ -104,8 +107,11 @@ new Namespace("advanced.audio").use(function() {
         * @param {AudioPort} fromPort The source port.
         **/
         def(function disconnectFrom(fromPort) {
-            fromPort.disconnect(this.busNumber);
+            fromPort._node._nativeNode.disconnect(this.busNumber);
             cleanPorts(fromPort, this);
+
+            this._delegateNode.onDisconnectInput(fromPort);
+            fromPort._delegateNode.onDisconnectOutput(this);
         })
         
         /**
@@ -214,7 +220,18 @@ new Namespace("advanced.audio").use(function() {
         def(function onInputFrom(source) {
 
         })
-        
+
+        /**
+        * The delegate method that will called when change the input connections.
+        * @method onInputFrom
+        * @memberof AudioNode#
+        * @param {AudioNode} source The new source node.
+        * @protected
+        **/
+        def(function onDisconnectInput(source) {
+
+        })
+
         /**
         * The delegate method that will called when change the output connections.
         * @method onOutputTo
@@ -225,6 +242,18 @@ new Namespace("advanced.audio").use(function() {
         def(function onOutputTo(destination) {
 
         })
+
+        /**
+        * The delegate method that will called when change the output connections.
+        * @method onOutputTo
+        * @memberof AudioNode#
+        * @param {AudioNode} destination The new destination node.
+        * @protected
+        **/
+        def(function onDisconnectOutput(destination) {
+
+        })
+        
         
         /**
         * The number of inputs.
@@ -741,6 +770,7 @@ new Namespace("advanced.audio").use(function() {
     **/
     proto(function AudioEffect() {
         ex(audioNamespace.AudioNode)
+        attrReader("bypass")
         
         def(function initialize(context, rawNode) {
             this.$super(context);
@@ -748,26 +778,40 @@ new Namespace("advanced.audio").use(function() {
             this._wet = 1;
             
             this.gainNode = new audioNamespace.GainNode(context);
+            this.throughNode = new audioNamespace.GainNode(context);
+            
             this.setInputPortNode(this);
             rawNode.connect(this.gainNode._nativeNode);
             this.setOutputPortNode(this.gainNode);
+
+            this._bypass = false;
         })
-        
-        def(function onInputFrom(from) {
-            
-        })
-        
-        // to do : disconnection handling
-        def(function onOutputTo(destination) {
-            var numInputs = this.numberOfInputs;
-            for (var i = 0; i < numInputs; i++) {
-                var inPort = this.inputPort(i);
-                var myInPortsInputs = inPort.inputs;
-                var numMyInPortsInputs = myInPortsInputs.length;
-                for (var j = 0; j < numMyInPortsInputs; j++) {
-                    destination.from(myInPortsInputs[j]);
-                }
+
+        setter("bypass", function(b) {
+            this._bypass = b;
+            if (b) {
+                this.gainNode.gain = 0;
+            } else {
+                this.gainNode.gain = this._wet;
             }
+        })
+
+
+        // hooks the connection changing
+        def(function onInputFrom(from) {
+            from.to(this.throughNode.inputPort(0));
+        })
+        
+        def(function onOutputTo(destination) {
+            destination.from(this.throughNode.outputPort(0));
+        })
+
+        def(function onDisconnectInput(source) {
+            source.disconnectTo(this.throughNode.inputPort(0));
+        })
+
+        def(function onDisconnectOutput(destination) {
+            destination.disconnectFrom(this.throughNode.outputPort(0));
         })
         
         /**
@@ -780,7 +824,8 @@ new Namespace("advanced.audio").use(function() {
         })
         setter("wet", function(value) {
             this._wet = value;
-            this.gainNode.gain = value;
+            if (!this._bypass)
+                this.gainNode.gain = value;
         })
     })
     
@@ -793,16 +838,13 @@ new Namespace("advanced.audio").use(function() {
     * @param {nubmer} delayTime The delay time.
     **/
     proto(function AudioDelay() {
-        ex(audioNamespace.AudioNode)
+        ex(audioNamespace.AudioEffect)
         
         def(function initialize(context, delayTime) {
-            this.$super(context);
-            
             var node = this._nativeNode = context._nativeContext.createDelay();
-            node.delayTime.value = 0.5;
-            
-            this.setInputPortNode(this);
-            this.setOutputPortNode(this);
+            this.$super(context, node);
+
+            node.delayTime.value = delayTime;
         })
     })
     
