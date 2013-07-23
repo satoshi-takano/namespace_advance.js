@@ -1358,11 +1358,10 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             })
         })
 
-
         /**
-        * The ImageManager manages loading  and caching of the images.
-        * @class ImageManager
-        **/
+         * The ImageManager manages loading  and caching of the images.
+         * @class ImageManager
+         **/
         proto(function ImageLoader() {
             ex(nsevent.EventDispatcher);
 
@@ -1374,9 +1373,9 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             })
 
             /**
-            * Loads the image asynchronous. When it has finished loading, the ImageManger will dispatches a FLEvent.COMPLETE event.
-            * @param {string} resourcePath The path of the image.
-            **/
+             * Loads the image asynchronous. When it has finished loading, the ImageManger will dispatches a FLEvent.COMPLETE event.
+             * @param {string} resourcePath The path of the image.
+             **/
             def(function load(resourcePaths) {
                 if (this.nowLoading) {
                     console.warn("ImageLoader \"load\" has currently working")
@@ -1390,7 +1389,8 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
 
                 for (var i = 0; i < l; i++) {
                     var img = new Image();
-                    img.src = img._name = resourcePaths[i];
+                    img.src = resourcePaths[i].src;
+                    img._name = resourcePaths[i].id;
                     img.onload = loaded;
                 }
                 var _this = this;
@@ -1419,19 +1419,19 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             })
             
             /**
-            * Returns the Image object by path of image.
-            * @method getImageByName
-            * @memberOf ImageManger#
-            **/
+             * Returns the Image object by path of image.
+             * @method getImageByName
+             * @memberOf ImageManger#
+             **/
             def(function getImageByName(name) {
                 return this.cache[name];
             })
             
             /**
-            * Delete the Image object by path of image.
-            * @method del
-            * @memberOf ImageManager#
-            **/
+             * Delete the Image object by path of image.
+             * @method del
+             * @memberOf ImageManager#
+             **/
             def(function del(name) {
                 delete this.cache[name];
             })
