@@ -1372,6 +1372,8 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 this._currentLoadedCount = 0;
             })
 
+            def(function loadManifest(r) {this.load(r)})
+
             /**
              * Loads the image asynchronous. When it has finished loading, the ImageManger will dispatches a FLEvent.COMPLETE event.
              * @param {string} resourcePath The path of the image.
@@ -1386,14 +1388,17 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 this._nowLoading = true;
                 this._currentToLoadCount = l;
                 this._currentLoadedCount = 0;
-
+                var _this = this;
+                
                 for (var i = 0; i < l; i++) {
                     var img = new Image();
                     img.src = resourcePaths[i].src;
                     img._name = resourcePaths[i].id;
-                    img.onload = loaded;
+
+                    if (img.width || img.height) loaded({currentTarget:img});
+                    else img.onload = loaded;
                 }
-                var _this = this;
+                
                 function loaded(e) {
                     _this.onLoadAImage(e);
                 }
@@ -1409,13 +1414,19 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 _this._currentLoadedCount++;
                 
                 _this.cache[name] = img;
+                
                 if (_this._currentLoadedCount == _this._currentToLoadCount) {
+
                     _this._nowLoading = false;
                     _this._currentToLoadCount = 0;
                     _this._currentLoadedCount = 0;
                     _this.dispatchEvent(new nsevent.FLEvent(nsevent.FLEvent.COMPLETE));
                 }
 
+            })
+
+            def(function getResult(name) {
+                return this.getImageByName(name);
             })
             
             /**
@@ -1426,6 +1437,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             def(function getImageByName(name) {
                 return this.cache[name];
             })
+            
             
             /**
              * Delete the Image object by path of image.
