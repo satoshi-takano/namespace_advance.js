@@ -360,7 +360,9 @@ new Namespace("advanced.core").use(function() {
         * @memberOf Operation#
         **/
         def(function execute() {
-            this.func.apply(this.scope, this.args);
+            if (this.args) {
+                this.func.apply(this.scope, this.args);
+            } else this.func.call(this.scope);
         })
         
     })

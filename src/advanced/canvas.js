@@ -31,6 +31,8 @@ THE SOFTWARE.
 * @namespace advanced.canavs
 */
 new Namespace("advanced.canvas").require(["advanced.core", "advanced.application", "advanced.geom", "advanced.events", "advanced.platform"], function() {
+    'use strict';
+    
     this.imported();
     
     this.use(function() {
@@ -189,7 +191,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             ex(nscore.Recordable)
 
             def(function initialize() {
-                this.$super();
+                this.initialize.$super(this);
 
                 this.context = null;
                 this.needStroke = false;
@@ -214,7 +216,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             def(function beginFill(color, alpha) {
                 if (alpha == undefined) alpha = 1;
                 var col = new ns.Color(color);
-                var style = "rgba(" + col.r + "," + col.g + "," + col.b + "," + alpha +")";
+                var style = "rgba(" + col.getR() + "," + col.getG() + "," + col.getB() + "," + alpha +")";
 
                 this.rec(new nscore.Operation(this, ctxNeedFill, [true]))
                 this.rec(new nscore.Operation(this, ctxSetFillStyle, [style]));
@@ -356,7 +358,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             })
 
             def(function clear() {
-                this.$super();
+                this.clear.$super(this);
                 this.boundWidth = 0;
                 this.boundHeight = 0;
             })
@@ -472,7 +474,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             ex(nsevent.EventDispatcher);
             var ii = 0
             def(function initialize() {
-                this.$super();
+                this.initialize.$super(this);
 
                 this._mx = 0, this._my = 0;
                 this._g = new ns.Graphics();
@@ -517,13 +519,13 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 if (!this.visible || 0 == this.alpha) return;
 
                 var c = this._g.context;
-                var sx = this.scaleX;
-                var sy = this.scaleY;
+                var sx = this.getScaleX();
+                var sy = this.getScaleY();
                 var rsx = 1 / sx;
                 var rsy = 1 / sy;
                 var x = this._mx;
                 var y = this._my;
-                var rot = this.rotation * Math.PI / 180;
+                var rot = this.getRotation() * Math.PI / 180;
 
                 this.applyTransform(c, rot, sx, sy, x, y);
 
@@ -566,11 +568,11 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             **/
             def(function getObjectsUnderPoints(px, py, results) {
                 if (!this.visible || 0 == this.alpha) return;
-
+                
                 var stg = this._stg;
                 var c = stg.context;
 
-                c.clearRect(0, 0, stg.stageWidth, stg.stageHeight);
+                c.clearRect(0, 0, stg.getStageWidth(), stg.getStageHeight());
                 // this._g.playback();
                 this.draw();
                 var hasPixel = c.getImageData(px, py, 1, 1).data[3];
@@ -629,7 +631,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 return this._sx;
             })
             setter("scaleX", function(val) {
-                this.graphics.boundWidth *= val;
+                this.getGraphics().boundWidth *= val;
                 this._sx = val;
             })
             /** @private **/
@@ -645,7 +647,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 return this._sy;
             })
             setter("scaleY", function(val) {
-                this.graphics.boundHeight *= val;
+                this.getGraphics().boundHeight *= val;
                 this._sy = val;
             })
             /** @private **/
@@ -733,7 +735,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             ex(ns.DisplayObject)
 
             def(function initialize() {
-                this.$super();
+                this.initialize.$super(this);
                 this.children = [];
                 this._stg = null;
             })
@@ -812,18 +814,19 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             })
 
             def(function drawNest() {
-                this.$super();
-                var l = this.numChildren;
+                this.drawNest.$super(this);
+                
+                var l = this.getNumChildren();
                 for (var i = 0; i < l; i++) {
                     this.children[i].draw();
                 }
             })
 
             def(function addedToStage() {
-                this.$super();
+                this.addedToStage.$super(this);
 
                 var children = this.children;
-                for (var i = 0, l = this.numChildren; i < l; i++) {
+                for (var i = 0, l = this.getNumChildren(); i < l; i++) {
                     var child = children[i];
                     child._stg = this._stg;
                     child.addedToStage();
@@ -831,7 +834,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             })
 
             def(function removeFromStage() {
-                this.$super();
+                this.removeFromStage.$super(this);
 
                 for (var i = 0, l = this.numChildren; i < l; i++) {
                     var child = this.children[i];
@@ -886,7 +889,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             ex(ns.DisplayObjectContainer);
 
             def(function initialize(canvas) {
-                this.$super();
+                this.initialize.$super(this);
 
                 var context = canvas.getContext("2d");
                 if (context == null) {
@@ -954,8 +957,8 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             def(function draw() {
                 if (this._enabled == false) return;
                 
-                this.context.clearRect(0, 0, this.stageWidth, this.stageHeight);
-                var l = this.numChildren;
+                this.context.clearRect(0, 0, this.getStageWidth(), this.getStageHeight());
+                var l = this.getNumChildren();
                 for (var i = 0; i < l; i++) {
                     this.children[i].draw();
                 }
@@ -1221,7 +1224,8 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             ex(ns.DisplayObject);
 
             def(function initialize() {
-                this.$super();
+                this.initialize.$super(this);
+                
                 this._text = "";
                 this._fontFamily = "_sans";
                 this._fontSize = 12;
@@ -1240,11 +1244,12 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             })
 
             def(function applyFormat() {
-                this.graphics.clear();
-                this.graphics.beginFill(this._color);
-                this.graphics.lineStyle(0);
-                this.graphics.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
-                this.graphics.drawText(this._text);
+                var g = this.getGraphics();
+                g.clear();
+                g.beginFill(this._color);
+                g.lineStyle(0);
+                g.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
+                g.drawText(this._text);
             })
             
             /** 
@@ -1256,11 +1261,12 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 return this._text;
             })
             setter("text", function(txt) {
-                this.graphics.clear();
-                this.graphics.beginFill(this._color);
-                this.graphics.lineStyle(0);
-                this.graphics.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
-                this.graphics.drawText(txt);
+                var g = this.getGraphics();
+                g.clear();
+                g.beginFill(this._color);
+                g.lineStyle(0);
+                g.setFormat(formatString(this._fontFamily, this._fontSize, this._bold, this._italic));
+                g.drawText(txt);
                 this._text = txt;
             })
 
@@ -1327,7 +1333,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             * @memberOf Text#
             **/
             getter("width", function() {
-                return this.graphics.boundWidth;
+                return this.getGraphics().boundWidth;
             })
 
             function formatString(family, size, bold, italic) {
@@ -1341,13 +1347,14 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
         * @augments DisplayObject
         * @param {object} imageElement The html img element.
         **/
-        proto(function Image() {
+        proto(function Bitmap() {
             ex(ns.DisplayObject)
             
             def(function initialize(imageElement) {
-                this.$super();
+                this.initialize.$super(this);
+                
                 this._imageElement = imageElement;
-                this.graphics.drawImage(this._imageElement);
+                this.getGraphics().drawImage(this._imageElement);
             })
 
             getter("width", function() {
@@ -1366,7 +1373,7 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             ex(nsevent.EventDispatcher);
 
             def(function initialize(cache) {
-                this.$super();
+                this.initialize.$super(this);
 
                 this.cache = cache || {};
                 this._currentLoadedCount = 0;
@@ -1446,50 +1453,6 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
              **/
             def(function del(name) {
                 delete this.cache[name];
-            })
-        })
-        
-        /**
-        * The ImageManager manages loading  and caching of the images.
-        * @class ImageManager
-        **/
-        singleton(function ImageManager() {
-            ex(nsevent.EventDispatcher);
-
-            def(function initialize() {
-                this.$super();
-
-                this.loader = new ns.ImageLoader();
-            })
-
-            /**
-            * Loads the image asynchronous. When it has finished loading, the ImageManger will dispatches a FLEvent.COMPLETE event.
-            * @param {string} resourcePath The path of the image.
-            **/
-            def(function load(resourcePaths) {
-                this.loader.load(resourcePaths);
-                var _this = this;
-                this.loader.addEventListener(nsevent.FLEvent.COMPLETE, function() {
-                    _this.dispatchEvent(new nsevent.FLEvent(nsevent.FLEvent.COMPLETE));
-                })
-            })
-            
-            /**
-            * Returns the Image object by path of image.
-            * @method getImageByName
-            * @memberOf ImageManger#
-            **/
-            def(function getImageByName(name) {
-                return this.loader.cache[name];
-            })
-            
-            /**
-            * Delete the Image object by path of image.
-            * @method del
-            * @memberOf ImageManager#
-            **/
-            def(function del(name) {
-                delete this.loader.cache[name];
             })
         })
         

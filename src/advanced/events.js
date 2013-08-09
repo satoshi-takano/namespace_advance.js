@@ -283,7 +283,7 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
             ex(ns.Event)
 
             def(function initialize (type, caller, origin) {
-                this.$super(type, caller, origin)
+                this.initialize.$super(this, type, caller, origin);
                 this.doBubbling = true;
             });
 
@@ -337,7 +337,8 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
             ex(ns.FLEvent);
 
             def(function initialize (type, caller, origin) {
-                this.$super(type, caller, origin);
+                this.initialize.$super(type, caller, origin);
+                
                 /** 
                 * @member {number} mosueX
                 * @memberOf FLMouseEvent#
