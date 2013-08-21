@@ -36,13 +36,13 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
     this.imported();
     
     this.use(function() {
-        console.log('imported ', this.nsName)
-        
         var ns = this;
         var nscore = new Namespace("advanced.core");
         var nsevent = new Namespace("advanced.events");
         var nsgeom = new Namespace("advanced.geom");
         var app = new Namespace("advanced.application").Application.getInstance();
+        var toRad = Math.PI / 180;
+        var _M = nsgeom.Matrix;
 
         if (global.CanvasRenderingContext2D && 
             !CanvasRenderingContext2D.prototype.createImageData && 
@@ -518,34 +518,39 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             def(function draw() {
                 if (!this.visible || 0 == this.alpha) return;
 
-                var c = this._g.context;
-                var sx = this.getScaleX();
-                var sy = this.getScaleY();
-                var rsx = 1 / sx;
-                var rsy = 1 / sy;
-                var x = this._mx;
-                var y = this._my;
-                var rot = this.getRotation() * Math.PI / 180;
-
-                this.applyTransform(c, rot, sx, sy, x, y);
+                this.applyTransform();
 
                 this.drawNest();
 
-                this.restoreTransform(c, -rot, rsx, rsy, -x, -y)
-            })
-            
-            /** @private **/
-            def(function applyTransform(ctx, rot, sx, sy, tx, ty) {
-                ctx.translate(tx, ty);
-                ctx.scale(sx, sy);
-                ctx.rotate(rot);
+                this.restoreTransform();
             })
 
             /** @private **/
-            def(function restoreTransform(ctx, rot, sx, sy, tx, ty) {
-                ctx.rotate(rot);
-                ctx.scale(sx, sy);
-                ctx.translate(tx, ty);
+            def(function applyTransform() {
+                var c = this._g.context;
+                var sx = this._sx;
+                var sy = this._sy;
+                var x = this._mx;
+                var y = this._my;
+                var rot = this._rotation * Math.PI / 180;
+                
+                c.translate(x, y);
+                c.scale(sx, sy);
+                c.rotate(rot);
+            })
+
+            /** @private **/
+            def(function restoreTransform() {
+                var c = this._g.context;
+                var rsx = 1 / this._sx;
+                var rsy = 1 / this._sy;
+                var x = this._mx;
+                var y = this._my;
+                var rot = this._rotation * Math.PI / 180;
+                
+                c.rotate(-rot);
+                c.scale(rsx, rsy);
+                c.translate(-x, -y);
             })
 
             /**
@@ -568,17 +573,23 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
             **/
             def(function getObjectsUnderPoints(px, py, results) {
                 if (!this.visible || 0 == this.alpha) return;
-                
+
                 var stg = this._stg;
                 var c = stg.context;
-
+                
                 c.clearRect(0, 0, stg.getStageWidth(), stg.getStageHeight());
-                // this._g.playback();
                 this.draw();
+                
                 var hasPixel = c.getImageData(px, py, 1, 1).data[3];
-                if (hasPixel) results.push(this);
+
+                if (hasPixel) {
+                    results.push(this);
+                }
                 else if (this._mouseOvered) this._mouseOutFlag = true;
+
+                this.applyTransform();
                 this.getObjectsUnderPointsNest(px, py, results);
+                this.restoreTransform();
             })
             
             /** @deprecated **/
@@ -687,6 +698,28 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 if (this.parent == undefined) return this._my;
                 return this._my +  this.parent.globalY;
             })
+
+            getter("globalMatrix", function() {
+                var target = this;
+                var displayList = [target];
+                
+                while (target.parent) {
+                    target = target.parent;
+                    displayList.push(target);
+                }
+                displayList.reverse();
+
+                var m = new _M();
+
+                for (var i = 0, l = displayList.length; i < l; i++) {
+                    var obj = displayList[i];
+                    m.translate(-obj._mx, -obj._my);
+                    m.scale(1/obj._sx, 1/obj._sy);
+                    m.rotate(obj._rotation * toRad);
+                }
+
+                return m;
+            });
             
             /** 
             * The stage object that contains this DisplayObject.
@@ -1061,94 +1094,59 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 util.listen(this.canvas, nsevent.DOMMouseEvent.CLICK, function(e) {
                     if (self._enabled == false) return;
                    
-                    oup.splice(0, oup.length);
-                    var pos = $(self.canvas).offset();
-                    var _x = e.pageX - pos.left;
-                    var _y = e.pageY - pos.top;
-
-                    var scl = self._canvasCSSScaledRatio;
-                    self.context.scale(scl, scl);
-                    self.getObjectsUnderPoints(_x, _y, oup);
-                    scl = 1/scl;
-                    self.context.scale(scl, scl);
-                    for (var i = oup.length - 1; 0 <= i; i--) {
-                        var o = oup[i];
-                        if (o.hasEventListener(E.CLICK)) {
-                            o.dispatchEvent(new E(E.CLICK, o));
-                            if (!o.mouseChildren) break;
-                        }
-                    }
-                    self.draw();
+                    dispatches(self, oup, e, E.CLICK, E);
                 })
 
                 util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_DOWN, function(e) {
                     if (self._enabled == false || self._enableTouchStart == false) return;
                     
-                    oup.splice(0, oup.length);
-                    var mouseX = e.clientX;
-                    var mouseY = e.clientY;
-
-                    var scl = self._canvasCSSScaledRatio;
-                    self.context.scale(scl, scl);
-                    self.getObjectsUnderPoints(mouseX, mouseY, oup);
-                    scl = 1/scl;
-                    self.context.scale(scl, scl);
-
-                    for (var i = 0, len = oup.length; i < len; i++) {
-                        var o = oup[i];
-                        if (o.hasEventListener(E.MOUSE_DOWN)) {
-                            var e = new nsevent.FLEvent(E.MOUSE_DOWN, o, e);
-
-                            var pos = new (new Namespace("advanced.geom")).Matrix();
-                            pos.tx = mouseX;
-                            pos.ty = mouseY;
-
-                            var mat = new (new Namespace("advanced.geom")).Matrix();
-                            var sx = o.scaleX;
-                            var sy = o.scaleY;
-                            var rsx = 1 / sx;
-                            var rsy = 1 / sy;
-                            var x = o._mx;
-                            var y = o._my;
-                            var rot = o.rotation * Math.PI / 180;
-                            mat.translate(-x, -y);
-                            mat.scale(sx, sy);
-                            mat.rotate(rot);
-
-                            pos.concat(mat);
-                            e.mouseX = pos.tx;
-                            e.mouseY = pos.ty;
-
-                            o.dispatchEvent(e);
-
-                            if (!e.doBubbling || !o.mouseChildren) break;
-                        }
-                    }
-                    self.draw();
+                    dispatches(self, oup, e, E.MOUSE_DOWN, E);
                 })
 
                 util.listen(this.canvas, nsevent.DOMMouseEvent.MOUSE_UP, function(e) {
                     if (self._enabled == false) return;
                     
-                    oup.splice(0, oup.length);
-
-                    var scl = self._canvasCSSScaledRatio;
-                    self.context.scale(scl, scl);
-                    self.getObjectsUnderPoints(e.clientX, e.clientY, oup);
-                    scl = 1/scl;
-                    self.context.scale(scl, scl);
-                    
-                    for (var i = 0, len = oup.length; i < len; i++) {
-                        var o = oup[i];
-                        if (o.hasEventListener(E.MOUSE_UP)) {
-                            var e = new nsevent.FLEvent(E.MOUSE_UP, o, e);
-                            o.dispatchEvent(e);
-                            if (!e.doBubble || !o.mouseChildren) break;
-                        }
-                    }
-                    self.draw()
+                    dispatches(self, oup, e, E.MOUSE_UP, E);
                 })
             })
+
+            function dispatches(self, oup, nativeEvent, eventType, EventClass) {
+                var mouseX = nativeEvent.clientX;
+                var mouseY = nativeEvent.clientY;
+                
+                oup.splice(0, oup.length);
+                var pos = $(self.canvas).offset();
+                var _x = nativeEvent.pageX - pos.left;
+                var _y = nativeEvent.pageY - pos.top;
+
+                var scl = self._canvasCSSScaledRatio;
+                self.context.scale(scl, scl);
+                self.getObjectsUnderPoints(_x, _y, oup);
+                scl = 1/scl;
+                self.context.scale(scl, scl);
+
+                var pointerPos = new _M();
+
+                for (var i = 0, l = oup.length; i < l; i++) {
+                    var o = oup[i];
+
+                    if (o.hasEventListener(eventType)) {
+                        pointerPos.identity();
+                        pointerPos.tx = mouseX;
+                        pointerPos.ty = mouseY;
+
+                        pointerPos.concat(o.getGlobalMatrix(), eventType == "mousedown");
+
+                        var e = new EventClass(eventType, o);
+                        e.mouseX = pointerPos.tx;
+                        e.mouseY = pointerPos.ty;
+
+                        o.dispatchEvent(e);
+                        if (!o.mouseChildren) break;
+                    }
+                }
+                self.draw();
+            }
 
             /** 
             * Sets to enabled the touch events.

@@ -442,14 +442,16 @@ new Namespace("advanced.geom").use(function() {
          * @method concat
          * @memberOf Matrix#
          */
-         def(function concat(m) {
+         def(function concat(m, _v) {
              var a = this.a, b = this.b, c = this.c, d = this.d, tx = this.tx, ty = this.ty;    
-            this.a = a * m.a + c * m.b;
-            this.c = a * m.c + c * m.d;
-            this.tx = a * m.tx + c * m.ty + tx;
-            this.b = b * m.a + d * m.b;
-            this.d = b * m.c + d * m.d;    
-            this.ty = b * m.tx + d * m.ty + ty;
+             this.a = m.a * a + m.b * c;
+             this.b = m.a * b + m.b * d;
+             this.tx = m.a * tx + m.b * ty + m.tx;
+             
+             this.c = m.c * a + m.d * c;
+             this.d = m.c * b + m.d * d;
+             this.ty = m.c * tx + m.d * ty + m.ty;
+//             if (_v) console.log(m.c, tx, m.d, ty, m.ty);
          });
          
          /**
