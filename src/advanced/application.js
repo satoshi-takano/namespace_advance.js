@@ -34,7 +34,6 @@ new Namespace("advanced.application").require(["advanced.events", "advanced.plat
     this.imported();
     
     this.use(function() {
-        console.log('imported ', this.nsName)
         
         var ns = this;
 

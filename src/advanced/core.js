@@ -31,7 +31,6 @@ THE SOFTWARE.
 * @namespace advanced.core
 **/
 new Namespace("advanced.core").use(function() {
-    console.log('imported ', this.nsName)
     var ns = this;
     this.imported();
     

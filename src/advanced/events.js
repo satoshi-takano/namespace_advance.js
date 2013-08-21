@@ -34,7 +34,6 @@ new Namespace("advanced.events").require(["advanced.platform"], function() {
     this.imported();
     
     this.use(function() {
-        console.log('imported ', this.nsName)
         
         var ns = this;
         // dynamical creating a internal namespace

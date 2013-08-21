@@ -31,7 +31,6 @@ THE SOFTWARE.
 * @namespace advanced.platform
 */
 new Namespace("advanced.platform").use(function() {
-    console.log('imported ', this.nsName)
     this.imported();
     
     var ns = this;

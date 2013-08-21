@@ -32,7 +32,6 @@ THE SOFTWARE.
 **/
 new Namespace("advanced.geom").use(function() {
     var ns = this;
-    console.log('imported ', this.nsName)
     this.imported();
     
      /** 

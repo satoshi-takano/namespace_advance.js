@@ -3,126 +3,118 @@
 <script src="./excanvas.js"></script>
 <script type="text/javascript" src="../../namespace.js/src/namespace.js"></script>
 
-<p>1</p>
-<canvas id="canvas2d" width='500' height='500' style="top:0;left:0;position:absolute;border: 1px solid #000">
-</canvas>
-</style>
-
 <script type="text/javascript">
 
 "use strict";
 Namespace.jsPath = "../../src";
 
-
 $(function() {
     
      new Namespace("test").require(["advanced.canvas"], function () {
          var ns = new Namespace("advanced.canvas");
-          // 
-         var stage = new ns.Stage(document.getElementById("canvas2d"));
          var nse = new Namespace("advanced.events");
-          
-         
+
+         // root object of the display list
+         var stage = new ns.Stage(document.getElementById("canvas2d"));
          
          var container = new ns.DisplayObjectContainer();
          var g = container.getGraphics();
          g.beginFill(0x333333);
          g.drawRect(0, 0, 500, 500);
-         var containerLabel = new ns.Text();
 
-         containerLabel.setFontFamily("Helvetica");
-         containerLabel.setColor(0xffffff)
-         containerLabel.setFontSize(14)
-         
-//         container.addChild(containerLabel);
-         stage.addChild(container);
-
-         var content = new ns.DisplayObjectContainer();
+         // child rectangle
+         var content = new ns.DisplayObject();
          g = content.getGraphics();
          g.beginFill(0x666666);
          g.drawRect(0, 0, 300, 300);
-         // var contentLabel = new ns.Text();
-         // contentLabel.setText("Content");
-         // contentLabel.setFontFamily("Content");
-         // contentLabel.setColor(0xffffff) ;
-         // contentLabel.setFontSize(14)
-         // content.addChild(contentLabel);
- 
          content.setX((container.getWidth() - content.getWidth()) * 0.5);
-         content.setY((container.getWidth() - content.getWidth) * 0.5);
- 
+         content.setY((container.getWidth() - content.getWidth()) * 0.5);
          container.addChild(content);
          
- 
+
+         // add container to the stage
+         stage.addChild(container);
+
          // transform
-         
          container.setX(200);
          container.setScaleX(0.7);
          container.setScaleY(0.7);
          container.setRotation(20);
-         content.setRotation(20);
-         
-         
-         
-         var imgManager = new ns.ImageLoader();
+         content.setRotation(40);
 
-         
-         imgManager.addEventListener(nse.FLEvent.COMPLETE, function(e) {
-//             imgManager.removeEventListener(nse.FLEvent.COMPLETE, arguments.callee);
-             
+         var imgManager = new ns.ImageLoader();
+         imgManager.addEventListener(nse.FLEvent.COMPLETE, function _handler(e) {
+             imgManager.removeEventListener(nse.FLEvent.COMPLETE, _handler);
+
+             // get octcat image and add child the image to the container
              var img0 = new ns.Bitmap(imgManager.getImageByName("oct"));
-             console.log(e)
              container.addChild(img0);
-//             img0.scaleX = img0.scaleY = 0.5;
              img0.setScaleX(0.5);
              img0.setScaleY(0.5);
-             img0.setRotation(-10);
-             // img0.rotation = -10;
-             // img0.setX(200);
-             // img0.y = 150;
+             img0.setX((container.getWidth() * (1 / container.getScaleX()) - img0.getWidth()) * 0.5);
+             img0.setY((container.getHeight() * (1 / container.getScaleY()) - img0.getHeight()) * 0.5);
 
-             img0.setX(100);
+             // re rendering
              stage.draw();
          })
+
+         // load octcat image
          imgManager.load([
              {id:"oct", src:"./images/octcat.jpg"}
          ]);
+
+         var $log = $("#log");
          
-         // set events
-         stage.enableMouseOver(10);
-         content.mouseChildren = false;
-         container.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
-             console.log("Mouse over : container");
-         })
-         container.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
-             console.log("Mouse out : container");
-         });
-         container.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
-             console.log("Mouse down : container");
-         })
-         container.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
-             console.log("Mouse up : container");
-         })
-         container.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
-             console.log("Click : container");
-         })
- 
-         content.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
-             console.log("Mouse over : content");
-         })
-         content.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
-             console.log("Mouse out : content");
-         });
-         content.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
-             console.log("Mouse down : content");
-         })
-         content.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
-             console.log("Mouse up : content");
-         })
-         content.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
-             console.log("Click : content");
-         })
+         var isIE = new advanced.platform.UserAgent().isIE();
+         if (!isIE) {
+             // set events
+             stage.enableMouseOver(10);
+
+             container.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
+                 var li = $("<li>Mouse over : container {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             })
+             container.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
+                 var li = $("<li>Mouse out : container {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             });
+             container.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
+                 var li = $("<li>Mouse down : container {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             })
+             container.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
+                 var li = $("<li>Mouse up : container {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             })
+             container.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
+                 var li = $("<li>Click : container {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             })
+             
+             content.addEventListener(nse.FLMouseEvent.MOUSE_OVER, function(e) {
+                 var li = $("<li>Mouse over : content {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             })
+             content.addEventListener(nse.FLMouseEvent.MOUSE_OUT, function(e) {
+                 var li = $("<li>Mouse out : content {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             });
+             content.addEventListener(nse.FLMouseEvent.MOUSE_DOWN, function(e) {
+                 var li = $("<li>Mouse down : content {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             })
+             content.addEventListener(nse.FLMouseEvent.MOUSE_UP, function(e) {
+                 var li = $("<li>Mouse up : content {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             })
+             content.addEventListener(nse.FLMouseEvent.CLICK, function(e) {
+                 var li = $("<li>Click : content {mouseX: " + Math.round(e.mouseX) + ", mouseY: " + Math.round(e.mouseY) + "}</li>");
+                 $log.append(li).scrollTop(li.offset().top);
+             })
+         }
+
          
+         // rendering
          stage.draw();
      })
 
@@ -132,5 +124,10 @@ $(function() {
 
 </script>
 <body>
+
+<canvas id="canvas2d" width='500' height='500' style="top:0;left:0px;position:absolute;border: 1px solid #000"></canvas>
+<ul id="log" style="list-style:none;padding:0;margin-left:520px;height: 500px;overflow-y: scroll;">  
+</ul>
+
 </body>
 </html>

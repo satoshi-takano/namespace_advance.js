@@ -943,9 +943,10 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 this._objectsUnderPointer = [];
                 this._currentMouseOveredObjects = [];
 
-                if (new (new Namespace("advanced.platform")).UserAgent().isMobile())
+                var ua = new (new Namespace("advanced.platform")).UserAgent();
+                if (ua.isMobile())
                     this.enableTouchEvents();
-                else
+                else if (!ua.isIE6 && !ua.isIE7 && !ua.isIE8)
                     this.enableMouseEvents();
                     
                 this._enabled = true;
@@ -1046,16 +1047,31 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                 var oup = this._objectsUnderPointer;
                 var E = nsevent.FLMouseEvent;
                 var currentOvered = this._currentMouseOveredObjects;
+                var pointerPos = new _M();
+                
                 this._mouseOverIntervalID = setInterval(function() {
                     if (app.canTrackMouse) {
+                        var mx = app.mouseX;
+                        var my = app.mouseY;
+                        
                         oup.splice(0, oup.length);
-                        self.getObjectsUnderPoints(app.mouseX, app.mouseY, oup);
+                        self.getObjectsUnderPoints(mx, my, oup);
                         self.draw();
+                        
                         if (oup.length) {
                             for (var i = oup.length - 1; 0 <= i; i--) {
                                 var o = oup[i];
-                                if (!o._mouseOvered && o.hasEventListener(E.MOUSE_OVER)) { 
-                                    o.dispatchEvent(new E(E.MOUSE_OVER, o));
+                                if (!o._mouseOvered && o.hasEventListener(E.MOUSE_OVER)) {
+                                    pointerPos.identity();
+                                    pointerPos.tx = mx;
+                                    pointerPos.ty = my;
+                                    pointerPos.concat(o.getGlobalMatrix());
+                
+                                    var e = new E(E.MOUSE_OVER, o);
+                                    e.mouseX = pointerPos.tx;
+                                    e.mouseY = pointerPos.ty;
+                                    
+                                    o.dispatchEvent(e);
                                     o._mouseOvered = true;
                                     currentOvered.push(o);
                                     if (!o.mouseChildren) break;
@@ -1068,7 +1084,17 @@ new Namespace("advanced.canvas").require(["advanced.core", "advanced.application
                         var overed = currentOvered[i];
 
                         if (overed._mouseOutFlag) {
-                            if (overed.hasEventListener(E.MOUSE_OUT)) overed.dispatchEvent(new E(E.MOUSE_OUT, o));
+                            if (overed.hasEventListener(E.MOUSE_OUT)) {
+                                pointerPos.identity();
+                                pointerPos.tx = mx;
+                                pointerPos.ty = my;
+                                pointerPos.concat(overed.getGlobalMatrix());
+                                
+                                var e = new E(E.MOUSE_OUT, overed);
+                                e.mouseX = pointerPos.tx;
+                                e.mouseY = pointerPos.ty;
+                                overed.dispatchEvent(e);
+                            }
                             overed._mouseOutFlag = false;
                             overed._mouseOvered = false;
                             currentOvered.splice(i, 1);
